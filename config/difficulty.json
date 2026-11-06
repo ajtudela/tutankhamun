@@ -1,0 +1,9 @@
+// Written by tutankhamun --export-configs from the built-in table; edit to change the game.
+// A record or a field left out keeps the built-in value.
+[
+    { "level": "DIFFICULTY_VERY_EASY", "treasury_percentage": 200, "tax_percentage": 50, "starting_favor": 70, "sentiment": 80, "enemies_percentage": 40 },
+    { "level": "DIFFICULTY_EASY", "treasury_percentage": 100, "tax_percentage": 50, "starting_favor": 60, "sentiment": 70, "enemies_percentage": 60 },
+    { "level": "DIFFICULTY_NORMAL", "treasury_percentage": 100, "tax_percentage": 50, "starting_favor": 50, "sentiment": 60, "enemies_percentage": 80 },
+    { "level": "DIFFICULTY_HARD", "treasury_percentage": 100, "tax_percentage": 50, "starting_favor": 50, "sentiment": 55, "enemies_percentage": 100 },
+    { "level": "DIFFICULTY_VERY_HARD", "treasury_percentage": 75, "tax_percentage": 50, "starting_favor": 40, "sentiment": 50, "enemies_percentage": 120 }
+]

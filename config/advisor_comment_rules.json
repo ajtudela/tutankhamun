@@ -1,0 +1,31 @@
+// Written by tutankhamun --export-configs from the built-in table; edit to change the game.
+// A record or a field left out keeps the built-in value.
+[
+    { "rule": "sentiment_low", "value": 50 },
+    { "rule": "sentiment_fair", "value": 100 },
+    { "rule": "migration_max_armed_figures", "value": 3 },
+    { "rule": "migration_newcomers_strong", "value": 5 },
+    { "rule": "migration_percentage_strong", "value": 80 },
+    { "rule": "employment_balanced_unemployment", "value": 5 },
+    { "rule": "employment_balanced_workers_needed", "value": 5 },
+    { "rule": "unemployment_urgent", "value": 17 },
+    { "rule": "unemployment_serious", "value": 10 },
+    { "rule": "unemployment_important", "value": 5 },
+    { "rule": "labor_shortage_urgent", "value": 20 },
+    { "rule": "labor_shortage_serious", "value": 10 },
+    { "rule": "food_stocks_low_percent", "value": 50 },
+    { "rule": "food_supply_plenty_percent", "value": 150 },
+    { "rule": "food_supply_enough_percent", "value": 110 },
+    { "rule": "food_supply_barely_enough_percent", "value": 95 },
+    { "rule": "food_supply_slightly_short_percent", "value": 85 },
+    { "rule": "food_supply_short_percent", "value": 70 },
+    { "rule": "angry_god_mood", "value": 40 },
+    { "rule": "very_angry_god_mood", "value": 20 },
+    { "rule": "happy_god_mood", "value": 60 },
+    { "rule": "thefts_many", "value": 10 },
+    { "rule": "thefts_several", "value": 5 },
+    { "rule": "thefts_some", "value": 2 },
+    { "rule": "requests_counted", "value": 5 },
+    { "rule": "requests_some_max", "value": 2 },
+    { "rule": "requests_several_max", "value": 4 }
+]

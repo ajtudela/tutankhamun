@@ -1,0 +1,68 @@
+// Written by tutankhamun --export-configs from the built-in table; edit to change the game.
+// A record or a field left out keeps the built-in value.
+[
+    { "monument": "library",
+        "parts": [
+            { "dx": -3, "dy": -4, "size": 1, "kind": 23 },
+            { "dx": 2, "dy": -4, "size": 1, "kind": 24 },
+            { "dx": -3, "dy": -3, "size": 6, "kind": 0 },
+            { "dx": -2, "dy": 3, "size": 4, "kind": 1 },
+            { "dx": -2, "dy": -7, "size": 4, "kind": 2 },
+            { "dx": -3, "dy": 3, "size": 1, "kind": 7 },
+            { "dx": 2, "dy": 3, "size": 1, "kind": 8 },
+            { "dx": -4, "dy": -2, "size": 1, "kind": 17 },
+            { "dx": 3, "dy": -2, "size": 1, "kind": 18 },
+            { "dx": -5, "dy": -1, "size": 2, "kind": 13 },
+            { "dx": 3, "dy": -1, "size": 2, "kind": 14 },
+            { "dx": -4, "dy": 1, "size": 1, "kind": 10 },
+            { "dx": 3, "dy": 1, "size": 1, "kind": 11 },
+            { "dx": -5, "dy": 4, "size": 3, "kind": 3 },
+            { "dx": 2, "dy": 4, "size": 3, "kind": 4 },
+            { "dx": -5, "dy": -7, "size": 3, "kind": 21 },
+            { "dx": 2, "dy": -7, "size": 3, "kind": 22 },
+            { "dx": 3, "dy": 2, "size": 2, "kind": 6 },
+            { "dx": -5, "dy": 2, "size": 2, "kind": 5 },
+            { "dx": -5, "dy": -4, "size": 2, "kind": 19 },
+            { "dx": 3, "dy": -4, "size": 2, "kind": 20 },
+            { "dx": -5, "dy": 1, "size": 1, "kind": 9 },
+            { "dx": 4, "dy": 1, "size": 1, "kind": 12 },
+            { "dx": -5, "dy": -2, "size": 1, "kind": 15 },
+            { "dx": 4, "dy": -2, "size": 1, "kind": 16 }
+        ] },
+    { "monument": "caesareum",
+        "parts": [
+            { "dx": -7, "dy": -7, "size": 5, "kind": 0 },
+            { "dx": -7, "dy": -2, "size": 5, "kind": 1 },
+            { "dx": -7, "dy": 3, "size": 5, "kind": 2 },
+            { "dx": -2, "dy": -7, "size": 5, "kind": 3 },
+            { "dx": -2, "dy": -2, "size": 5, "kind": 4 },
+            { "dx": -2, "dy": 3, "size": 5, "kind": 5 },
+            { "dx": 3, "dy": -7, "size": 5, "kind": 6 },
+            { "dx": 3, "dy": -2, "size": 5, "kind": 7 },
+            { "dx": 3, "dy": 3, "size": 5, "kind": 8 }
+        ] },
+    { "monument": "lighthouse",
+        "parts": [
+            { "dx": 0, "dy": 0, "size": 6, "kind": 0 },
+            { "dx": 2, "dy": 6, "size": 1, "kind": 1 }
+        ] },
+    { "monument": "abu_simbel",
+        "parts": [
+            { "dx": 1, "dy": 7, "size": 3, "kind": 5 },
+            { "dx": 1, "dy": -11, "size": 3, "kind": 6 },
+            { "dx": -5, "dy": 4, "size": 3, "kind": 0 },
+            { "dx": -5, "dy": 1, "size": 3, "kind": 0 },
+            { "dx": -5, "dy": -2, "size": 3, "kind": 0 },
+            { "dx": -5, "dy": -5, "size": 3, "kind": 0 },
+            { "dx": -5, "dy": -8, "size": 3, "kind": 0 },
+            { "dx": -2, "dy": 7, "size": 3, "kind": 1 },
+            { "dx": -2, "dy": -11, "size": 3, "kind": 2 },
+            { "dx": -5, "dy": 7, "size": 3, "kind": 3 },
+            { "dx": -5, "dy": -11, "size": 3, "kind": 4 },
+            { "dx": -2, "dy": -2, "size": 3, "kind": 7 },
+            { "dx": 1, "dy": -2, "size": 3, "kind": 8 },
+            { "dx": 4, "dy": -2, "size": 3, "kind": 9 },
+            { "dx": -2, "dy": 1, "size": 6, "kind": 10 },
+            { "dx": -2, "dy": -8, "size": 6, "kind": 11 }
+        ] }
+]

@@ -1,0 +1,17 @@
+// Written by tutankhamun --export-configs from the built-in table; edit to change the game.
+// A record or a field left out keeps the built-in value.
+[
+    { "rule": "radius", "value": 2 },
+    { "rule": "missionary_radius", "value": 4 },
+    { "rule": "house_access", "value": 96 },
+    { "rule": "house_tax_access", "value": 50 },
+    { "rule": "risk_seen_start", "value": 1000 },
+    { "rule": "crime_risk_max", "value": 1000 },
+    { "rule": "houses_covered_max", "value": 300 },
+    { "rule": "seen_fade", "value": 10 },
+    { "rule": "market_demand", "value": 10 },
+    { "rule": "food_per_person", "value": 2 },
+    { "rule": "food_stock_per_person", "value": 6 },
+    { "rule": "large_house_goods_factor", "value": 4 },
+    { "rule": "goods_stock_factor", "value": 2 }
+]

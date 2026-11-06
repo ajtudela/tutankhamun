@@ -1,0 +1,199 @@
+// Written by tutankhamun --export-configs from the built-in table; edit to change the game.
+// A record or a field left out keeps the built-in value.
+[
+    { "overlay": "OVERLAY_NONE",
+        "buildings": [
+        ] },
+    { "overlay": 1 },
+    { "overlay": 2 },
+    { "overlay": 3 },
+    { "overlay": "OVERLAY_RELIGION",
+        "buildings": [
+            { "type": "BUILDING_MENU_SHRINES" },
+            { "type": "BUILDING_FESTIVAL_SQUARE" },
+            { "type": "BUILDING_ORACLE" },
+            { "type": "BUILDING_SHRINE_OSIRIS" },
+            { "type": "BUILDING_SHRINE_RA" },
+            { "type": "BUILDING_SHRINE_PTAH" },
+            { "type": "BUILDING_SHRINE_SETH" },
+            { "type": "BUILDING_SHRINE_BAST" },
+            { "type": "BUILDING_TEMPLE_OSIRIS" },
+            { "type": "BUILDING_TEMPLE_RA" },
+            { "type": "BUILDING_TEMPLE_PTAH" },
+            { "type": "BUILDING_TEMPLE_SETH" },
+            { "type": "BUILDING_TEMPLE_BAST" },
+            { "type": "BUILDING_TEMPLE_COMPLEX_OSIRIS" },
+            { "type": "BUILDING_TEMPLE_COMPLEX_RA" },
+            { "type": "BUILDING_TEMPLE_COMPLEX_PTAH" },
+            { "type": "BUILDING_TEMPLE_COMPLEX_SETH" },
+            { "type": "BUILDING_TEMPLE_COMPLEX_BAST" },
+            { "type": "BUILDING_SPHINX" }
+        ] },
+    { "overlay": 5 },
+    { "overlay": 6 },
+    { "overlay": 7 },
+    { "overlay": "OVERLAY_FIRE",
+        "buildings": [
+            { "type": "BUILDING_FIREHOUSE" }
+        ] },
+    { "overlay": "OVERLAY_DAMAGE",
+        "buildings": [
+            { "type": "BUILDING_ARCHITECT_POST" }
+        ] },
+    { "overlay": "OVERLAY_CRIME",
+        "buildings": [
+            { "type": "BUILDING_POLICE_STATION" },
+            { "type": "BUILDING_COURTHOUSE" },
+            { "type": "BUILDING_FORT_CHARIOTEERS" },
+            { "type": "BUILDING_FORT_ARCHERS" },
+            { "type": "BUILDING_FORT_INFANTRY" },
+            { "type": "BUILDING_FORT" }
+        ] },
+    { "overlay": "OVERLAY_ENTERTAINMENT",
+        "buildings": [
+            { "type": "BUILDING_BOOTH" },
+            { "type": "BUILDING_JUGGLER_SCHOOL" },
+            { "type": "BUILDING_BANDSTAND" },
+            { "type": "BUILDING_CONSERVATORY" },
+            { "type": "BUILDING_PAVILION" },
+            { "type": "BUILDING_DANCE_SCHOOL" },
+            { "type": "BUILDING_SENET_HOUSE" },
+            { "type": "BUILDING_FESTIVAL_SQUARE" },
+            { "type": "BUILDING_ZOO" }
+        ] },
+    { "overlay": "OVERLAY_JUGGLER",
+        "buildings": [
+            { "type": "BUILDING_BOOTH" },
+            { "type": "BUILDING_JUGGLER_SCHOOL" }
+        ] },
+    { "overlay": "OVERLAY_MUSICIAN",
+        "buildings": [
+            { "type": "BUILDING_BANDSTAND" },
+            { "type": "BUILDING_CONSERVATORY" }
+        ] },
+    { "overlay": "OVERLAY_DANCER",
+        "buildings": [
+            { "type": "BUILDING_PAVILION" },
+            { "type": "BUILDING_DANCE_SCHOOL" }
+        ] },
+    { "overlay": "OVERLAY_SENET",
+        "buildings": [
+            { "type": "BUILDING_SENET_HOUSE" }
+        ] },
+    { "overlay": "OVERLAY_ZOOKEEPER",
+        "buildings": [
+            { "type": "BUILDING_ZOO" }
+        ] },
+    { "overlay": "OVERLAY_EDUCATION",
+        "buildings": [
+            { "type": "BUILDING_SCRIBAL_SCHOOL" },
+            { "type": "BUILDING_LIBRARY" }
+        ] },
+    { "overlay": "OVERLAY_SCRIBAL_SCHOOL",
+        "buildings": [
+            { "type": "BUILDING_SCRIBAL_SCHOOL" }
+        ] },
+    { "overlay": "OVERLAY_LIBRARY",
+        "buildings": [
+            { "type": "BUILDING_LIBRARY" }
+        ] },
+    { "overlay": "OVERLAY_WATER_CROSSINGS" },
+    { "overlay": "OVERLAY_DENTIST",
+        "buildings": [
+            { "type": "BUILDING_DENTIST" }
+        ] },
+    { "overlay": "OVERLAY_PHYSICIAN",
+        "buildings": [
+            { "type": "BUILDING_PHYSICIAN" }
+        ] },
+    { "overlay": "OVERLAY_APOTHECARY",
+        "buildings": [
+            { "type": "BUILDING_APOTHECARY" }
+        ] },
+    { "overlay": "OVERLAY_MORTUARY",
+        "buildings": [
+            { "type": "BUILDING_MORTUARY" }
+        ] },
+    { "overlay": "OVERLAY_TAX_INCOME",
+        "buildings": [
+            { "type": "BUILDING_TAX_COLLECTOR" },
+            { "type": "BUILDING_TAX_COLLECTOR_UP" },
+            { "type": "BUILDING_VILLAGE_PALACE_UP" },
+            { "type": "BUILDING_TOWN_PALACE_UP" },
+            { "type": "BUILDING_CITY_PALACE" }
+        ] },
+    { "overlay": "OVERLAY_BAZAAR_ACCESS",
+        "buildings": [
+            { "type": "BUILDING_BAZAAR" },
+            { "type": "BUILDING_BAZAAR_UP" },
+            { "type": "BUILDING_GRANARY" },
+            { "type": "BUILDING_GRANARY_UP" },
+            { "type": "BUILDING_STORAGE_YARD" },
+            { "type": "BUILDING_STORAGE_YARD_UP" },
+            { "type": "BUILDING_STORAGE_ROOM" }
+        ] },
+    { "overlay": "OVERLAY_DESIRABILITY" },
+    { "overlay": "OVERLAY_FERTILITY" },
+    { "overlay": "OVERLAY_LABOR" },
+    { "overlay": "OVERLAY_NATIVE" },
+    { "overlay": "OVERLAY_PROBLEMS" },
+    { "overlay": 32 },
+    { "overlay": "OVERLAY_GRAIN" },
+    { "overlay": "OVERLAY_CHICKPEAS" },
+    { "overlay": "OVERLAY_POMEGRANATES" },
+    { "overlay": "OVERLAY_FIGS" },
+    { "overlay": "OVERLAY_MEAT" },
+    { "overlay": "OVERLAY_GAME" },
+    { "overlay": "OVERLAY_POTTERY" },
+    { "overlay": "OVERLAY_JEWELRY" },
+    { "overlay": "OVERLAY_LINEN" },
+    { "overlay": "OVERLAY_BEER" },
+    { "overlay": "OVERLAY_DISEASE",
+        "buildings": [
+            { "type": "BUILDING_PHYSICIAN" }
+        ] },
+    { "overlay": "OVERLAY_INFECTED_HOUSING" },
+    { "overlay": "OVERLAY_WATER",
+        "buildings": [
+            { "type": "BUILDING_WELL" },
+            { "type": "BUILDING_WATER_SUPPLY" }
+        ] },
+    { "overlay": "OVERLAY_EMPTY_HOUSING" },
+    { "overlay": "OVERLAY_IRRIGATION" },
+    { "overlay": "OVERLAY_MALARIA",
+        "buildings": [
+            { "type": "BUILDING_APOTHECARY" }
+        ] },
+    { "overlay": "OVERLAY_CITY_DEFENSES",
+        "buildings": [
+            { "type": "BUILDING_FORT_CHARIOTEERS" },
+            { "type": "BUILDING_FORT_ARCHERS" },
+            { "type": "BUILDING_FORT_INFANTRY" },
+            { "type": "BUILDING_FORT_GROUND" },
+            { "type": "BUILDING_POLICE_STATION" },
+            { "type": "BUILDING_TRIUMPHAL_ARCH" },
+            { "type": "BUILDING_FORT" },
+            { "type": "BUILDING_MUD_GATEHOUSE" },
+            { "type": "BUILDING_MUD_TOWER" },
+            { "type": "BUILDING_BRICK_TOWER" },
+            { "type": "BUILDING_TOWER" },
+            { "type": "BUILDING_BRICK_WALL" },
+            { "type": "BUILDING_WALL" },
+            { "type": "BUILDING_BRICK_GATEHOUSE" },
+            { "type": "BUILDING_GATEHOUSE" },
+            { "type": "BUILDING_MUD_GATEHOUSE_UP" },
+            { "type": "BUILDING_BRICK_GATEHOUSE_UP" },
+            { "type": "BUILDING_GATEHOUSE_UP" },
+            { "type": "BUILDING_MILITARY_ACADEMY" },
+            { "type": "BUILDING_MILITARY_ACADEMY_2" },
+            { "type": "BUILDING_MILITARY_ACADEMY_3" },
+            { "type": "BUILDING_RECRUITER" },
+            { "type": "BUILDING_TRANSPORT_WHARF" },
+            { "type": "BUILDING_WARSHIP_WHARF" }
+        ] },
+    { "overlay": "OVERLAY_MAGISTRATE",
+        "buildings": [
+            { "type": "BUILDING_COURTHOUSE" }
+        ] },
+    { "overlay": "OVERLAY_HIDE_CLIFFS" }
+]

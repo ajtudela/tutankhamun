@@ -1,0 +1,17 @@
+// Written by tutankhamun --export-configs from the built-in table; edit to change the game.
+// A record or a field left out keeps the built-in value.
+[
+    { "group": 0, "image": 0 },
+    { "group": 1, "image": 1 },
+    { "group": 2, "image": 9 },
+    { "group": 3, "image": 5 },
+    { "group": 4, "image": 10 },
+    { "group": 5, "image": 4 },
+    { "group": 6, "image": 7 },
+    { "group": 7, "image": 11 },
+    { "group": 8, "image": 3 },
+    { "group": 9, "image": 8 },
+    { "group": 10, "image": 6 },
+    { "group": 11, "image": 12 },
+    { "group": 12, "image": 2 }
+]

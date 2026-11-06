@@ -1,0 +1,11 @@
+// Written by tutankhamun --export-configs from the built-in table; edit to change the game.
+// A record or a field left out keeps the built-in value.
+[
+    { "size": 0, "tiles": 0 },
+    { "size": 1, "tiles": 1 },
+    { "size": 2, "tiles": 4 },
+    { "size": 3, "tiles": 9 },
+    { "size": 4, "tiles": 16 },
+    { "size": 5, "tiles": 25 },
+    { "size": 6, "tiles": 36 }
+]

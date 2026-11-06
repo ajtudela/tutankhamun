@@ -1,0 +1,8 @@
+// Written by tutankhamun --export-configs from the built-in table; edit to change the game.
+// A record or a field left out keeps the built-in value.
+[
+    { "view": 0, "dx": 4, "dy": 0 },
+    { "view": 1, "dx": 3, "dy": -2 },
+    { "view": 2, "dx": 12, "dy": 0 },
+    { "view": 3, "dx": 15, "dy": 6 }
+]

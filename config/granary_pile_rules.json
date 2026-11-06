@@ -1,0 +1,8 @@
+// Written by tutankhamun --export-configs from the built-in table; edit to change the game.
+// A record or a field left out keeps the built-in value.
+[
+    { "rule": "first_amount", "value": 600 },
+    { "rule": "amount_step", "value": 400 },
+    { "rule": "full_amount", "value": 3200 },
+    { "rule": "max_piles", "value": 8 }
+]

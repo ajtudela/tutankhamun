@@ -1,0 +1,29 @@
+// Written by tutankhamun --export-configs from the built-in table; edit to change the game.
+// A record or a field left out keeps the built-in value.
+[
+    { "rule": "jugglers_per_venue", "value": 400 },
+    { "rule": "musicians_per_venue", "value": 700 },
+    { "rule": "dancers_per_venue", "value": 1200 },
+    { "rule": "senet_house_people", "value": 5000 },
+    { "rule": "zoo_people", "value": 7500 },
+    { "rule": "temple_complex_people", "value": 8000 },
+    { "rule": "local_temple_people", "value": 750 },
+    { "rule": "local_shrine_people", "value": 300 },
+    { "rule": "patron_temple_people", "value": 375 },
+    { "rule": "patron_shrine_people", "value": 150 },
+    { "rule": "school_children", "value": 300 },
+    { "rule": "library_people", "value": 800 },
+    { "rule": "booth_no_show_weight", "value": 1 },
+    { "rule": "bandstand_no_show_weight", "value": 2 },
+    { "rule": "pavilion_no_show_weight", "value": 3 },
+    { "rule": "senet_no_show_weight", "value": 100 },
+    { "rule": "zoo_no_show_weight", "value": 100 },
+    { "rule": "small_festival_people_per_deben", "value": 20 },
+    { "rule": "small_festival_base_cost", "value": 10 },
+    { "rule": "large_festival_people_per_deben", "value": 10 },
+    { "rule": "large_festival_base_cost", "value": 20 },
+    { "rule": "grand_festival_people_per_deben", "value": 5 },
+    { "rule": "grand_festival_base_cost", "value": 40 },
+    { "rule": "grand_festival_people_per_beer_step", "value": 500 },
+    { "rule": "grand_festival_beer_step", "value": 100 }
+]

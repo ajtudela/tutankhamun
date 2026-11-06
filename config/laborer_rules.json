@@ -1,0 +1,26 @@
+// Written by tutankhamun --export-configs from the built-in table; edit to change the game.
+// A record or a field left out keeps the built-in value.
+[
+    { "rule": "load", "value": 400 },
+    { "rule": "yard_wait_ticks", "value": 4 },
+    { "rule": "ramp_route_retry_ticks", "value": 30 },
+    { "rule": "ramp_route_give_up_ticks", "value": 120 },
+    { "rule": "delivered_wait_ticks", "value": 42 },
+    { "rule": "ferry_wait_ticks", "value": 100 },
+    { "rule": "max_roam_ticks", "value": 512 },
+    { "rule": "farm_walk_ticks", "value": 3200 },
+    { "rule": "home_road_radius", "value": 2 },
+    { "rule": "max_out", "value": 4 },
+    { "rule": "labor_seeker_houses", "value": 50 },
+    { "rule": "spawn_delay_full", "value": 3 },
+    { "rule": "spawn_delay_75_percent", "value": 7 },
+    { "rule": "spawn_delay_50_percent", "value": 15 },
+    { "rule": "spawn_delay_25_percent", "value": 29 },
+    { "rule": "spawn_delay_low", "value": 47 },
+    { "rule": "farm_search_distance", "value": 40 },
+    { "rule": "farm_busy_labor_days", "value": 48 },
+    { "rule": "farm_labor_days", "value": 96 },
+    { "rule": "camp_labor_days", "value": 32 },
+    { "rule": "level_tiles_in_a_row", "value": 4 },
+    { "rule": "monument_work_searches", "value": 4 }
+]

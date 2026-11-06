@@ -1,0 +1,8 @@
+// Written by tutankhamun --export-configs from the built-in table; edit to change the game.
+// A record or a field left out keeps the built-in value.
+[
+    { "direction": 0, "low_start": 3, "low_end": 5, "low_span": 4, "ship_start_image": 11, "ship_start_dx": -3, "ship_start_dy": -50, "ship_end_image": 9, "ship_end_dx": 1, "ship_end_dy": -24, "ship_middle_image": 13, "ship_middle_dx": 0, "ship_middle_dy": -38, "ship_span_image": 10, "ship_span_dx": 0, "ship_span_dy": -37 },
+    { "direction": 1, "low_start": 0, "low_end": 2, "low_span": 1, "ship_start_image": 6, "ship_start_dx": -1, "ship_start_dy": -12, "ship_end_image": 8, "ship_end_dx": 7, "ship_end_dy": -39, "ship_middle_image": 12, "ship_middle_dx": 7, "ship_middle_dy": -38, "ship_span_image": 7, "ship_span_dx": 7, "ship_span_dy": -38 },
+    { "direction": 2, "low_start": 5, "low_end": 3, "low_span": 4, "ship_start_image": 9, "ship_start_dx": -30, "ship_start_dy": -12, "ship_end_image": 11, "ship_end_dx": -34, "ship_end_dy": -35, "ship_middle_image": 13, "ship_middle_dx": 0, "ship_middle_dy": -38, "ship_span_image": 10, "ship_span_dx": 0, "ship_span_dy": -37 },
+    { "direction": 3, "low_start": 2, "low_end": 0, "low_span": 1, "ship_start_image": 8, "ship_start_dx": -23, "ship_start_dy": -53, "ship_end_image": 6, "ship_end_dx": -29, "ship_end_dy": -22, "ship_middle_image": 12, "ship_middle_dx": 7, "ship_middle_dy": -38, "ship_span_image": 7, "ship_span_dx": 7, "ship_span_dy": -38 }
+]

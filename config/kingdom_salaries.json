@@ -1,0 +1,15 @@
+// Written by tutankhamun --export-configs from the built-in table; edit to change the game.
+// A record or a field left out keeps the built-in value.
+[
+    { "rank": 0, "salary": 0 },
+    { "rank": 1, "salary": 2 },
+    { "rank": 2, "salary": 5 },
+    { "rank": 3, "salary": 8 },
+    { "rank": 4, "salary": 12 },
+    { "rank": 5, "salary": 20 },
+    { "rank": 6, "salary": 30 },
+    { "rank": 7, "salary": 40 },
+    { "rank": 8, "salary": 60 },
+    { "rank": 9, "salary": 80 },
+    { "rank": 10, "salary": 100 }
+]

@@ -1,0 +1,12 @@
+// Written by tutankhamun --export-configs from the built-in table; edit to change the game.
+// A record or a field left out keeps the built-in value.
+[
+    { "direction": "DIRECTION_TOP", "dx": 22, "dy": -18 },
+    { "direction": "DIRECTION_TOP_RIGHT", "dx": 27, "dy": -3 },
+    { "direction": "DIRECTION_RIGHT", "dx": 23, "dy": 17 },
+    { "direction": "DIRECTION_BOTTOM_RIGHT", "dx": 0, "dy": 11 },
+    { "direction": "DIRECTION_BOTTOM", "dx": -21, "dy": 17 },
+    { "direction": "DIRECTION_BOTTOM_LEFT", "dx": -25, "dy": -1 },
+    { "direction": "DIRECTION_LEFT", "dx": -23, "dy": -17 },
+    { "direction": "DIRECTION_TOP_LEFT", "dx": 0, "dy": -12 }
+]

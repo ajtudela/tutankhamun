@@ -1,0 +1,14 @@
+// Written by tutankhamun --export-configs from the built-in table; edit to change the game.
+// A record or a field left out keeps the built-in value.
+[
+    { "crop": 0, "months": [1, 7, -1, -1] },
+    { "crop": 1, "months": [11, -1, -1, -1] },
+    { "crop": 2, "months": [4, 0, -1, -1] },
+    { "crop": 3, "months": [3, -1, -1, -1] },
+    { "crop": 4, "months": [5, 10, -1, -1] },
+    { "crop": 5, "months": [3, -1, -1, -1] },
+    { "crop": 6, "months": [-1, -1, -1, -1] },
+    { "crop": 7, "months": [8, -1, -1, -1] },
+    { "crop": 8, "months": [2, 6, -1, -1] },
+    { "crop": 9, "months": [11, -1, -1, -1] }
+]

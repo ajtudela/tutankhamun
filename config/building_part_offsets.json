@@ -1,0 +1,20 @@
+// Written by tutankhamun --export-configs from the built-in table; edit to change the game.
+// A record or a field left out keeps the built-in value.
+[
+    { "index": 0, "x": 0, "y": -2 },
+    { "index": 1, "x": 4, "y": 2 },
+    { "index": 2, "x": 2, "y": 4 },
+    { "index": 3, "x": -2, "y": 0 },
+    { "index": 4, "x": -2, "y": 0 },
+    { "index": 5, "x": 0, "y": -2 },
+    { "index": 6, "x": 4, "y": 2 },
+    { "index": 7, "x": 2, "y": 4 },
+    { "index": 8, "x": 2, "y": 4 },
+    { "index": 9, "x": -2, "y": 0 },
+    { "index": 10, "x": 0, "y": -2 },
+    { "index": 11, "x": 4, "y": 2 },
+    { "index": 12, "x": 4, "y": 2 },
+    { "index": 13, "x": 2, "y": 4 },
+    { "index": 14, "x": -2, "y": 0 },
+    { "index": 15, "x": 0, "y": -2 }
+]

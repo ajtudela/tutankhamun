@@ -1,0 +1,12 @@
+// Written by tutankhamun --export-configs from the built-in table; edit to change the game.
+// A record or a field left out keeps the built-in value.
+[
+    { "rule": "months_few", "value": 2 },
+    { "rule": "months_quite_some_time", "value": 7 },
+    { "rule": "months_over_a_year", "value": 13 },
+    { "rule": "months_almost_two_years", "value": 19 },
+    { "rule": "months_over_two_years", "value": 25 },
+    { "rule": "months_good_old_days", "value": 31 },
+    { "rule": "months_effect_order_now", "value": 2 },
+    { "rule": "months_effect_about_time", "value": 7 }
+]

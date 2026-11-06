@@ -1,0 +1,19 @@
+// Written by tutankhamun --export-configs from the built-in table; edit to change the game.
+// A record or a field left out keeps the built-in value.
+[
+    { "advisor": "none", "message": 0 },
+    { "advisor": "labor", "message": 20 },
+    { "advisor": "military", "message": 21 },
+    { "advisor": "fleet", "message": 21 },
+    { "advisor": "kingdom", "message": 22 },
+    { "advisor": "ratings", "message": 23 },
+    { "advisor": "trade", "message": 24 },
+    { "advisor": "population", "message": 25 },
+    { "advisor": "health", "message": 26 },
+    { "advisor": "education", "message": 27 },
+    { "advisor": "entertainment", "message": 28 },
+    { "advisor": "religion", "message": 29 },
+    { "advisor": "financial", "message": 30 },
+    { "advisor": "chief", "message": 31 },
+    { "advisor": "monuments", "message": 373 }
+]

@@ -1,0 +1,18 @@
+// Written by tutankhamun --export-configs from the built-in table; edit to change the game.
+// A record or a field left out keeps the built-in value.
+[
+    { "stage": 0, "blocks": 0 },
+    { "stage": 1, "blocks": 1 },
+    { "stage": 2, "blocks": 2 },
+    { "stage": 3, "blocks": 3 },
+    { "stage": 4, "blocks": 4 },
+    { "stage": 5, "blocks": 4 },
+    { "stage": 6, "blocks": 3 },
+    { "stage": 7, "blocks": 3 },
+    { "stage": 8, "blocks": 2 },
+    { "stage": 9, "blocks": 2 },
+    { "stage": 10, "blocks": 1 },
+    { "stage": 11, "blocks": 1 },
+    { "stage": 12, "blocks": 0 },
+    { "stage": 13, "blocks": 0 }
+]

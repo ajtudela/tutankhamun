@@ -1,0 +1,11 @@
+// Written by tutankhamun --export-configs from the built-in table; edit to change the game.
+// A record or a field left out keeps the built-in value.
+[
+    { "bracket": 0, "below_percent": 10, "losses": 70 },
+    { "bracket": 1, "below_percent": 25, "losses": 50 },
+    { "bracket": 2, "below_percent": 50, "losses": 25 },
+    { "bracket": 3, "below_percent": 75, "losses": 15 },
+    { "bracket": 4, "below_percent": 100, "losses": 10 },
+    { "bracket": 5, "below_percent": 150, "losses": 5 },
+    { "bracket": 6, "below_percent": 2147483647, "losses": 0 }
+]

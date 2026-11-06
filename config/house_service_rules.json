@@ -1,0 +1,18 @@
+// Written by tutankhamun --export-configs from the built-in table; edit to change the game.
+// A record or a field left out keeps the built-in value.
+[
+    { "rule": "coverage_points_divisor", "value": 5 },
+    { "rule": "juggler_points", "value": 10 },
+    { "rule": "musician_points", "value": 20 },
+    { "rule": "dancer_points", "value": 30 },
+    { "rule": "senet_points", "value": 40 },
+    { "rule": "zoo_points", "value": 40 },
+    { "rule": "zoo_fills_above", "value": 60 },
+    { "rule": "entertainment_max", "value": 100 },
+    { "rule": "water_desirability", "value": 10 },
+    { "rule": "elevation_1_desirability", "value": 10 },
+    { "rule": "elevation_2_desirability", "value": 12 },
+    { "rule": "elevation_3_desirability", "value": 14 },
+    { "rule": "elevation_4_desirability", "value": 16 },
+    { "rule": "elevation_5_desirability", "value": 18 }
+]

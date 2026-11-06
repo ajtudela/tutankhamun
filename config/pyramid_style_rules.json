@@ -1,0 +1,10 @@
+// Written by tutankhamun --export-configs from the built-in table; edit to change the game.
+// A record or a field left out keeps the built-in value.
+[
+    { "style": "other", "help_message": 38, "main_material": "RESOURCE_STONE", "casing_material": "RESOURCE_LIMESTONE", "stonemasons": 0, "bricklayers": 1 },
+    { "style": "bent", "help_message": 54, "main_material": "RESOURCE_STONE", "casing_material": "RESOURCE_LIMESTONE", "stonemasons": 1, "bricklayers": 0 },
+    { "style": "mudbrick", "help_message": 55, "main_material": "RESOURCE_BRICKS", "casing_material": "RESOURCE_LIMESTONE", "stonemasons": 1, "bricklayers": 1 },
+    { "style": "stepped", "help_message": 375, "main_material": "RESOURCE_STONE", "casing_material": -1, "stonemasons": 0, "bricklayers": 0 },
+    { "style": "pyramid", "help_message": 38, "main_material": "RESOURCE_STONE", "casing_material": "RESOURCE_LIMESTONE", "stonemasons": 1, "bricklayers": 0 },
+    { "style": "mastaba", "help_message": 371, "main_material": "RESOURCE_BRICKS", "casing_material": -1, "stonemasons": 0, "bricklayers": 1 }
+]

@@ -1,0 +1,10 @@
+// Written by tutankhamun --export-configs from the built-in table; edit to change the game.
+// A record or a field left out keeps the built-in value.
+[
+    { "column": 0, "lang_group": 1 },
+    { "column": 1, "lang_group": 2 },
+    { "column": 2, "lang_group": 3 },
+    { "column": 3, "lang_group": 4 },
+    { "column": 4, "lang_group": 7 },
+    { "column": 5, "lang_group": 10 }
+]

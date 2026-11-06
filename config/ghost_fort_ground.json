@@ -1,0 +1,8 @@
+// Written by tutankhamun --export-configs from the built-in table; edit to change the game.
+// A record or a field left out keeps the built-in value.
+[
+    { "view": 0, "tile_x": 2, "tile_y": 1, "half_tile_x": 0, "half_tile_y": 0, "pixel_x": 4, "grid_offset": -225 },
+    { "view": 1, "tile_x": 1, "tile_y": -3, "half_tile_x": 1, "half_tile_y": 1, "pixel_x": 3, "grid_offset": -224 },
+    { "view": 2, "tile_x": -2, "tile_y": -2, "half_tile_x": 0, "half_tile_y": 0, "pixel_x": -4, "grid_offset": 4 },
+    { "view": 3, "tile_x": -2, "tile_y": 1, "half_tile_x": 1, "half_tile_y": 1, "pixel_x": -3, "grid_offset": 3 }
+]

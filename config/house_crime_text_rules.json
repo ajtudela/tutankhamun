@@ -1,0 +1,10 @@
+// Written by tutankhamun --export-configs from the built-in table; edit to change the game.
+// A record or a field left out keeps the built-in value.
+[
+    { "rule": "no_crime", "sentiment": 50 },
+    { "rule": "peaceful", "sentiment": 40 },
+    { "rule": "some_crime", "sentiment": 30 },
+    { "rule": "becoming_a_problem", "sentiment": 20 },
+    { "rule": "high_crime", "sentiment": 10 },
+    { "rule": "lawless", "sentiment": 1 }
+]

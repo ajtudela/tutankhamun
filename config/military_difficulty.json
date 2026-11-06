@@ -1,0 +1,9 @@
+// Written by tutankhamun --export-configs from the built-in table; edit to change the game.
+// A record or a field left out keeps the built-in value.
+[
+    { "difficulty": "DIFFICULTY_VERY_EASY", "theft_percentage": 3, "tomb_robbery_rating": -2 },
+    { "difficulty": "DIFFICULTY_EASY", "theft_percentage": 6, "tomb_robbery_rating": -4 },
+    { "difficulty": "DIFFICULTY_NORMAL", "theft_percentage": 9, "tomb_robbery_rating": -6 },
+    { "difficulty": "DIFFICULTY_HARD", "theft_percentage": 12, "tomb_robbery_rating": -8 },
+    { "difficulty": "DIFFICULTY_VERY_HARD", "theft_percentage": 15, "tomb_robbery_rating": -10 }
+]

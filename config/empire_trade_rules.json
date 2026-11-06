@@ -1,0 +1,20 @@
+// Written by tutankhamun --export-configs from the built-in table; edit to change the game.
+// A record or a field left out keeps the built-in value.
+[
+    { "rule": "import_debt_limit", "value": -4999 },
+    { "rule": "limit_small", "value": 15 },
+    { "rule": "limit_medium", "value": 25 },
+    { "rule": "limit_large", "value": 40 },
+    { "rule": "sea_entry_delay", "value": 30 },
+    { "rule": "land_entry_delay", "value": 4 },
+    { "rule": "new_city_entry_delay", "value": 4 },
+    { "rule": "no_docks_message_ticks", "value": 384 },
+    { "rule": "ship_loads", "value": 12 },
+    { "rule": "trader_wait_ticks", "value": 10 },
+    { "rule": "keep_workshop_amount", "value": 200 },
+    { "rule": "keep_monument_amount", "value": 500 },
+    { "rule": "keep_other_amount", "value": 1000 },
+    { "rule": "food_population_small", "value": 1000 },
+    { "rule": "food_population_medium", "value": 2500 },
+    { "rule": "food_population_large", "value": 5000 }
+]

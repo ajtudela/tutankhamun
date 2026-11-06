@@ -1,0 +1,19 @@
+// Written by tutankhamun --export-configs from the built-in table; edit to change the game.
+// A record or a field left out keeps the built-in value.
+[
+    { "row": 0, "resource": "RESOURCE_GRAIN" },
+    { "row": 1, "resource": "RESOURCE_GAMEMEAT" },
+    { "row": 2, "resource": "RESOURCE_WEAPONS" },
+    { "row": 3, "resource": "RESOURCE_POTTERY" },
+    { "row": 4, "resource": "RESOURCE_BEER" },
+    { "row": 5, "resource": "RESOURCE_LINEN" },
+    { "row": 6, "resource": "RESOURCE_GEMS" },
+    { "row": 7, "resource": "RESOURCE_LUXURY_GOODS" },
+    { "row": 8, "resource": "RESOURCE_TIMBER" },
+    { "row": 9, "resource": "RESOURCE_PAPYRUS" },
+    { "row": 10, "resource": "RESOURCE_STONE" },
+    { "row": 11, "resource": "RESOURCE_LIMESTONE" },
+    { "row": 12, "resource": "RESOURCE_GRANITE" },
+    { "row": 13, "resource": "RESOURCE_CHARIOTS" },
+    { "row": 14, "resource": "RESOURCE_SANDSTONE" }
+]

@@ -1,0 +1,19 @@
+// Written by tutankhamun --export-configs from the built-in table; edit to change the game.
+// A record or a field left out keeps the built-in value.
+[
+    { "rule": "no_houses_sentiment", "value": 60 },
+    { "rule": "happiness_neutral_sentiment", "value": 80 },
+    { "rule": "happiness_drift_divisor", "value": 5 },
+    { "rule": "factors_min_population", "value": 300 },
+    { "rule": "warning_min_population", "value": 300 },
+    { "rule": "small_city_population", "value": 200 },
+    { "rule": "empty_house_bonus", "value": 10 },
+    { "rule": "max_months_without_food", "value": 3 },
+    { "rule": "bast_oracle_bonus", "value": 10 },
+    { "rule": "ra_altar_happiness_penalty", "value": 2 },
+    { "rule": "migration_max_population", "value": 200000 },
+    { "rule": "migration_min_emigration_population", "value": 101 },
+    { "rule": "migration_base_amount", "value": 12 },
+    { "rule": "migration_hold_updates", "value": 2 },
+    { "rule": "migration_max_soldiers", "value": 3 }
+]

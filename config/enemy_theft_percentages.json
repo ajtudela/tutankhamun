@@ -1,0 +1,9 @@
+// Written by tutankhamun --export-configs from the built-in table; edit to change the game.
+// A record or a field left out keeps the built-in value.
+[
+    { "difficulty": "DIFFICULTY_VERY_EASY", "percent": 0 },
+    { "difficulty": "DIFFICULTY_EASY", "percent": 15 },
+    { "difficulty": "DIFFICULTY_NORMAL", "percent": 30 },
+    { "difficulty": "DIFFICULTY_HARD", "percent": 60 },
+    { "difficulty": "DIFFICULTY_VERY_HARD", "percent": 100 }
+]

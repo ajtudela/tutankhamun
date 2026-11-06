@@ -1,0 +1,56 @@
+// The built-in burial provisions of the editor's monuments window: the good offered per row and the monuments that
+// need burial provisions (the pyramid family, the mastabas, mausoleums, colossi and royal tombs). Overridden by
+// config/burial_provision_resources.json and config/monument_burial_provisions.json.
+
+#include "building/monument_def_ids.h"
+#include "city/resource_type.h"
+#include "editor/editor_monuments.h"
+
+int32_t burial_provision_resources[BURIAL_PROVISION_ROWS] = {
+    RESOURCE_GRAIN,
+    RESOURCE_GAMEMEAT,
+    RESOURCE_WEAPONS,
+    RESOURCE_POTTERY,
+    RESOURCE_BEER,
+    RESOURCE_LINEN,
+    RESOURCE_GEMS,
+    RESOURCE_LUXURY_GOODS,
+    RESOURCE_TIMBER,
+    RESOURCE_PAPYRUS,
+    RESOURCE_STONE,
+    RESOURCE_LIMESTONE,
+    RESOURCE_GRANITE,
+    RESOURCE_CHARIOTS,
+    RESOURCE_SANDSTONE,
+};
+
+int32_t monument_burial_provisions[MONUMENT_DEFINITIONS] = {
+    [MONUMENT_ID_SMALL_BENT_PYRAMID] = 1,
+    [MONUMENT_ID_MEDIUM_BENT_PYRAMID] = 1,
+    [MONUMENT_ID_SMALL_MUDBRICK_PYRAMID] = 1,
+    [MONUMENT_ID_MEDIUM_MUDBRICK_PYRAMID] = 1,
+    [MONUMENT_ID_LARGE_MUDBRICK_PYRAMID] = 1,
+    [MONUMENT_ID_MUDBRICK_PYRAMID_COMPLEX] = 1,
+    [MONUMENT_ID_GRAND_MUDBRICK_PYRAMID_COMPLEX] = 1,
+    [MONUMENT_ID_SMALL_STEPPED_PYRAMID] = 1,
+    [MONUMENT_ID_MEDIUM_STEPPED_PYRAMID] = 1,
+    [MONUMENT_ID_LARGE_STEPPED_PYRAMID] = 1,
+    [MONUMENT_ID_STEPPED_PYRAMID_COMPLEX] = 1,
+    [MONUMENT_ID_GRAND_STEPPED_PYRAMID_COMPLEX] = 1,
+    [MONUMENT_ID_SMALL_PYRAMID] = 1,
+    [MONUMENT_ID_MEDIUM_PYRAMID] = 1,
+    [MONUMENT_ID_LARGE_PYRAMID] = 1,
+    [MONUMENT_ID_PYRAMID_COMPLEX] = 1,
+    [MONUMENT_ID_GRAND_PYRAMID_COMPLEX] = 1,
+    [MONUMENT_ID_SMALL_MASTABA] = 1,
+    [MONUMENT_ID_MEDIUM_MASTABA] = 1,
+    [MONUMENT_ID_LARGE_MASTABA] = 1,
+    [MONUMENT_ID_SMALL_MAUSOLEUM] = 1,
+    [MONUMENT_ID_MEDIUM_MAUSOLEUM] = 1,
+    [MONUMENT_ID_LARGE_MAUSOLEUM] = 1,
+    [MONUMENT_ID_COLOSSI] = 1,
+    [MONUMENT_ID_SMALL_ROYAL_TOMB] = 1,
+    [MONUMENT_ID_MEDIUM_ROYAL_TOMB] = 1,
+    [MONUMENT_ID_LARGE_ROYAL_TOMB] = 1,
+    [MONUMENT_ID_GRAND_ROYAL_TOMB] = 1,
+};

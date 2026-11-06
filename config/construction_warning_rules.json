@@ -1,0 +1,9 @@
+// Written by tutankhamun --export-configs from the built-in table; edit to change the game.
+// A record or a field left out keeps the built-in value.
+[
+    { "rule": "min_population", "value": 300 },
+    { "rule": "min_workers_needed", "value": 10 },
+    { "rule": "max_unemployment_percent", "value": 10 },
+    { "rule": "min_food_produced_percent", "value": 96 },
+    { "rule": "max_problem_messages", "value": 3 }
+]

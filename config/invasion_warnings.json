@@ -1,0 +1,9 @@
+// Written by tutankhamun --export-configs from the built-in table; edit to change the game.
+// A record or a field left out keeps the built-in value.
+[
+    { "warning": 0, "months_left": 0, "phrase": [183, 173, 163, 256], "message": [119, 129, 126, 119] },
+    { "warning": 1, "months_left": 24, "phrase": [184, 174, 164, 257], "message": [119, 129, 126, 119] },
+    { "warning": 2, "months_left": 12, "phrase": [185, 175, 165, 258], "message": [118, 128, 125, 118] },
+    { "warning": 3, "months_left": 6, "phrase": [186, 176, 166, 259], "message": [113, 127, 124, 113] },
+    { "warning": 4, "months_left": 1, "phrase": [187, 177, 167, 260], "message": [113, 127, 124, 113] }
+]

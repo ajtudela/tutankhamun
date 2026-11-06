@@ -1,0 +1,9 @@
+// Written by tutankhamun --export-configs from the built-in table; edit to change the game.
+// A record or a field left out keeps the built-in value.
+[
+    { "level": "DIFFICULTY_VERY_EASY", "penalty_by_years_in_debt": [-2, -5, -7, -10, -15, -20, -27, -35, -47, -50] },
+    { "level": "DIFFICULTY_EASY", "penalty_by_years_in_debt": [-3, -7, -12, -20, -30, -35, -40, -45, -50, -50] },
+    { "level": "DIFFICULTY_NORMAL", "penalty_by_years_in_debt": [-5, -10, -20, -35, -50, -50, -50, -50, -50, -50] },
+    { "level": "DIFFICULTY_HARD", "penalty_by_years_in_debt": [-10, -25, -40, -50, -50, -50, -50, -50, -50, -50] },
+    { "level": "DIFFICULTY_VERY_HARD", "penalty_by_years_in_debt": [-15, -35, -50, -50, -50, -50, -50, -50, -50, -50] }
+]

@@ -1,0 +1,13 @@
+// Written by tutankhamun --export-configs from the built-in table; edit to change the game.
+// A record or a field left out keeps the built-in value.
+[
+    { "record": "central_prey", "figure_type": "FIGURE_BIRDS", "terrain": 262144, "max_figures": 7, "spawn_only_when_present": 0, "spawn_delay": 4, "move_delay": 8, "roam_radius": 5, "amphibious": 0, "hunt_delay": 0, "hunt_radius": 0 },
+    { "record": "northern_prey", "figure_type": "FIGURE_ANTELOPE", "terrain": 0, "max_figures": 7, "spawn_only_when_present": 0, "spawn_delay": 4, "move_delay": 8, "roam_radius": 10, "amphibious": 0, "hunt_delay": 0, "hunt_radius": 0 },
+    { "record": "desert_prey", "figure_type": "FIGURE_OSTRICH", "terrain": 0, "max_figures": 7, "spawn_only_when_present": 0, "spawn_delay": 4, "move_delay": 8, "roam_radius": 8, "amphibious": 0, "hunt_delay": 0, "hunt_radius": 0 },
+    { "record": "central_predator_0", "figure_type": "FIGURE_HIPPO", "terrain": 262148, "max_figures": 3, "spawn_only_when_present": 0, "spawn_delay": 16, "move_delay": 0, "roam_radius": 0, "amphibious": 1, "hunt_delay": 90, "hunt_radius": 4 },
+    { "record": "central_predator_1", "figure_type": "FIGURE_ASP", "terrain": 0, "max_figures": 6, "spawn_only_when_present": 0, "spawn_delay": 16, "move_delay": 30, "roam_radius": 2, "amphibious": 0, "hunt_delay": 30, "hunt_radius": 6 },
+    { "record": "northern_predator_0", "figure_type": "FIGURE_CROCODILE", "terrain": 262148, "max_figures": 1, "spawn_only_when_present": 0, "spawn_delay": 32, "move_delay": 0, "roam_radius": 0, "amphibious": 1, "hunt_delay": 50, "hunt_radius": 2 },
+    { "record": "northern_predator_1", "figure_type": "FIGURE_LION", "terrain": 0, "max_figures": 4, "spawn_only_when_present": 1, "spawn_delay": 12, "move_delay": 18, "roam_radius": 10, "amphibious": 0, "hunt_delay": 18, "hunt_radius": 14 },
+    { "record": "desert_predator_0", "figure_type": "FIGURE_HYENA", "terrain": 33554432, "max_figures": 7, "spawn_only_when_present": 1, "spawn_delay": 8, "move_delay": 16, "roam_radius": 10, "amphibious": 0, "hunt_delay": 16, "hunt_radius": 10 },
+    { "record": "desert_predator_1", "figure_type": "FIGURE_SCORPION", "terrain": 0, "max_figures": 2, "spawn_only_when_present": 0, "spawn_delay": 20, "move_delay": 20, "roam_radius": 7, "amphibious": 0, "hunt_delay": 20, "hunt_radius": 6 }
+]

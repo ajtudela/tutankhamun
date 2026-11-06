@@ -1,0 +1,4 @@
+// The program icon of tutankhamun.exe (Explorer, the taskbar, the window class): the project's own Tutankhamun
+// mask (res/tutankhamun.svg).
+
+IDI_ICON1 ICON "tutankhamun.ico"

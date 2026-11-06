@@ -1,0 +1,16 @@
+// Written by tutankhamun --export-configs from the built-in table; edit to change the game.
+// A record or a field left out keeps the built-in value.
+[
+    { "enemy": "hyksos", "group": 285, "count": 16 },
+    { "enemy": "sea_people", "group": 287, "count": 16 },
+    { "enemy": "hittite", "group": 286, "count": 16 },
+    { "enemy": "mitani", "group": 288, "count": 17 },
+    { "enemy": "kushite", "group": 284, "count": 16 },
+    { "enemy": "libyan", "group": 283, "count": 16 },
+    { "enemy": "nubian", "group": 282, "count": 16 },
+    { "enemy": "canaanite", "group": 281, "count": 16 },
+    { "enemy": "assyrian", "group": 300, "count": 16 },
+    { "enemy": "roman", "group": 301, "count": 16 },
+    { "enemy": "phoenician", "group": 302, "count": 16 },
+    { "enemy": "persian", "group": 303, "count": 16 }
+]

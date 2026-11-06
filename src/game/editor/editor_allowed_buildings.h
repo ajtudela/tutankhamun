@@ -1,0 +1,70 @@
+// The allowed buildings window (editor_allowed_buildings.c): its functions, the entries of the list (indexes of
+// scenario_data.allowed_buildings and of their names) and the window's layout.
+
+#ifndef EDITOR_EDITOR_ALLOWED_BUILDINGS_H
+#define EDITOR_EDITOR_ALLOWED_BUILDINGS_H
+
+#include <stdint.h>
+
+enum allowed_building {
+    ALLOWED_GOLD_MINE = 2,
+    ALLOWED_WATER_LIFT = 3,
+    ALLOWED_IRRIGATION_DITCH = 4,
+    ALLOWED_FISHING_WHARF = 5,
+    ALLOWED_WORK_CAMP = 6,
+    ALLOWED_GRANARY = 7,
+    ALLOWED_BAZAAR = 8,
+    ALLOWED_STORAGE_YARD = 9,
+    ALLOWED_DOCK = 10,
+    ALLOWED_BOOTH = 11,
+    ALLOWED_BANDSTAND = 12,
+    ALLOWED_PAVILION = 13,
+    ALLOWED_SENET_HOUSE = 14,
+    ALLOWED_FESTIVAL_SQUARE = 15,
+    ALLOWED_SCRIBAL_SCHOOL = 16,
+    ALLOWED_LIBRARY = 17,
+    ALLOWED_WATER_SUPPLY = 18,
+    ALLOWED_DENTIST = 19,
+    ALLOWED_APOTHECARY = 20,
+    ALLOWED_PHYSICIAN = 21,
+    ALLOWED_MORTUARY = 22,
+    ALLOWED_TAX_COLLECTOR = 23,
+    ALLOWED_COURTHOUSE = 24,
+    ALLOWED_PALACES = 25,
+    ALLOWED_MANSIONS = 26,
+    ALLOWED_ROADBLOCK = 27,
+    ALLOWED_BRIDGE = 28,
+    ALLOWED_FERRY = 29,
+    ALLOWED_GARDENS = 30,
+    ALLOWED_PLAZA = 31,
+    ALLOWED_STATUES = 32,
+    ALLOWED_WALL = 33,
+    ALLOWED_TOWER = 34,
+    ALLOWED_GATEHOUSE = 35,
+    ALLOWED_RECRUITER = 36,
+    ALLOWED_FORT_INFANTRY = 37,
+    ALLOWED_FORT_ARCHERS = 38,
+    ALLOWED_FORT_CHARIOTEERS = 39,
+    ALLOWED_ACADEMY = 40,
+    ALLOWED_WEAPONSMITH = 41,
+    ALLOWED_CHARIOT_MAKER = 42,
+    ALLOWED_WARSHIP_WHARF = 43,
+    ALLOWED_TRANSPORT_WHARF = 44,
+    ALLOWED_ZOO = 45,
+    SCENARIO_ALLOWED_BUILDING_ENTRIES = 46,
+};
+
+enum allowed_buildings_layout {
+    ALLOWED_LIST_FIRST_ROW = 2,
+    ALLOWED_LIST_LAST_OF_COLUMN_1 = 17,
+    ALLOWED_LIST_LAST_OF_COLUMN_2 = 33,
+    ALLOWED_ROW_HEIGHT = 20,
+    ALLOWED_ROW_WIDTH = 190,
+    ALLOWED_COLUMN_HEIGHT = 320,
+};
+
+void window_editor_allowed_buildings_draw(void);
+void editor_allowed_building_toggle(void);
+int32_t scenario_allowed_building_count(void);
+
+#endif

@@ -1,0 +1,10 @@
+// Written by tutankhamun --export-configs from the built-in table; edit to change the game.
+// A record or a field left out keeps the built-in value.
+[
+    { "height_class": "large", "blocks": 22 },
+    { "height_class": "standard", "blocks": 16 },
+    { "height_class": "tall", "blocks": 18 },
+    { "height_class": "bandstand", "blocks": 19 },
+    { "height_class": "short", "blocks": 14 },
+    { "height_class": "farm", "blocks": 24 }
+]

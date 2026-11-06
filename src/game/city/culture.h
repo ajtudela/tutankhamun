@@ -1,0 +1,78 @@
+// City culture (city/culture.c): the coverage, the culture averages, the show demands, the festival costs and the
+// temple types of the gods; culture_rules holds the tunable values.
+
+#ifndef CITY_CULTURE_H
+#define CITY_CULTURE_H
+
+#include <stdint.h>
+
+enum god_building_kind {
+    GOD_BUILDING_TEMPLE = 0,
+    GOD_BUILDING_TEMPLE_COMPLEX = 1,
+    GOD_BUILDING_SHRINE = 2,
+};
+
+enum venue_need {
+    VENUE_NONE = 0,
+    VENUE_JUGGLERS = 1,
+    VENUE_MUSICIANS = 2,
+    VENUE_DANCERS = 3,
+    VENUE_SENET = 4,
+    VENUE_ZOO = 5,
+};
+
+enum culture_coverage_index {
+    CULTURE_COVERAGE_JUGGLERS = 0,
+    CULTURE_COVERAGE_MUSICIANS = 1,
+    CULTURE_COVERAGE_DANCERS = 2,
+    CULTURE_COVERAGE_SENET = 3,
+    CULTURE_COVERAGE_ZOO = 4,
+    CULTURE_COVERAGE_SCHOOL = 5,
+    CULTURE_COVERAGE_LIBRARY = 6,
+    CULTURE_COVERAGE_RELIGION = 7,
+    CULTURE_COVERAGE_DENTIST = 8,
+    CULTURE_COVERAGE_APOTHECARY = 9,
+    CULTURE_COVERAGE_PHYSICIAN = 10,
+    CULTURE_COVERAGE_MORTUARY = 11,
+    CULTURE_COVERAGE_GOD = 12,
+};
+
+enum culture_rule {
+    CULTURE_RULE_JUGGLERS_PER_VENUE,
+    CULTURE_RULE_MUSICIANS_PER_VENUE,
+    CULTURE_RULE_DANCERS_PER_VENUE,
+    CULTURE_RULE_SENET_HOUSE_PEOPLE,
+    CULTURE_RULE_ZOO_PEOPLE,
+    CULTURE_RULE_TEMPLE_COMPLEX_PEOPLE,
+    CULTURE_RULE_LOCAL_TEMPLE_PEOPLE,
+    CULTURE_RULE_LOCAL_SHRINE_PEOPLE,
+    CULTURE_RULE_PATRON_TEMPLE_PEOPLE,
+    CULTURE_RULE_PATRON_SHRINE_PEOPLE,
+    CULTURE_RULE_SCHOOL_CHILDREN,
+    CULTURE_RULE_LIBRARY_PEOPLE,
+    CULTURE_RULE_BOOTH_NO_SHOW_WEIGHT,
+    CULTURE_RULE_BANDSTAND_NO_SHOW_WEIGHT,
+    CULTURE_RULE_PAVILION_NO_SHOW_WEIGHT,
+    CULTURE_RULE_SENET_NO_SHOW_WEIGHT,
+    CULTURE_RULE_ZOO_NO_SHOW_WEIGHT,
+    CULTURE_RULE_SMALL_FESTIVAL_PEOPLE_PER_DEBEN,
+    CULTURE_RULE_SMALL_FESTIVAL_BASE_COST,
+    CULTURE_RULE_LARGE_FESTIVAL_PEOPLE_PER_DEBEN,
+    CULTURE_RULE_LARGE_FESTIVAL_BASE_COST,
+    CULTURE_RULE_GRAND_FESTIVAL_PEOPLE_PER_DEBEN,
+    CULTURE_RULE_GRAND_FESTIVAL_BASE_COST,
+    CULTURE_RULE_GRAND_FESTIVAL_PEOPLE_PER_BEER_STEP,
+    CULTURE_RULE_GRAND_FESTIVAL_BEER_STEP,
+    CULTURE_RULE_COUNT,
+};
+
+extern int32_t culture_rules[CULTURE_RULE_COUNT];
+
+int32_t building_type_for_god(int32_t god, int32_t kind);
+int32_t city_population_count_school_age(int32_t player_id);
+int32_t city_population_count_academy_age(int32_t player_id);
+void city_culture_update_health_coverage(int32_t *apothecary, int32_t *mortuary, int32_t *physician, int32_t *dentist);
+void city_culture_update_coverage(void);
+void city_culture_calculate(void);
+
+#endif

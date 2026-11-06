@@ -1,0 +1,8 @@
+// Written by tutankhamun --export-configs from the built-in table; edit to change the game.
+// A record or a field left out keeps the built-in value.
+[
+    { "entry": 0, "text_group": 7, "first_item": 34, "item_count": 4 },
+    { "entry": 1, "text_group": 2, "first_item": 6, "item_count": 4 },
+    { "entry": 2, "text_group": 3, "first_item": 18, "item_count": 3 },
+    { "entry": 3, "text_group": 10, "first_item": 38, "item_count": 6 }
+]

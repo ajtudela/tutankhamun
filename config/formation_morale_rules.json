@@ -1,0 +1,29 @@
+// Written by tutankhamun --export-configs from the built-in table; edit to change the game.
+// A record or a field left out keeps the built-in value.
+[
+    { "rule": "new_legion", "value": 50 },
+    { "rule": "charioteers_max", "value": 80 },
+    { "rule": "trained_charioteers_max", "value": 100 },
+    { "rule": "kingdom_soldiers_max", "value": 100 },
+    { "rule": "foot_soldiers_max", "value": 60 },
+    { "rule": "trained_foot_soldiers_max", "value": 80 },
+    { "rule": "enemy_max", "value": 70 },
+    { "rule": "enemy_13_max", "value": 80 },
+    { "rule": "at_fort_gain", "value": 5 },
+    { "rule": "away_loss", "value": 5 },
+    { "rule": "months_away_without_loss", "value": 3 },
+    { "rule": "low", "value": 20 },
+    { "rule": "very_low", "value": 10 },
+    { "rule": "rout_swing", "value": 10 },
+    { "rule": "death_share_1", "value": 8 },
+    { "rule": "death_share_2", "value": 10 },
+    { "rule": "death_share_3", "value": 14 },
+    { "rule": "death_share_4", "value": 20 },
+    { "rule": "death_share_5", "value": 30 },
+    { "rule": "death_loss_1", "value": 5 },
+    { "rule": "death_loss_2", "value": 7 },
+    { "rule": "death_loss_3", "value": 10 },
+    { "rule": "death_loss_4", "value": 12 },
+    { "rule": "death_loss_5", "value": 15 },
+    { "rule": "death_loss_6", "value": 20 }
+]

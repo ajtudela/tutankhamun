@@ -1,0 +1,7 @@
+// Written by tutankhamun --export-configs from the built-in table; edit to change the game.
+// A record or a field left out keeps the built-in value.
+[
+    { "animal": "hyena", "frames": [-1, -1, -1, -1, 6, 6, -1, -1, 1, 12, 12, -1, 6, 12, -1, -1, -1, -1, 6, 6, 1, 12, -1, 1, -1], "default_frames": 1, "attack_sound": 0, "rest_base": 150, "rest_range": 100, "no_tile_wait": 100, "arrival_frames": 0, "reset_counter": 0 },
+    { "animal": "lion", "frames": [-1, -1, -1, -1, 6, 11, -1, -1, 0, -1, -1, -1, 6, 11, -1, -1, -1, -1, 10, 8, 8, 11, -1, 11, -1], "default_frames": 1, "attack_sound": 1, "rest_base": 150, "rest_range": 200, "no_tile_wait": 200, "arrival_frames": 1, "reset_counter": 0 },
+    { "animal": "scorpion", "frames": [-1, -1, -1, -1, 6, 6, -1, -1, 0, 12, 12, -1, 6, 12, -1, -1, -1, -1, 6, 6, 1, 12, -1, 1, -1], "default_frames": 0, "attack_sound": 2, "rest_base": 0, "rest_range": 100, "no_tile_wait": -1, "arrival_frames": 0, "reset_counter": 1 }
+]

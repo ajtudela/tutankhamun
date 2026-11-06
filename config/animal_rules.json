@@ -1,0 +1,28 @@
+// Written by tutankhamun --export-configs from the built-in table; edit to change the game.
+// A record or a field left out keeps the built-in value.
+[
+    { "rule": "dying_ticks", "value": 500 },
+    { "rule": "no_tile_wait_ticks", "value": 100 },
+    { "rule": "ferry_wait_ticks", "value": 100 },
+    { "rule": "herd_alert_ticks", "value": 20 },
+    { "rule": "herd_rest_base_ticks", "value": 150 },
+    { "rule": "herd_rest_random_ticks", "value": 150 },
+    { "rule": "predator_rest_base_ticks", "value": 250 },
+    { "rule": "predator_rest_random_ticks", "value": 100 },
+    { "rule": "predator_chase_ticks_per_ring", "value": 18 },
+    { "rule": "hippo_animate_ticks", "value": 20 },
+    { "rule": "hippo_after_hunt_ticks", "value": 200 },
+    { "rule": "asp_rest_base_ticks", "value": 50 },
+    { "rule": "asp_rest_random_ticks", "value": 100 },
+    { "rule": "gatherer_cut_ticks", "value": 300 },
+    { "rule": "hunter_shoot_timeout_ticks", "value": 300 },
+    { "rule": "hunter_retry_ticks", "value": 20 },
+    { "rule": "hunter_take_prey_ticks", "value": 18 },
+    { "rule": "hunter_shoot_distance", "value": 3 },
+    { "rule": "hunter_search_path_length", "value": 1000 },
+    { "rule": "hunter_near_search_path_length", "value": 6 },
+    { "rule": "hunter_homeward_search_path_length", "value": 100 },
+    { "rule": "hunter_game_load", "value": 100 },
+    { "rule": "lumberjack_wood_load", "value": 25 },
+    { "rule": "reed_gatherer_reeds_load", "value": 50 }
+]

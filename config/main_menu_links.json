@@ -1,0 +1,8 @@
+// Written by tutankhamun --export-configs from the built-in table; edit to change the game.
+// A record or a field left out keeps the built-in value.
+[
+    { "link": "discord", "url": "https://discord.gg/HS4njmBvpb", "right": 100, "bottom": 50 },
+    { "link": "github", "url": "https://github.com/dalerank/tutankhamun", "right": 150, "bottom": 50 },
+    { "link": "patreon", "url": "https://dalerank.github.io/en/", "right": 50, "bottom": 50 },
+    { "link": "wiki", "url": "https://dalerank.github.io/Akhenaten/", "right": 200, "bottom": 50 }
+]

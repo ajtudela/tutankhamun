@@ -1,0 +1,11 @@
+// Written by tutankhamun --export-configs from the built-in table; edit to change the game.
+// A record or a field left out keeps the built-in value.
+[
+    { "choice": "hippo_idle", "weights": [50, 50, 0, 0] },
+    { "choice": "hippo_other", "weights": [29, 70, 0, 1] },
+    { "choice": "hippo_in_water", "weights": [75, 5, 20, 0] },
+    { "choice": "hippo_animating", "weights": [90, 1, 9, 0] },
+    { "choice": "crocodile_idle", "weights": [50, 50, 0, 0] },
+    { "choice": "crocodile_in_water", "weights": [90, 10, 0, 0] },
+    { "choice": "crocodile_other", "weights": [25, 75, 0, 0] }
+]

@@ -1,0 +1,7 @@
+// Written by tutankhamun --export-configs from the built-in table; edit to change the game.
+// A record or a field left out keeps the built-in value.
+[
+    { "gift": "modest", "savings_divisor": 8, "base_cost": 20 },
+    { "gift": "generous", "savings_divisor": 4, "base_cost": 50 },
+    { "gift": "lavish", "savings_divisor": 2, "base_cost": 100 }
+]

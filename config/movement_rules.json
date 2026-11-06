@@ -1,0 +1,9 @@
+// Written by tutankhamun --export-configs from the built-in table; edit to change the game.
+// A record or a field left out keeps the built-in value.
+[
+    { "rule": "building_max_damage", "value": 10 },
+    { "rule": "wall_max_damage", "value": 200 },
+    { "rule": "gatehouse_max_damage", "value": 400 },
+    { "rule": "roam_start_distance", "value": 8 },
+    { "rule": "roam_road_radius", "value": 6 }
+]

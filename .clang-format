@@ -1,0 +1,47 @@
+# The code style of the sources (CODE_STYLE.md): 4 spaces, braces on the line of the statement, the `{` of a function
+# on its own line, a space after casts, the pointer star with the name, lines up to 160 columns.
+Language: Cpp
+BasedOnStyle: LLVM
+ColumnLimit: 160
+IndentWidth: 4
+TabWidth: 4
+UseTab: Never
+ContinuationIndentWidth: 4
+BreakBeforeBraces: Custom
+BraceWrapping:
+  AfterFunction: true
+  AfterControlStatement: Never
+  AfterEnum: false
+  AfterStruct: false
+  AfterUnion: false
+  BeforeElse: false
+  BeforeWhile: false
+  SplitEmptyFunction: true
+InsertBraces: true
+IndentCaseLabels: true
+SpaceAfterCStyleCast: true
+PointerAlignment: Right
+DerivePointerAlignment: false
+AllowShortFunctionsOnASingleLine: None
+AllowShortIfStatementsOnASingleLine: Never
+AllowShortLoopsOnASingleLine: false
+AllowShortBlocksOnASingleLine: Never
+AllowShortCaseLabelsOnASingleLine: false
+AlignAfterOpenBracket: DontAlign
+AlignOperands: DontAlign
+AlignTrailingComments: false
+AlignConsecutiveMacros: None
+AlignEscapedNewlines: DontAlign
+BinPackArguments: true
+BinPackParameters: true
+BreakBeforeBinaryOperators: None
+PenaltyBreakAssignment: 1000
+PenaltyBreakBeforeFirstCallParameter: 1000
+PenaltyExcessCharacter: 1000000
+SortIncludes: Never
+IncludeBlocks: Preserve
+ReflowComments: false
+MaxEmptyLinesToKeep: 1
+KeepEmptyLinesAtTheStartOfBlocks: false
+SpacesBeforeTrailingComments: 1
+Cpp11BracedListStyle: false

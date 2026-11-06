@@ -1,0 +1,19 @@
+// Written by tutankhamun --export-configs from the built-in table; edit to change the game.
+// A record or a field left out keeps the built-in value.
+[
+    { "monument": "abu_simbel",
+        "parts": [
+            { "view0_x": 243, "view0_y": -99, "view3_x": -411, "view3_y": -247 },
+            { "view0_x": 401, "view0_y": -178, "view3_x": -253, "view3_y": -171 },
+            { "view0_x": 540, "view0_y": -244, "view3_x": -114, "view3_y": -101 },
+            { "view0_x": 243, "view0_y": -159, "view3_x": -411, "view3_y": -307 },
+            { "view0_x": 401, "view0_y": -238, "view3_x": -253, "view3_y": -231 },
+            { "view0_x": 540, "view0_y": -304, "view3_x": -114, "view3_y": -161 },
+            { "view0_x": 228, "view0_y": -269, "view3_x": -396, "view3_y": -417 },
+            { "view0_x": 386, "view0_y": -348, "view3_x": -238, "view3_y": -341 },
+            { "view0_x": 525, "view0_y": -414, "view3_x": -99, "view3_y": -271 },
+            { "view0_x": 208, "view0_y": -384, "view3_x": -376, "view3_y": -532 },
+            { "view0_x": 366, "view0_y": -463, "view3_x": -218, "view3_y": -456 },
+            { "view0_x": 505, "view0_y": -529, "view3_x": -79, "view3_y": -386 }
+        ] }
+]

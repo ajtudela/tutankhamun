@@ -1,0 +1,8 @@
+// Written by tutankhamun --export-configs from the built-in table; edit to change the game.
+// A record or a field left out keeps the built-in value.
+[
+    { "block": 0, "x": 60, "y": -29 },
+    { "block": 1, "x": 187, "y": -29 },
+    { "block": 2, "x": 82, "y": -96 },
+    { "block": 3, "x": 170, "y": -100 }
+]

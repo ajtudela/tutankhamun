@@ -1,0 +1,7 @@
+// Written by tutankhamun --export-configs from the built-in table; edit to change the game.
+// A record or a field left out keeps the built-in value.
+[
+    { "screen": "640x480", "display_height": 480, "x": 8, "x_collapsed": 68, "low_mouse_y": 0, "bottom_y": 0 },
+    { "screen": "800x600", "display_height": 600, "x": 68, "x_collapsed": 128, "low_mouse_y": 312, "bottom_y": 592 },
+    { "screen": "1024x768", "display_height": 768, "x": 188, "x_collapsed": 248, "low_mouse_y": 396, "bottom_y": 760 }
+]

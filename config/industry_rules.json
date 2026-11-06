@@ -1,0 +1,8 @@
+// Written by tutankhamun --export-configs from the built-in table; edit to change the game.
+// A record or a field left out keeps the built-in value.
+[
+    { "rule": "progress_done", "value": 200 },
+    { "rule": "input_load", "value": 100 },
+    { "rule": "brickworks_straw_load", "value": 25 },
+    { "rule": "input_stock_default", "value": 200 }
+]

@@ -1,0 +1,8 @@
+// Written by tutankhamun --export-configs from the built-in table; edit to change the game.
+// A record or a field left out keeps the built-in value.
+[
+    { "rule": "views_threshold", "value": 200 },
+    { "rule": "delay_ms", "value": 30000 },
+    { "rule": "update_ms", "value": 2000 },
+    { "rule": "pan_views", "value": 10 }
+]

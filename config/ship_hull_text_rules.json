@@ -1,0 +1,9 @@
+// Written by tutankhamun --export-configs from the built-in table; edit to change the game.
+// A record or a field left out keeps the built-in value.
+[
+    { "rule": "weak", "transport": 0, "warship": 15 },
+    { "rule": "fair", "transport": 30, "warship": 30 },
+    { "rule": "average", "transport": 50, "warship": 50 },
+    { "rule": "good", "transport": 70, "warship": 70 },
+    { "rule": "strong", "transport": 90, "warship": 90 }
+]

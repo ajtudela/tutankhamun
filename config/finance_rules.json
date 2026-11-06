@@ -1,0 +1,9 @@
+// Written by tutankhamun --export-configs from the built-in table; edit to change the game.
+// A record or a field left out keeps the built-in value.
+[
+    { "rule": "house_tax_bonus_percentage", "value": 110 },
+    { "rule": "ra_complex_interest_reduction", "value": 5 },
+    { "rule": "salary_min_treasury", "value": -5000 },
+    { "rule": "tribute_profit_percentage", "value": 25 },
+    { "rule": "bailout_prosperity_loss", "value": 3 }
+]

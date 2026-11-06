@@ -1,0 +1,23 @@
+// Written by tutankhamun --export-configs from the built-in table; edit to change the game.
+// A record or a field left out keeps the built-in value.
+[
+    { "rule": "roamer_roam_ticks", "value": 384 },
+    { "rule": "patrician_roam_ticks", "value": 128 },
+    { "rule": "missionary_roam_ticks", "value": 192 },
+    { "rule": "tax_collector_roam_ticks", "value": 512 },
+    { "rule": "entertainer_roam_ticks", "value": 512 },
+    { "rule": "engineer_roam_ticks", "value": 640 },
+    { "rule": "fireman_roam_ticks", "value": 640 },
+    { "rule": "law_walker_roam_ticks", "value": 640 },
+    { "rule": "market_trader_empty_turn_ticks", "value": 96 },
+    { "rule": "entertainer_venue_walk_ticks", "value": 3200 },
+    { "rule": "home_road_radius", "value": 2 },
+    { "rule": "ferry_wait_ticks", "value": 100 },
+    { "rule": "fire_search_ticks", "value": 20 },
+    { "rule": "fire_search_distance", "value": 25 },
+    { "rule": "fire_fight_ticks", "value": 50 },
+    { "rule": "fire_out_duration", "value": 32 },
+    { "rule": "enemy_search_ticks", "value": 10 },
+    { "rule": "enemy_search_distance", "value": 30 },
+    { "rule": "festival_trips", "value": 10 }
+]

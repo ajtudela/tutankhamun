@@ -1,0 +1,20 @@
+// Written by tutankhamun --export-configs from the built-in table; edit to change the game.
+// A record or a field left out keeps the built-in value.
+[
+    { "step": 0, "front": 0, "dx": 0, "dy": -1 },
+    { "step": 1, "front": 1, "dx": 1, "dy": 0 },
+    { "step": 2, "front": 2, "dx": 0, "dy": 1 },
+    { "step": 3, "front": 3, "dx": -1, "dy": 0 },
+    { "step": 4, "front": 0, "dx": 0, "dy": -1 },
+    { "step": 5, "front": 0, "dx": -1, "dy": 0 },
+    { "step": 6, "front": 0, "dx": 1, "dy": 0 },
+    { "step": 7, "front": 1, "dx": 1, "dy": 0 },
+    { "step": 8, "front": 1, "dx": 0, "dy": -1 },
+    { "step": 9, "front": 1, "dx": 0, "dy": 1 },
+    { "step": 10, "front": 2, "dx": 0, "dy": 1 },
+    { "step": 11, "front": 2, "dx": -1, "dy": 0 },
+    { "step": 12, "front": 2, "dx": 1, "dy": 0 },
+    { "step": 13, "front": 3, "dx": -1, "dy": 0 },
+    { "step": 14, "front": 3, "dx": 0, "dy": -1 },
+    { "step": 15, "front": 3, "dx": 0, "dy": 1 }
+]

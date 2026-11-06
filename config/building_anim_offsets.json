@@ -1,0 +1,18 @@
+// Written by tutankhamun --export-configs from the built-in table; edit to change the game.
+// A record or a field left out keeps the built-in value.
+[
+    { "anim": "mine", "dx": 54, "dy": 15 },
+    { "anim": "quarry_first", "dx": 90, "dy": 17 },
+    { "anim": "quarry_second", "dx": 40, "dy": 20 },
+    { "anim": "bandstand_gate", "dx": 52, "dy": -3 },
+    { "anim": "bandstand_stage", "dx": 20, "dy": 0 },
+    { "anim": "conservatory", "dx": 82, "dy": 14 },
+    { "anim": "booth", "dx": 29, "dy": 14 },
+    { "anim": "pavilion", "dx": 64, "dy": 0 },
+    { "anim": "dance_school", "dx": 108, "dy": 1 },
+    { "anim": "granary", "dx": 113, "dy": 3 },
+    { "anim": "storage_yard", "dx": 22, "dy": 24 },
+    { "anim": "storage_yard_roof", "dx": -4, "dy": -42 },
+    { "anim": "fort_flag", "dx": 93, "dy": -20 },
+    { "anim": "house_sick_flag", "dx": 18, "dy": -32 }
+]

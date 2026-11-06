@@ -1,0 +1,9 @@
+// Written by tutankhamun --export-configs from the built-in table; edit to change the game.
+// A record or a field left out keeps the built-in value.
+[
+    { "step": 0, "floated_at_least": 400, "random_mask": 7, "base": 0 },
+    { "step": 1, "floated_at_least": 200, "random_mask": 15, "base": 50 },
+    { "step": 2, "floated_at_least": 100, "random_mask": 31, "base": 100 },
+    { "step": 3, "floated_at_least": 50, "random_mask": 63, "base": 200 },
+    { "step": 4, "floated_at_least": 0, "random_mask": 32767, "base": 300 }
+]

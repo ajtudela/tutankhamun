@@ -1,0 +1,12 @@
+// Written by tutankhamun --export-configs from the built-in table; edit to change the game.
+// A record or a field left out keeps the built-in value.
+[
+    { "image": 0, "dx": 132, "dy": -7 },
+    { "image": 1, "dx": 115, "dy": 25 },
+    { "image": 2, "dx": 60, "dy": 20 },
+    { "image": 3, "dx": 49, "dy": -4 },
+    { "image": 4, "dx": 152, "dy": -13 },
+    { "image": 5, "dx": 123, "dy": 16 },
+    { "image": 6, "dx": 65, "dy": 14 },
+    { "image": 7, "dx": 38, "dy": -12 }
+]

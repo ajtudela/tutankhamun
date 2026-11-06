@@ -1,0 +1,24 @@
+// Written by tutankhamun --export-configs from the built-in table; edit to change the game.
+// A record or a field left out keeps the built-in value.
+[
+    { "flotsam": 0, "kind": "FLOTSAM_KIND_SINKING", "wait": 10 },
+    { "flotsam": 1, "kind": "FLOTSAM_KIND_DEBRIS_A", "wait": 50 },
+    { "flotsam": 2, "kind": "FLOTSAM_KIND_SINKING", "wait": 100 },
+    { "flotsam": 3, "kind": "FLOTSAM_KIND_DEBRIS_B", "wait": 130 },
+    { "flotsam": 4, "kind": "FLOTSAM_KIND_DEBRIS_A", "wait": 200 },
+    { "flotsam": 5, "kind": "FLOTSAM_KIND_SINKING", "wait": 250 },
+    { "flotsam": 6, "kind": "FLOTSAM_KIND_DEBRIS_B", "wait": 400 },
+    { "flotsam": 7, "kind": "FLOTSAM_KIND_SINKING", "wait": 430 },
+    { "flotsam": 8, "kind": "FLOTSAM_KIND_DEBRIS_B", "wait": 500 },
+    { "flotsam": 9, "kind": "FLOTSAM_KIND_DEBRIS_A", "wait": 600 },
+    { "flotsam": 10, "kind": "FLOTSAM_KIND_SINKING", "wait": 70 },
+    { "flotsam": 11, "kind": "FLOTSAM_KIND_SINKING", "wait": 750 },
+    { "flotsam": 12, "kind": "FLOTSAM_KIND_DEBRIS_B", "wait": 820 },
+    { "flotsam": 13, "kind": "FLOTSAM_KIND_SINKING", "wait": 830 },
+    { "flotsam": 14, "kind": "FLOTSAM_KIND_SINKING", "wait": 900 },
+    { "flotsam": 15, "kind": "FLOTSAM_KIND_SINKING", "wait": 980 },
+    { "flotsam": 16, "kind": "FLOTSAM_KIND_DEBRIS_A", "wait": 1010 },
+    { "flotsam": 17, "kind": "FLOTSAM_KIND_DEBRIS_B", "wait": 1030 },
+    { "flotsam": 18, "kind": "FLOTSAM_KIND_BOBBING", "wait": 1200 },
+    { "flotsam": 19, "kind": "FLOTSAM_KIND_DEBRIS_A", "wait": 1300 }
+]

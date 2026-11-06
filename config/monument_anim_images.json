@@ -1,0 +1,24 @@
+// Written by tutankhamun --export-configs from the built-in table; edit to change the game.
+// A record or a field left out keeps the built-in value.
+[
+    { "images": "ANIM_IMAGES_CARPENTER_WALK", "group": "IMAGE_GROUP_CARPENTER_WALK", "offset": 0, "frames": 12, "frame_step": 8 },
+    { "images": "ANIM_IMAGES_CARPENTER_WORK", "group": "IMAGE_GROUP_CARPENTER_WORK", "offset": 0, "frames": 7, "frame_step": 8 },
+    { "images": "ANIM_IMAGES_CARPENTER_WORK_2", "group": "IMAGE_GROUP_CARPENTER_WORK_2", "offset": 0, "frames": 7, "frame_step": 8 },
+    { "images": "ANIM_IMAGES_CARPENTER_SLIDE_DOWN", "group": "IMAGE_GROUP_CARPENTER_CORPSE", "offset": 0, "frames": 8, "frame_step": 1 },
+    { "images": "ANIM_IMAGES_CARPENTER_SLIDE_DOWN_END", "group": "IMAGE_GROUP_CARPENTER_CORPSE", "offset": 7, "frames": 1, "frame_step": 1 },
+    { "images": "ANIM_IMAGES_CARPENTER_STAND", "group": "IMAGE_GROUP_CARPENTER_WALK", "offset": 10, "frames": 1, "frame_step": 1 },
+    { "images": "ANIM_IMAGES_CARPENTER_CLIMB_UP", "group": "IMAGE_GROUP_CARPENTER_CLIMB", "offset": 0, "frames": 12, "frame_step": 2 },
+    { "images": "ANIM_IMAGES_STONEMASON_WALK", "group": "IMAGE_GROUP_STONEMASON_WALK", "offset": 0, "frames": 12, "frame_step": 8 },
+    { "images": "ANIM_IMAGES_STONEMASON_WORK", "group": "IMAGE_GROUP_STONEMASON_WORK", "offset": 0, "frames": 7, "frame_step": 8 },
+    { "images": "ANIM_IMAGES_STONEMASON_SLIDE_DOWN", "group": "IMAGE_GROUP_STONEMASON_CORPSE", "offset": 0, "frames": 8, "frame_step": 1 },
+    { "images": "ANIM_IMAGES_STONEMASON_SLIDE_DOWN_END", "group": "IMAGE_GROUP_STONEMASON_CORPSE", "offset": 7, "frames": 1, "frame_step": 1 },
+    { "images": "ANIM_IMAGES_STONEMASON_BLOCK", "group": "IMAGE_GROUP_STONEMASON_BLOCK", "offset": 0, "frames": 12, "frame_step": 8 },
+    { "images": "ANIM_IMAGES_STONEMASON_WORK_2", "group": "IMAGE_GROUP_STONEMASON_WORK_2", "offset": 0, "frames": 7, "frame_step": 8 },
+    { "images": "ANIM_IMAGES_STONEMASON_CLIMB_UP", "group": "IMAGE_GROUP_STONEMASON_CLIMB", "offset": 0, "frames": 12, "frame_step": 2 },
+    { "images": "ANIM_IMAGES_ARTISAN_WALK", "group": "IMAGE_GROUP_ARTISAN_WALK", "offset": 0, "frames": 12, "frame_step": 8 },
+    { "images": "ANIM_IMAGES_ARTISAN_WORK", "group": "IMAGE_GROUP_ARTISAN_WORK", "offset": 0, "frames": 12, "frame_step": 8 },
+    { "images": "ANIM_IMAGES_ARTISAN_WORK_2", "group": "IMAGE_GROUP_ARTISAN_WORK_2", "offset": 0, "frames": 12, "frame_step": 8 },
+    { "images": "ANIM_IMAGES_ARTISAN_SLIDE_DOWN", "group": "IMAGE_GROUP_ARTISAN_CORPSE", "offset": 0, "frames": 7, "frame_step": 1 },
+    { "images": "ANIM_IMAGES_ARTISAN_SLIDE_DOWN_END", "group": "IMAGE_GROUP_ARTISAN_CORPSE", "offset": 7, "frames": 1, "frame_step": 1 },
+    { "images": "ANIM_IMAGES_ARTISAN_STAND", "group": "IMAGE_GROUP_ARTISAN_WALK", "offset": 10, "frames": 1, "frame_step": 1 }
+]

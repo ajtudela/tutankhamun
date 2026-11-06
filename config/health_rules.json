@@ -1,0 +1,25 @@
+// Written by tutankhamun --export-configs from the built-in table; edit to change the game.
+// A record or a field left out keeps the built-in value.
+[
+    { "rule": "sick_months", "value": 2 },
+    { "rule": "tutorial_health", "value": 75 },
+    { "rule": "monthly_step", "value": 2 },
+    { "rule": "warning_min_population", "value": 300 },
+    { "rule": "plague_radius_health_step", "value": 20 },
+    { "rule": "plague_max_radius", "value": 4 },
+    { "rule": "bast_altar_percentage", "value": 105 },
+    { "rule": "disease_chance", "value": 40 },
+    { "rule": "mortuary_points", "value": 25 },
+    { "rule": "physician_points", "value": 15 },
+    { "rule": "food_points", "value": 10 },
+    { "rule": "second_food_points", "value": 5 },
+    { "rule": "third_food_points", "value": 5 },
+    { "rule": "physician_and_food_points", "value": 40 },
+    { "rule": "malaria_health_level", "value": 50 },
+    { "rule": "malaria_health_weight", "value": 2 },
+    { "rule": "plague_marsh_distance", "value": 55 },
+    { "rule": "plague_marsh_weight", "value": 2 },
+    { "rule": "plague_bonus", "value": 16 },
+    { "rule": "plague_desert_bonus", "value": 8 },
+    { "rule": "plague_desert_divisor", "value": 2 }
+]

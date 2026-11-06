@@ -1,0 +1,10 @@
+// Written by tutankhamun --export-configs from the built-in table; edit to change the game.
+// A record or a field left out keeps the built-in value.
+[
+    { "size": 0, "width": 56, "height": 56, "grid_start": 19694, "grid_border_size": 172 },
+    { "size": 1, "width": 84, "height": 84, "grid_start": 16488, "grid_border_size": 144 },
+    { "size": 2, "width": 112, "height": 112, "grid_start": 13282, "grid_border_size": 116 },
+    { "size": 3, "width": 140, "height": 140, "grid_start": 10076, "grid_border_size": 88 },
+    { "size": 4, "width": 170, "height": 170, "grid_start": 6641, "grid_border_size": 58 },
+    { "size": 5, "width": 226, "height": 226, "grid_start": 229, "grid_border_size": 2 }
+]

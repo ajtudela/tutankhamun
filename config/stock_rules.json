@@ -1,0 +1,13 @@
+// Written by tutankhamun --export-configs from the built-in table; edit to change the game.
+// A record or a field left out keeps the built-in value.
+[
+    { "rule": "granary_list_min_food", "value": 100 },
+    { "rule": "granary_operating_workers_percent", "value": 50 },
+    { "rule": "tutorial_pottery_stored", "value": 200 },
+    { "rule": "tutorial_beer_stored", "value": 300 },
+    { "rule": "tutorial_bricks_stored", "value": 800 },
+    { "rule": "tutorial_granary_gamemeat", "value": 400 },
+    { "rule": "tutorial_granary_figs", "value": 800 },
+    { "rule": "kingdom_grain_bazaar_food", "value": 200 },
+    { "rule": "kingdom_grain_supply_months", "value": 12 }
+]

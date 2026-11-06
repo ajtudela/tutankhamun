@@ -1,0 +1,27 @@
+// Written by tutankhamun --export-configs from the built-in table; edit to change the game.
+// A record or a field left out keeps the built-in value.
+[
+    { "rule": "tutorial_mood", "value": 30 },
+    { "rule": "festival_months_cap", "value": 40 },
+    { "rule": "festival_mood_bonus", "value": 12 },
+    { "rule": "first_mission_min_mood", "value": 50 },
+    { "rule": "complex_god_percentage", "value": 115 },
+    { "rule": "patron_without_complex_percentage", "value": 98 },
+    { "rule": "patron_beside_complex_percentage", "value": 90 },
+    { "rule": "local_beside_complex_percentage", "value": 95 },
+    { "rule": "angry_mood", "value": 30 },
+    { "rule": "angry_message_delay", "value": 20 },
+    { "rule": "tutorial_bast_mood", "value": 40 },
+    { "rule": "bolts_max", "value": 50 },
+    { "rule": "minor_event_bolts", "value": 20 },
+    { "rule": "blessing_festival_months", "value": 15 },
+    { "rule": "curse_festival_months", "value": 3 },
+    { "rule": "major_event_mood_change", "value": 30 },
+    { "rule": "minor_event_mood_change", "value": 12 },
+    { "rule": "ra_effect_months", "value": 12 },
+    { "rule": "seth_protection_months", "value": 10 },
+    { "rule": "seth_enemies_to_leave", "value": 10 },
+    { "rule": "ra_major_kingdom_change", "value": 15 },
+    { "rule": "ra_minor_kingdom_change", "value": 5 },
+    { "rule": "ptah_frogs", "value": 6 }
+]

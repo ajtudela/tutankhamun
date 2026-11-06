@@ -1,0 +1,11 @@
+// Written by tutankhamun --export-configs from the built-in table; edit to change the game.
+// A record or a field left out keeps the built-in value.
+[
+    { "figure_type": "FIGURE_ENEMY_ARCHER", "speed_factor": 1, "attack_sound": -1 },
+    { "figure_type": "FIGURE_ENEMY_INFANTRY", "speed_factor": 1, "attack_sound": -1 },
+    { "figure_type": "FIGURE_ENEMY_CHARIOT", "speed_factor": 1, "attack_sound": -1 },
+    { "figure_type": "FIGURE_ENEMY_EGYPTIAN_INFANTRY", "speed_factor": 2, "attack_sound": 12 },
+    { "figure_type": "FIGURE_ENEMY_EGYPTIAN_ARCHER", "speed_factor": 2, "attack_sound": 11 },
+    { "figure_type": "FIGURE_ENEMY_EGYPTIAN_CHARIOT", "speed_factor": 2, "attack_sound": 13 },
+    { "figure_type": "FIGURE_BEDOUIN", "speed_factor": 2, "attack_sound": 10 }
+]

@@ -1,0 +1,60 @@
+// Written by tutankhamun --export-configs from the built-in table; edit to change the game.
+// A record or a field left out keeps the built-in value.
+[
+    { "tomb": "small_royal_tomb", "last_part_closed": 0, "sealing_adds_stage": 1, "sealing_group": 805, "entrance_groups": [807, 808, 809],
+        "chambers": [
+            { "kind": 0, "group": 791 },
+            { "kind": 1, "group": 793 },
+            { "kind": 2, "group": 795 },
+            { "kind": 3, "group": 797 },
+            { "kind": 6, "group": 799 },
+            { "kind": 15, "group": 801 },
+            { "kind": 16, "group": 803 },
+            { "kind": 29, "group": 810 }
+        ] },
+    { "tomb": "medium_royal_tomb", "last_part_closed": 1, "sealing_adds_stage": 0, "sealing_group": 844, "entrance_groups": [846, 847, 848],
+        "chambers": [
+            { "kind": 0, "group": 828 },
+            { "kind": 1, "group": 830 },
+            { "kind": 2, "group": 832 },
+            { "kind": 9, "group": 834 },
+            { "kind": 10, "group": 836 },
+            { "kind": 19, "group": 838 },
+            { "kind": 20, "group": 840 },
+            { "kind": 21, "group": 842 },
+            { "kind": 29, "group": 849 }
+        ] },
+    { "tomb": "large_royal_tomb", "last_part_closed": 1, "sealing_adds_stage": 0, "sealing_group": 873, "entrance_groups": [875, 876, 877],
+        "chambers": [
+            { "kind": 0, "group": 851 },
+            { "kind": 1, "group": 853 },
+            { "kind": 2, "group": 855 },
+            { "kind": 4, "group": 857 },
+            { "kind": 5, "group": 859 },
+            { "kind": 6, "group": 861 },
+            { "kind": 7, "group": 863 },
+            { "kind": 8, "group": 865 },
+            { "kind": 12, "group": 867 },
+            { "kind": 22, "group": 869 },
+            { "kind": 23, "group": 871 },
+            { "kind": 29, "group": 878 }
+        ] },
+    { "tomb": "grand_royal_tomb", "last_part_closed": 1, "sealing_adds_stage": 0, "sealing_group": 908, "entrance_groups": [910, 911, 912],
+        "chambers": [
+            { "kind": 0, "group": 880 },
+            { "kind": 1, "group": 882 },
+            { "kind": 2, "group": 884 },
+            { "kind": 4, "group": 886 },
+            { "kind": 6, "group": 888 },
+            { "kind": 7, "group": 890 },
+            { "kind": 8, "group": 892 },
+            { "kind": 11, "group": 894 },
+            { "kind": 12, "group": 896 },
+            { "kind": 13, "group": 898 },
+            { "kind": 14, "group": 900 },
+            { "kind": 24, "group": 902 },
+            { "kind": 25, "group": 904 },
+            { "kind": 26, "group": 906 },
+            { "kind": 29, "group": 913 }
+        ] }
+]

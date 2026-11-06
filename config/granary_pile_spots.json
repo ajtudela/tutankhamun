@@ -1,0 +1,12 @@
+// Written by tutankhamun --export-configs from the built-in table; edit to change the game.
+// A record or a field left out keeps the built-in value.
+[
+    { "spot": 0, "dx": 110, "dy": -73 },
+    { "spot": 1, "dx": 126, "dy": -64 },
+    { "spot": 2, "dx": 145, "dy": -55 },
+    { "spot": 3, "dx": 161, "dy": -47 },
+    { "spot": 4, "dx": 94, "dy": -66 },
+    { "spot": 5, "dx": 111, "dy": -57 },
+    { "spot": 6, "dx": 130, "dy": -47 },
+    { "spot": 7, "dx": 147, "dy": -38 }
+]

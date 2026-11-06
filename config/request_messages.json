@@ -1,0 +1,11 @@
+// Written by tutankhamun --export-configs from the built-in table; edit to change the game.
+// A record or a field left out keeps the built-in value.
+[
+    { "subtype": 0, "announcement": [53, 52], "completed": [47, 46], "refused": [51, 50], "too_late": [49, 48], "defeat": [-1, -1], "completed_group": 8, "refused_group": 10, "too_late_group": 9, "defeat_group": -1, "reason_column": 2 },
+    { "subtype": 1, "announcement": [17, 16], "completed": [9, 8], "refused": [13, 12], "too_late": [11, 10], "defeat": [15, 14], "completed_group": 0, "refused_group": 3, "too_late_group": 2, "defeat_group": 1, "reason_column": 0 },
+    { "subtype": 2, "announcement": [35, 34], "completed": [27, 26], "refused": [31, 30], "too_late": [29, 28], "defeat": [33, 32], "completed_group": 4, "refused_group": 7, "too_late_group": 6, "defeat_group": 5, "reason_column": 1 },
+    { "subtype": 3, "announcement": [71, 70], "completed": [65, 64], "refused": [69, 68], "too_late": [67, 66], "defeat": [-1, -1], "completed_group": 11, "refused_group": 13, "too_late_group": 12, "defeat_group": -1, "reason_column": 3 },
+    { "subtype": 4, "announcement": [89, 88], "completed": [83, 82], "refused": [87, 86], "too_late": [85, 84], "defeat": [-1, -1], "completed_group": 14, "refused_group": 16, "too_late_group": 15, "defeat_group": -1, "reason_column": 4 },
+    { "subtype": 5, "announcement": [107, 106], "completed": [101, 100], "refused": [105, 104], "too_late": [103, 102], "defeat": [-1, -1], "completed_group": 17, "refused_group": 19, "too_late_group": 18, "defeat_group": -1, "reason_column": 5 },
+    { "subtype": 6, "announcement": [125, 124], "completed": [119, 118], "refused": [123, 122], "too_late": [121, 120], "defeat": [-1, -1], "completed_group": 20, "refused_group": 22, "too_late_group": 21, "defeat_group": -1, "reason_column": 6 }
+]

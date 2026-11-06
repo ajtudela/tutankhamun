@@ -1,0 +1,13 @@
+// Written by tutankhamun --export-configs from the built-in table; edit to change the game.
+// A record or a field left out keeps the built-in value.
+[
+    { "rule": "out_of_credit_treasury", "value": -5000 },
+    { "rule": "max_forts", "value": 6 },
+    { "rule": "max_warship_wharves", "value": 6 },
+    { "rule": "max_docks", "value": 10 },
+    { "rule": "library_papyrus", "value": 500 },
+    { "rule": "small_obelisk_granite", "value": 10000 },
+    { "rule": "large_obelisk_granite", "value": 20000 },
+    { "rule": "sun_temple_sandstone", "value": 22000 },
+    { "rule": "mausoleum_sandstone", "value": 24000 }
+]

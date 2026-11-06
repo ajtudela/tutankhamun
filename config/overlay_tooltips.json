@@ -1,0 +1,212 @@
+// Written by tutankhamun --export-configs from the built-in table; edit to change the game.
+// A record or a field left out keeps the built-in value.
+[
+    { "overlay": "OVERLAY_NONE",
+        "tooltip": [
+            { "buildings": 1, "needs_building": 1, "needs_fertile_soil": 0 }
+        ] },
+    { "overlay": 1,
+        "tooltip": [
+            { "buildings": 1, "needs_building": 1, "needs_fertile_soil": 0 }
+        ] },
+    { "overlay": 2,
+        "tooltip": [
+            { "buildings": 0, "needs_building": 0, "needs_fertile_soil": 0 }
+        ] },
+    { "overlay": 3,
+        "tooltip": [
+            { "buildings": 1, "needs_building": 1, "needs_fertile_soil": 0 }
+        ] },
+    { "overlay": "OVERLAY_RELIGION",
+        "tooltip": [
+            { "buildings": 1, "needs_building": 1, "needs_fertile_soil": 0 }
+        ] },
+    { "overlay": 5,
+        "tooltip": [
+            { "buildings": 1, "needs_building": 1, "needs_fertile_soil": 0 }
+        ] },
+    { "overlay": 6,
+        "tooltip": [
+            { "buildings": 1, "needs_building": 1, "needs_fertile_soil": 0 }
+        ] },
+    { "overlay": 7,
+        "tooltip": [
+            { "buildings": 1, "needs_building": 1, "needs_fertile_soil": 0 }
+        ] },
+    { "overlay": "OVERLAY_FIRE",
+        "tooltip": [
+            { "buildings": 0, "needs_building": 1, "needs_fertile_soil": 0 }
+        ] },
+    { "overlay": "OVERLAY_DAMAGE",
+        "tooltip": [
+            { "buildings": 0, "needs_building": 1, "needs_fertile_soil": 0 }
+        ] },
+    { "overlay": "OVERLAY_CRIME",
+        "tooltip": [
+            { "buildings": 1, "needs_building": 1, "needs_fertile_soil": 0 }
+        ] },
+    { "overlay": "OVERLAY_ENTERTAINMENT",
+        "tooltip": [
+            { "buildings": 1, "needs_building": 1, "needs_fertile_soil": 0 }
+        ] },
+    { "overlay": "OVERLAY_JUGGLER",
+        "tooltip": [
+            { "buildings": 1, "needs_building": 1, "needs_fertile_soil": 0 }
+        ] },
+    { "overlay": "OVERLAY_MUSICIAN",
+        "tooltip": [
+            { "buildings": 1, "needs_building": 1, "needs_fertile_soil": 0 }
+        ] },
+    { "overlay": "OVERLAY_DANCER",
+        "tooltip": [
+            { "buildings": 1, "needs_building": 1, "needs_fertile_soil": 0 }
+        ] },
+    { "overlay": "OVERLAY_SENET",
+        "tooltip": [
+            { "buildings": 1, "needs_building": 1, "needs_fertile_soil": 0 }
+        ] },
+    { "overlay": "OVERLAY_ZOOKEEPER",
+        "tooltip": [
+            { "buildings": 1, "needs_building": 1, "needs_fertile_soil": 0 }
+        ] },
+    { "overlay": "OVERLAY_EDUCATION",
+        "tooltip": [
+            { "buildings": 1, "needs_building": 1, "needs_fertile_soil": 0 }
+        ] },
+    { "overlay": "OVERLAY_SCRIBAL_SCHOOL",
+        "tooltip": [
+            { "buildings": 1, "needs_building": 1, "needs_fertile_soil": 0 }
+        ] },
+    { "overlay": "OVERLAY_LIBRARY",
+        "tooltip": [
+            { "buildings": 1, "needs_building": 1, "needs_fertile_soil": 0 }
+        ] },
+    { "overlay": "OVERLAY_WATER_CROSSINGS",
+        "tooltip": [
+            { "buildings": 1, "needs_building": 1, "needs_fertile_soil": 0 }
+        ] },
+    { "overlay": "OVERLAY_DENTIST",
+        "tooltip": [
+            { "buildings": 1, "needs_building": 1, "needs_fertile_soil": 0 }
+        ] },
+    { "overlay": "OVERLAY_PHYSICIAN",
+        "tooltip": [
+            { "buildings": 1, "needs_building": 1, "needs_fertile_soil": 0 }
+        ] },
+    { "overlay": "OVERLAY_APOTHECARY",
+        "tooltip": [
+            { "buildings": 1, "needs_building": 1, "needs_fertile_soil": 0 }
+        ] },
+    { "overlay": "OVERLAY_MORTUARY",
+        "tooltip": [
+            { "buildings": 1, "needs_building": 1, "needs_fertile_soil": 0 }
+        ] },
+    { "overlay": "OVERLAY_TAX_INCOME",
+        "tooltip": [
+            { "buildings": 1, "needs_building": 1, "needs_fertile_soil": 0 }
+        ] },
+    { "overlay": "OVERLAY_BAZAAR_ACCESS",
+        "tooltip": [
+            { "buildings": 1, "needs_building": 1, "needs_fertile_soil": 0 }
+        ] },
+    { "overlay": "OVERLAY_DESIRABILITY",
+        "tooltip": [
+            { "buildings": 0, "needs_building": 0, "needs_fertile_soil": 0 }
+        ] },
+    { "overlay": "OVERLAY_FERTILITY",
+        "tooltip": [
+            { "buildings": 0, "needs_building": 0, "needs_fertile_soil": 1 }
+        ] },
+    { "overlay": "OVERLAY_LABOR",
+        "tooltip": [
+            { "buildings": 2, "needs_building": 1, "needs_fertile_soil": 0 }
+        ] },
+    { "overlay": "OVERLAY_NATIVE",
+        "tooltip": [
+            { "buildings": 1, "needs_building": 1, "needs_fertile_soil": 0 }
+        ] },
+    { "overlay": "OVERLAY_PROBLEMS",
+        "tooltip": [
+            { "buildings": 0, "needs_building": 1, "needs_fertile_soil": 0 }
+        ] },
+    { "overlay": 32,
+        "tooltip": [
+            { "buildings": 1, "needs_building": 1, "needs_fertile_soil": 0 }
+        ] },
+    { "overlay": "OVERLAY_GRAIN",
+        "tooltip": [
+            { "buildings": 1, "needs_building": 1, "needs_fertile_soil": 0 }
+        ] },
+    { "overlay": "OVERLAY_CHICKPEAS",
+        "tooltip": [
+            { "buildings": 1, "needs_building": 1, "needs_fertile_soil": 0 }
+        ] },
+    { "overlay": "OVERLAY_POMEGRANATES",
+        "tooltip": [
+            { "buildings": 1, "needs_building": 1, "needs_fertile_soil": 0 }
+        ] },
+    { "overlay": "OVERLAY_FIGS",
+        "tooltip": [
+            { "buildings": 1, "needs_building": 1, "needs_fertile_soil": 0 }
+        ] },
+    { "overlay": "OVERLAY_MEAT",
+        "tooltip": [
+            { "buildings": 1, "needs_building": 1, "needs_fertile_soil": 0 }
+        ] },
+    { "overlay": "OVERLAY_GAME",
+        "tooltip": [
+            { "buildings": 1, "needs_building": 1, "needs_fertile_soil": 0 }
+        ] },
+    { "overlay": "OVERLAY_POTTERY",
+        "tooltip": [
+            { "buildings": 1, "needs_building": 1, "needs_fertile_soil": 0 }
+        ] },
+    { "overlay": "OVERLAY_JEWELRY",
+        "tooltip": [
+            { "buildings": 1, "needs_building": 1, "needs_fertile_soil": 0 }
+        ] },
+    { "overlay": "OVERLAY_LINEN",
+        "tooltip": [
+            { "buildings": 1, "needs_building": 1, "needs_fertile_soil": 0 }
+        ] },
+    { "overlay": "OVERLAY_BEER",
+        "tooltip": [
+            { "buildings": 1, "needs_building": 1, "needs_fertile_soil": 0 }
+        ] },
+    { "overlay": "OVERLAY_DISEASE",
+        "tooltip": [
+            { "buildings": 1, "needs_building": 1, "needs_fertile_soil": 0 }
+        ] },
+    { "overlay": "OVERLAY_INFECTED_HOUSING",
+        "tooltip": [
+            { "buildings": 1, "needs_building": 1, "needs_fertile_soil": 0 }
+        ] },
+    { "overlay": "OVERLAY_WATER",
+        "tooltip": [
+            { "buildings": 0, "needs_building": 0, "needs_fertile_soil": 0 }
+        ] },
+    { "overlay": "OVERLAY_EMPTY_HOUSING",
+        "tooltip": [
+            { "buildings": 1, "needs_building": 1, "needs_fertile_soil": 0 }
+        ] },
+    { "overlay": "OVERLAY_IRRIGATION",
+        "tooltip": [
+            { "buildings": 0, "needs_building": 0, "needs_fertile_soil": 0 }
+        ] },
+    { "overlay": "OVERLAY_MALARIA",
+        "tooltip": [
+            { "buildings": 1, "needs_building": 1, "needs_fertile_soil": 0 }
+        ] },
+    { "overlay": "OVERLAY_CITY_DEFENSES",
+        "tooltip": [
+            { "buildings": 0, "needs_building": 1, "needs_fertile_soil": 0 }
+        ] },
+    { "overlay": "OVERLAY_MAGISTRATE",
+        "tooltip": [
+            { "buildings": 1, "needs_building": 1, "needs_fertile_soil": 0 }
+        ] },
+    { "overlay": "OVERLAY_HIDE_CLIFFS",
+        "tooltip": [
+            { "buildings": 0, "needs_building": 0, "needs_fertile_soil": 0 }
+        ] }
+]
