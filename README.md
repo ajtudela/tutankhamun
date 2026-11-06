@@ -110,14 +110,6 @@ This project is not meant for further development: it exists only to preserve th
 to port it to other platforms. Pull requests are accepted only for minimal fixes. See
 [CONTRIBUTING.md](CONTRIBUTING.md).
 
-## Support
-
-- **Issues**: report bugs on [GitHub Issues](https://github.com/dalerank/tutankhamun/issues)
-- **Discord**: [discord.gg/HS4njmBvpb](https://discord.gg/HS4njmBvpb)
-- **Wiki**: [dalerank.github.io/Akhenaten](https://dalerank.github.io/Akhenaten/)
-- **GitHub**: [github.com/dalerank/tutankhamun](https://github.com/dalerank/tutankhamun)
-- **Website**: [dalerank.github.io/en](https://dalerank.github.io/en/)
-
 ## Credits
 
 Parts of the code come from other projects (details: [LICENSES/README.md](LICENSES/README.md) and each file's
