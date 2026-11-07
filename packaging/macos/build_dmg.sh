@@ -26,7 +26,8 @@ build_arch() {
     esac
     cmake -S "$source_dir" -B "$build_dir/$one" -G "Unix Makefiles" -DCMAKE_BUILD_TYPE=Release \
         -DCMAKE_OSX_ARCHITECTURES="$one" -DCMAKE_OSX_DEPLOYMENT_TARGET="$target"
-    cmake --build "$build_dir/$one" -- -j"$cores"
+    # -k: one run shows every file that fails, not only the first
+    cmake --build "$build_dir/$one" -- -k -j"$cores"
 }
 
 case "$arch" in

@@ -21,6 +21,9 @@
 #include <stdlib.h>
 #include <string.h>
 #include <sys/types.h>
+#if defined(__APPLE__)
+#include <sys/sysctl.h>
+#endif
 #include <sys/wait.h>
 #include <time.h>
 #include <unistd.h>
@@ -353,6 +356,15 @@ void platform_desktop_palette(void *entries, int32_t count)
 
 int32_t platform_memory_available(void)
 {
+#if defined(__APPLE__)
+    // macOS has no count of the free pages in sysconf: the physical memory, which is above the 2 GB cap anyway
+    uint64_t memory = 0;
+    size_t length = sizeof(memory);
+    if (sysctlbyname("hw.memsize", &memory, &length, NULL, 0) != 0 || memory == 0) {
+        return INT32_MAX;
+    }
+    return memory > INT32_MAX ? INT32_MAX : (int32_t) memory;
+#else
     long pages = sysconf(_SC_AVPHYS_PAGES);
     long page_size = sysconf(_SC_PAGESIZE);
     if (pages <= 0 || page_size <= 0) {
@@ -360,6 +372,7 @@ int32_t platform_memory_available(void)
     }
     uint64_t bytes = (uint64_t) pages * (uint64_t) page_size;
     return bytes > INT32_MAX ? INT32_MAX : (int32_t) bytes;
+#endif
 }
 
 bool platform_time_counter(uint64_t *count)
