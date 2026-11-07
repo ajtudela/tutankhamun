@@ -14,6 +14,7 @@
 
 #include "app/play.h"
 
+#include "app/app_files.h"
 #include "app/app_icon.h"
 #include "app/media_lib.h"
 #include "app/play_cursors.h"
@@ -28,6 +29,9 @@
 #include "graphics/screen_fade.h"
 #include "platform/platform_screen.h"
 #include "platform/platform_dialog.h"
+#include "platform/platform_input.h"
+#include "platform/platform_time.h"
+#include "platform/platform_message.h"
 #include "platform/platform_display.h"
 #include "platform/platform_shell.h"
 #include "platform/platform_win32.h"
@@ -37,15 +41,20 @@
 #include "window/free_play.h"
 #include "window/window_proc.h"
 
+#if defined(_WIN32)
 #include <windows.h>
 #include <mmsystem.h>
 #include <intrin.h>
+#endif
+#include <assert.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include "SDL.h"
+#if defined(_WIN32)
 #include "SDL_syswm.h"
+#endif
 
 
 static void no_log(const char *format, ...)
@@ -57,7 +66,108 @@ void (*play_log)(const char *format, ...) = no_log;
 static play_host host;
 
 
-typedef LRESULT(CALLBACK *window_proc_fn)(HWND, UINT, WPARAM, LPARAM);
+#if defined(_WIN32)
+typedef MSG play_native_message;
+#else
+typedef struct {
+    void *hwnd;
+    uint32_t message;
+    uintptr_t wParam;
+    intptr_t lParam;
+    uint32_t time;
+} play_native_message;
+#endif
+
+static_assert(sizeof(play_native_message) <= sizeof(((platform_message *) 0)->native), "platform_message has room for a play message");
+
+enum play_peek {
+    PLAY_PEEK_KEEP = 0,
+    PLAY_PEEK_REMOVE = 1,
+};
+
+#if defined(_WIN32)
+static bool system_peek(play_native_message *msg, uint32_t first, uint32_t last, uint32_t remove)
+{
+    return PeekMessageA(msg, 0, first, last, remove) != 0;
+}
+
+static bool system_get(play_native_message *msg)
+{
+    return GetMessageA(msg, 0, 0, 0) != 0;
+}
+
+static void system_wait(void)
+{
+    WaitMessage();
+}
+
+static bool system_post(void *window, uint32_t message, uintptr_t wparam, intptr_t lparam)
+{
+    return PostMessageA((HWND) window, message, wparam, lparam) != 0;
+}
+
+static uint32_t system_scan_code(int32_t vk)
+{
+    return MapVirtualKeyA((UINT) vk, 0);
+}
+
+static uint32_t system_time_ms(void)
+{
+    return timeGetTime();
+}
+
+static void *native_window(SDL_Window *window)
+{
+    SDL_SysWMinfo info;
+    SDL_VERSION(&info.version);
+    return window && SDL_GetWindowWMInfo(window, &info) ? (void *) info.info.win.window : 0;
+}
+#else
+static bool system_peek(play_native_message *msg, uint32_t first, uint32_t last, uint32_t remove)
+{
+    return false;
+}
+
+static bool system_get(play_native_message *msg)
+{
+    memset(msg, 0, sizeof(*msg));
+    msg->message = PLATFORM_MSG_QUIT;
+    return false;
+}
+
+static void system_wait(void)
+{
+    SDL_Delay(5);
+}
+
+static bool system_post(void *window, uint32_t message, uintptr_t wparam, intptr_t lparam)
+{
+    return false;
+}
+
+static uint32_t system_scan_code(int32_t vk)
+{
+    return 0;
+}
+
+static uint32_t system_time_ms(void)
+{
+    return SDL_GetTicks();
+}
+
+static void *native_window(SDL_Window *window)
+{
+    return window;
+}
+#endif
+
+static void screen_rect_set(int32_t width, int32_t height)
+{
+    window_screen_rect.left = 0;
+    window_screen_rect.top = 0;
+    window_screen_rect.right = width;
+    window_screen_rect.bottom = height;
+}
 
 static struct {
     int32_t cursor_x;
@@ -68,7 +178,7 @@ static struct {
     int32_t modal_frames;
     uint32_t video_poll_ms;
     int32_t has_message;
-    MSG message;
+    play_native_message message;
     int32_t other_peeks;
     uint8_t key_down[256];
     uint8_t key_pressed[256];
@@ -111,25 +221,25 @@ static void key_state(int32_t vk, int32_t down)
 
 static void modal_pump(void);
 
-static void modal_message(UINT message, WPARAM wparam)
+static void modal_message(uint32_t message, uintptr_t wparam)
 {
     memset(&play.message, 0, sizeof(play.message));
     play.message.message = message;
     play.message.wParam = wparam;
-    play.message.time = GetTickCount();
+    play.message.time = platform_tick_count();
     play.has_message = 1;
 }
 
-static BOOL take_modal_message(MSG *msg, UINT remove)
+static bool take_modal_message(play_native_message *msg, uint32_t remove)
 {
     if (!play.has_message) {
-        return FALSE;
+        return false;
     }
     *msg = play.message;
-    if (remove & PM_REMOVE) {
+    if (remove & PLAY_PEEK_REMOVE) {
         play.has_message = 0;
     }
-    return TRUE;
+    return true;
 }
 
 
@@ -138,23 +248,23 @@ static int32_t in_modal_loop(void)
     return window_current_id == WINDOW_VIDEO || window_current_id == WINDOW_MESSAGE_BOX;
 }
 
-static BOOL peek_message(MSG *msg, UINT first, UINT last, UINT remove, void *caller)
+static bool peek_message(play_native_message *msg, uint32_t first, uint32_t last, uint32_t remove, void *caller)
 {
     if (first || last || !play.running) {
-        return PeekMessageA(msg, 0, first, last, remove);
+        return system_peek(msg, first, last, remove);
     }
     if (!in_modal_loop()) {
         if (!play.other_peeks++) {
             play_log("play: frame %d unfiltered PeekMessageA from 0x%08X in window %d: no pump outside the modal loops", play.frame,
                 (uint32_t) (uintptr_t) caller, window_current_id);
         }
-        return PeekMessageA(msg, 0, first, last, remove);
+        return system_peek(msg, first, last, remove);
     }
     if (take_modal_message(msg, remove)) {
-        return TRUE;
+        return true;
     }
-    if (PeekMessageA(msg, 0, 0, 0, remove)) {
-        return TRUE;
+    if (system_peek(msg, 0, 0, remove)) {
+        return true;
     }
     modal_pump();
     return take_modal_message(msg, remove);
@@ -162,8 +272,13 @@ static BOOL peek_message(MSG *msg, UINT first, UINT last, UINT remove, void *cal
 
 static bool play_message_peek(platform_message *msg, uint32_t first, uint32_t last, bool remove)
 {
-    MSG *native = (MSG *) msg->native;
-    if (!peek_message(native, first, last, remove ? PM_REMOVE : PM_NOREMOVE, _ReturnAddress())) {
+#if defined(_MSC_VER)
+    void *caller = _ReturnAddress();
+#else
+    void *caller = __builtin_return_address(0);
+#endif
+    play_native_message *native = (play_native_message *) msg->native;
+    if (!peek_message(native, first, last, remove ? PLAY_PEEK_REMOVE : PLAY_PEEK_KEEP, caller)) {
         return false;
     }
     msg->message = native->message;
@@ -172,12 +287,12 @@ static bool play_message_peek(platform_message *msg, uint32_t first, uint32_t la
 
 static bool play_message_get(platform_message *msg)
 {
-    MSG *native = (MSG *) msg->native;
+    play_native_message *native = (play_native_message *) msg->native;
     bool more;
-    if (play.running && take_modal_message(native, PM_REMOVE)) {
-        more = native->message != WM_QUIT;
+    if (play.running && take_modal_message(native, PLAY_PEEK_REMOVE)) {
+        more = native->message != PLATFORM_MSG_QUIT;
     } else {
-        more = GetMessageA(native, 0, 0, 0) != 0;
+        more = system_get(native);
     }
     msg->message = native->message;
     return more;
@@ -186,7 +301,7 @@ static bool play_message_get(platform_message *msg)
 static void play_message_wait(void)
 {
     if (!play.running) {
-        WaitMessage();
+        system_wait();
         return;
     }
     SDL_Delay(5);
@@ -194,17 +309,17 @@ static void play_message_wait(void)
 
 static int32_t default_box_answer(uint32_t type)
 {
-    switch (type & MB_TYPEMASK) {
-        case MB_ABORTRETRYIGNORE:
-            return IDIGNORE;
-        case MB_YESNO:
-        case MB_YESNOCANCEL:
-            return IDNO;
-        case MB_RETRYCANCEL:
-        case MB_OKCANCEL:
-            return IDCANCEL;
+    switch (type & PLATFORM_BOX_TYPE_MASK) {
+        case PLATFORM_BOX_ABORT_RETRY_IGNORE:
+            return PLATFORM_ANSWER_IGNORE;
+        case PLATFORM_BOX_YES_NO:
+        case PLATFORM_BOX_YES_NO_CANCEL:
+            return PLATFORM_ANSWER_NO;
+        case PLATFORM_BOX_RETRY_CANCEL:
+        case PLATFORM_BOX_OK_CANCEL:
+            return PLATFORM_ANSWER_CANCEL;
         default:
-            return IDOK;
+            return PLATFORM_ANSWER_OK;
     }
 }
 
@@ -216,14 +331,14 @@ static int32_t play_message_box(void *window, const char *text, const char *capt
         int32_t ids[3];
         const char *texts[3];
     } layouts[] = {
-        { 1, { IDOK }, { "OK" } },
-        { 2, { IDOK, IDCANCEL }, { "OK", "Cancel" } },
-        { 3, { IDABORT, IDRETRY, IDIGNORE }, { "Abort", "Retry", "Ignore" } },
-        { 3, { IDYES, IDNO, IDCANCEL }, { "Yes", "No", "Cancel" } },
-        { 2, { IDYES, IDNO }, { "Yes", "No" } },
-        { 2, { IDRETRY, IDCANCEL }, { "Retry", "Cancel" } },
+        { 1, { PLATFORM_ANSWER_OK }, { "OK" } },
+        { 2, { PLATFORM_ANSWER_OK, PLATFORM_ANSWER_CANCEL }, { "OK", "Cancel" } },
+        { 3, { PLATFORM_ANSWER_ABORT, PLATFORM_ANSWER_RETRY, PLATFORM_ANSWER_IGNORE }, { "Abort", "Retry", "Ignore" } },
+        { 3, { PLATFORM_ANSWER_YES, PLATFORM_ANSWER_NO, PLATFORM_ANSWER_CANCEL }, { "Yes", "No", "Cancel" } },
+        { 2, { PLATFORM_ANSWER_YES, PLATFORM_ANSWER_NO }, { "Yes", "No" } },
+        { 2, { PLATFORM_ANSWER_RETRY, PLATFORM_ANSWER_CANCEL }, { "Retry", "Cancel" } },
     };
-    UINT layout = type & MB_TYPEMASK;
+    uint32_t layout = type & PLATFORM_BOX_TYPE_MASK;
     if (layout >= sizeof(layouts) / sizeof(layouts[0])) {
         layout = 0;
     }
@@ -234,11 +349,11 @@ static int32_t play_message_box(void *window, const char *text, const char *capt
         buttons[i].buttonid = layouts[layout].ids[i];
         buttons[i].text = layouts[layout].texts[i];
     }
-    UINT icon = type & MB_ICONMASK;
+    uint32_t icon = type & PLATFORM_BOX_ICON_MASK;
     SDL_MessageBoxData box;
     memset(&box, 0, sizeof(box));
-    box.flags = icon == MB_ICONERROR                        ? SDL_MESSAGEBOX_ERROR
-        : icon == MB_ICONWARNING || icon == MB_ICONQUESTION ? SDL_MESSAGEBOX_WARNING
+    box.flags = icon == PLATFORM_BOX_ICON_ERROR                        ? SDL_MESSAGEBOX_ERROR
+        : icon == PLATFORM_BOX_ICON_WARNING || icon == PLATFORM_BOX_ICON_QUESTION ? SDL_MESSAGEBOX_WARNING
                                                             : SDL_MESSAGEBOX_INFORMATION;
     box.window = (SDL_Window *) platform_screen_window();
     box.title = caption ? caption : "";
@@ -261,21 +376,21 @@ enum play_posted_keys {
 };
 
 static struct {
-    UINT message;
-    WPARAM wparam;
-    LPARAM lparam;
+    uint32_t message;
+    uintptr_t wparam;
+    intptr_t lparam;
 } posted_keys[POSTED_KEYS_MAX];
 static int32_t posted_key_count;
 
-static int32_t is_key_message(UINT message)
+static int32_t is_key_message(uint32_t message)
 {
-    return message == WM_KEYDOWN || message == WM_KEYUP || message == WM_CHAR || message == WM_SYSKEYDOWN || message == WM_SYSKEYUP;
+    return message == PLATFORM_MSG_KEY_DOWN || message == PLATFORM_MSG_KEY_UP || message == PLATFORM_MSG_CHAR || message == PLATFORM_MSG_SYS_KEY_DOWN || message == PLATFORM_MSG_SYS_KEY_UP;
 }
 
 static bool play_message_post(void *window, uint32_t message, uintptr_t wparam, intptr_t lparam)
 {
     if (!play.running || window != platform_main_window || !is_key_message(message)) {
-        return PostMessageA((HWND) window, message, wparam, lparam) != 0;
+        return system_post(window, message, wparam, lparam);
     }
     if (posted_key_count >= POSTED_KEYS_MAX) {
         play_log("play: frame %d posted key 0x%X dropped, the queue is full", play.frame, (uint32_t) wparam);
@@ -290,7 +405,7 @@ static bool play_message_post(void *window, uint32_t message, uintptr_t wparam, 
 
 static uint32_t play_tick_count(void)
 {
-    return timeGetTime();
+    return system_time_ms();
 }
 
 static const platform_bindings play_bindings = {
@@ -314,22 +429,22 @@ void play_bind(const play_host *h)
     media_video = play_video_library;
 }
 
-static void mouse_message(UINT message, int32_t x, int32_t y)
+static void mouse_message(uint32_t message, int32_t x, int32_t y)
 {
     play.cursor_x = x;
     play.cursor_y = y;
     switch (message) {
-        case WM_LBUTTONDOWN:
+        case PLATFORM_MSG_LEFT_DOWN:
             mouse_left_clicked = 1;
             mouse_buttons |= 1;
             break;
-        case WM_LBUTTONUP:
+        case PLATFORM_MSG_LEFT_UP:
             mouse_buttons &= (uint8_t) ~1;
             break;
-        case WM_RBUTTONDOWN:
+        case PLATFORM_MSG_RIGHT_DOWN:
             mouse_buttons |= 2;
             break;
-        case WM_RBUTTONUP:
+        case PLATFORM_MSG_RIGHT_UP:
             mouse_buttons &= (uint8_t) ~2;
             break;
         default:
@@ -339,9 +454,9 @@ static void mouse_message(UINT message, int32_t x, int32_t y)
     mouse_window_y = (int16_t) y;
 }
 
-static void window_message(UINT message, WPARAM wparam, LPARAM lparam)
+static void window_message(uint32_t message, uintptr_t wparam, intptr_t lparam)
 {
-    ((window_proc_fn) window_proc)(platform_main_window, message, wparam, lparam);
+    window_proc(platform_main_window, message, wparam, lparam);
 }
 
 static int32_t virtual_key(SDL_Keycode key)
@@ -353,70 +468,70 @@ static int32_t virtual_key(SDL_Keycode key)
         return key;
     }
     if (key >= SDLK_F1 && key <= SDLK_F12) {
-        return VK_F1 + (key - SDLK_F1);
+        return PLATFORM_KEY_F1 + (key - SDLK_F1);
     }
     if (key >= SDLK_KP_1 && key <= SDLK_KP_9) {
-        return VK_NUMPAD1 + (key - SDLK_KP_1);
+        return PLATFORM_KEY_NUMPAD_1 + (key - SDLK_KP_1);
     }
     switch (key) {
         case SDLK_KP_0:
-            return VK_NUMPAD0;
+            return PLATFORM_KEY_NUMPAD_0;
         case SDLK_RETURN:
         case SDLK_KP_ENTER:
-            return VK_RETURN;
+            return PLATFORM_KEY_RETURN;
         case SDLK_ESCAPE:
-            return VK_ESCAPE;
+            return PLATFORM_KEY_ESCAPE;
         case SDLK_BACKSPACE:
-            return VK_BACK;
+            return PLATFORM_KEY_BACKSPACE;
         case SDLK_TAB:
-            return VK_TAB;
+            return PLATFORM_KEY_TAB;
         case SDLK_SPACE:
-            return VK_SPACE;
+            return PLATFORM_KEY_SPACE;
         case SDLK_LEFT:
-            return VK_LEFT;
+            return PLATFORM_KEY_LEFT;
         case SDLK_RIGHT:
-            return VK_RIGHT;
+            return PLATFORM_KEY_RIGHT;
         case SDLK_UP:
-            return VK_UP;
+            return PLATFORM_KEY_UP;
         case SDLK_DOWN:
-            return VK_DOWN;
+            return PLATFORM_KEY_DOWN;
         case SDLK_PAGEUP:
-            return VK_PRIOR;
+            return PLATFORM_KEY_PAGE_UP;
         case SDLK_PAGEDOWN:
-            return VK_NEXT;
+            return PLATFORM_KEY_PAGE_DOWN;
         case SDLK_HOME:
-            return VK_HOME;
+            return PLATFORM_KEY_HOME;
         case SDLK_END:
-            return VK_END;
+            return PLATFORM_KEY_END;
         case SDLK_INSERT:
-            return VK_INSERT;
+            return PLATFORM_KEY_INSERT;
         case SDLK_DELETE:
-            return VK_DELETE;
+            return PLATFORM_KEY_DELETE;
         case SDLK_LSHIFT:
         case SDLK_RSHIFT:
-            return VK_SHIFT;
+            return PLATFORM_KEY_SHIFT;
         case SDLK_LCTRL:
         case SDLK_RCTRL:
-            return VK_CONTROL;
+            return PLATFORM_KEY_CONTROL;
         case SDLK_LALT:
         case SDLK_RALT:
-            return VK_MENU;
+            return PLATFORM_KEY_ALT;
         case SDLK_MINUS:
         case SDLK_KP_MINUS:
-            return VK_OEM_MINUS;
+            return PLATFORM_KEY_OEM_MINUS;
         case SDLK_EQUALS:
         case SDLK_KP_PLUS:
-            return VK_OEM_PLUS;
+            return PLATFORM_KEY_OEM_PLUS;
         case SDLK_COMMA:
-            return VK_OEM_COMMA;
+            return PLATFORM_KEY_OEM_COMMA;
         case SDLK_PERIOD:
-            return VK_OEM_PERIOD;
+            return PLATFORM_KEY_OEM_PERIOD;
         case SDLK_LEFTBRACKET:
-            return VK_OEM_4;
+            return PLATFORM_KEY_OEM_OPEN_BRACKET;
         case SDLK_RIGHTBRACKET:
-            return VK_OEM_6;
+            return PLATFORM_KEY_OEM_CLOSE_BRACKET;
         case SDLK_PAUSE:
-            return VK_PAUSE;
+            return PLATFORM_KEY_PAUSE;
         default:
             return 0;
     }
@@ -430,18 +545,18 @@ static void key_event(const SDL_KeyboardEvent *e)
     }
     int32_t down = e->type == SDL_KEYDOWN;
     key_state(vk, down);
-    if (vk == VK_MENU || vk == VK_SHIFT || vk == VK_CONTROL) {
-        key_state(vk == VK_MENU ? VK_LMENU : vk == VK_SHIFT ? VK_LSHIFT : VK_LCONTROL, down);
+    if (vk == PLATFORM_KEY_ALT || vk == PLATFORM_KEY_SHIFT || vk == PLATFORM_KEY_CONTROL) {
+        key_state(vk == PLATFORM_KEY_ALT ? PLATFORM_KEY_LEFT_ALT : vk == PLATFORM_KEY_SHIFT ? PLATFORM_KEY_LEFT_SHIFT : PLATFORM_KEY_LEFT_CONTROL, down);
     }
-    int32_t alt = (e->keysym.mod & KMOD_ALT) != 0 && vk != VK_MENU;
-    LPARAM lparam = 1 | (LPARAM) (MapVirtualKeyA((UINT) vk, 0) << 16) | (alt ? 1 << 29 : 0);
+    int32_t alt = (e->keysym.mod & KMOD_ALT) != 0 && vk != PLATFORM_KEY_ALT;
+    intptr_t lparam = 1 | (intptr_t) (system_scan_code(vk) << 16) | (alt ? 1 << 29 : 0);
     if (e->type == SDL_KEYDOWN) {
-        window_message(alt ? WM_SYSKEYDOWN : WM_KEYDOWN, (WPARAM) vk, lparam | (e->repeat ? 1 << 30 : 0));
-        if (!alt && (vk == VK_BACK || vk == VK_TAB || vk == VK_RETURN || vk == VK_ESCAPE)) {
-            window_message(WM_CHAR, (WPARAM) vk, lparam);
+        window_message(alt ? PLATFORM_MSG_SYS_KEY_DOWN : PLATFORM_MSG_KEY_DOWN, (uintptr_t) vk, lparam | (e->repeat ? 1 << 30 : 0));
+        if (!alt && (vk == PLATFORM_KEY_BACKSPACE || vk == PLATFORM_KEY_TAB || vk == PLATFORM_KEY_RETURN || vk == PLATFORM_KEY_ESCAPE)) {
+            window_message(PLATFORM_MSG_CHAR, (uintptr_t) vk, lparam);
         }
     } else {
-        window_message(alt ? WM_SYSKEYUP : WM_KEYUP, (WPARAM) vk, lparam | (LPARAM) 0xC0000000u);
+        window_message(alt ? PLATFORM_MSG_SYS_KEY_UP : PLATFORM_MSG_KEY_UP, (uintptr_t) vk, lparam | (intptr_t) 0xC0000000u);
     }
 }
 
@@ -456,7 +571,7 @@ static void text_event(const char *text)
             continue;
         }
         if (c < 0x100) {
-            window_message(WM_CHAR, (WPARAM) c, 1);
+            window_message(PLATFORM_MSG_CHAR, (uintptr_t) c, 1);
         }
     }
 }
@@ -478,18 +593,18 @@ static void handle_event(const SDL_Event *e)
             }
             break;
         case SDL_MOUSEMOTION:
-            mouse_message(WM_MOUSEMOVE, e->motion.x, e->motion.y);
+            mouse_message(PLATFORM_MSG_MOUSE_MOVE, e->motion.x, e->motion.y);
             break;
         case SDL_MOUSEBUTTONDOWN:
         case SDL_MOUSEBUTTONUP: {
             int32_t down = e->type == SDL_MOUSEBUTTONDOWN;
             if (e->button.button == SDL_BUTTON_LEFT || e->button.button == SDL_BUTTON_RIGHT) {
-                key_state(e->button.button == SDL_BUTTON_LEFT ? VK_LBUTTON : VK_RBUTTON, down);
+                key_state(e->button.button == SDL_BUTTON_LEFT ? PLATFORM_KEY_LEFT_BUTTON : PLATFORM_KEY_RIGHT_BUTTON, down);
             }
             if (e->button.button == SDL_BUTTON_LEFT) {
-                mouse_message(down ? WM_LBUTTONDOWN : WM_LBUTTONUP, e->button.x, e->button.y);
+                mouse_message(down ? PLATFORM_MSG_LEFT_DOWN : PLATFORM_MSG_LEFT_UP, e->button.x, e->button.y);
             } else if (e->button.button == SDL_BUTTON_RIGHT) {
-                mouse_message(down ? WM_RBUTTONDOWN : WM_RBUTTONUP, e->button.x, e->button.y);
+                mouse_message(down ? PLATFORM_MSG_RIGHT_DOWN : PLATFORM_MSG_RIGHT_UP, e->button.x, e->button.y);
             }
             break;
         }
@@ -516,13 +631,6 @@ void play_load_save(const char *path)
     play_log("play: loaded %s", path);
 }
 
-static HWND window_handle(SDL_Window *window)
-{
-    SDL_SysWMinfo info;
-    SDL_VERSION(&info.version);
-    return window && SDL_GetWindowWMInfo(window, &info) ? info.info.win.window : 0;
-}
-
 static size_t frame_buffer_bytes;
 static int32_t fullscreen_setting;
 static int32_t fullscreen;
@@ -547,7 +655,7 @@ static void display_init(void)
             SDL_SetWindowSize(window, g_screen_width, g_screen_height);
         }
     }
-    SetRect((RECT *) &window_screen_rect, 0, 0, g_screen_width, g_screen_height);
+    screen_rect_set(g_screen_width, g_screen_height);
     desktop_width = g_screen_width;
     desktop_height = g_screen_height;
     screen_fade_set_frame(&fade_object, screen_rgb565_ptr, g_screen_width, g_screen_height);
@@ -614,7 +722,7 @@ static void video_pump(void)
     if (play.quit) {
         if (!play.has_message) {
             play_log("play: frame %d quit asked in a video: the video ends", play.frame);
-            modal_message(WM_KEYDOWN, VK_ESCAPE);
+            modal_message(PLATFORM_MSG_KEY_DOWN, PLATFORM_KEY_ESCAPE);
         }
         return;
     }
@@ -628,15 +736,15 @@ static void video_pump(void)
         if (e.type == SDL_QUIT) {
             play.quit = 1;
             play_log("play: frame %d window closed in a video: the video ends", play.frame);
-            modal_message(WM_KEYDOWN, VK_ESCAPE);
+            modal_message(PLATFORM_MSG_KEY_DOWN, PLATFORM_KEY_ESCAPE);
         } else if (e.type == SDL_KEYDOWN) {
             int32_t vk = virtual_key(e.key.keysym.sym);
             play_log("play: frame %d key %d in a video: the video ends", play.frame, vk);
-            modal_message(WM_KEYDOWN, (WPARAM) vk);
+            modal_message(PLATFORM_MSG_KEY_DOWN, (uintptr_t) vk);
         } else if (e.type == SDL_MOUSEBUTTONDOWN && e.button.button == SDL_BUTTON_LEFT) {
             play_log("play: frame %d click in a video: the video ends", play.frame);
-            mouse_message(WM_MOUSEMOVE, e.button.x, e.button.y);
-            modal_message(WM_LBUTTONDOWN, 0);
+            mouse_message(PLATFORM_MSG_MOUSE_MOVE, e.button.x, e.button.y);
+            modal_message(PLATFORM_MSG_LEFT_DOWN, 0);
         } else if (e.type == SDL_KEYUP) {
             int32_t vk = virtual_key(e.key.keysym.sym);
             if (vk) {
@@ -658,8 +766,8 @@ static void modal_pump(void)
     play.modal_frames++;
     frame_begin();
     if (play.quit && !play.has_message) {
-        play_log("play: frame %d quit in the modal loop of window %d: WM_QUIT", play.frame, window_current_id);
-        modal_message(WM_QUIT, 0);
+        play_log("play: frame %d quit in the modal loop of window %d: PLATFORM_MSG_QUIT", play.frame, window_current_id);
+        modal_message(PLATFORM_MSG_QUIT, 0);
     }
 }
 
@@ -703,29 +811,17 @@ static struct {
     int32_t fullscreen;
 } display_start;
 
-static void display_ini_path(char *path, size_t size)
-{
-    DWORD length = GetModuleFileNameA(0, path, (DWORD) size);
-    char *slash = length > 0 && length < size ? strrchr(path, '\\') : 0;
-    char *dot = slash ? strrchr(slash, '.') : 0;
-    if (!dot || (size_t) (dot - path) + sizeof(".ini") > size) {
-        path[0] = 0;
-        return;
-    }
-    memcpy(dot, ".ini", sizeof(".ini"));
-}
-
 static play_display_request display_file_read(void)
 {
     play_display_request remembered = { 0, 0, -1 };
-    char path[MAX_PATH];
-    display_ini_path(path, sizeof(path));
+    char path[1024];
+    app_ini_path(path, sizeof(path));
     if (!path[0]) {
         return remembered;
     }
-    remembered.width = (int32_t) GetPrivateProfileIntA(display_ini_section, "width", 0, path);
-    remembered.height = (int32_t) GetPrivateProfileIntA(display_ini_section, "height", 0, path);
-    remembered.fullscreen = (int32_t) GetPrivateProfileIntA(display_ini_section, "fullscreen", -1, path);
+    remembered.width = app_ini_read_int(path, display_ini_section, "width", 0);
+    remembered.height = app_ini_read_int(path, display_ini_section, "height", 0);
+    remembered.fullscreen = app_ini_read_int(path, display_ini_section, "fullscreen", -1);
     if (remembered.fullscreen > 0) {
         remembered.fullscreen = 1;
     }
@@ -736,13 +832,13 @@ static int32_t display_ini_write(const char *path, const char *key, int32_t valu
 {
     char text[DISPLAY_FILE_VALUE_SIZE];
     snprintf(text, sizeof(text), "%d", value);
-    return WritePrivateProfileStringA(display_ini_section, key, text, path) != 0;
+    return app_ini_write(path, display_ini_section, key, text);
 }
 
 static void display_file_write(void)
 {
-    char path[MAX_PATH];
-    display_ini_path(path, sizeof(path));
+    char path[1024];
+    app_ini_path(path, sizeof(path));
     int32_t written = path[0] && display_ini_write(path, "width", g_screen_width) && display_ini_write(path, "height", g_screen_height) &&
         display_ini_write(path, "fullscreen", fullscreen);
     play_log(written ? "play: display %dx%d%s remembered in %s" : "play: cannot remember the display %dx%d%s in %s", g_screen_width,
@@ -839,10 +935,10 @@ int32_t play_run(const char *save)
         fprintf(stderr, "cannot open the window: %s\n", SDL_GetError());
         return 2;
     }
-    platform_main_window = window_handle(platform_screen_window());
+    platform_main_window = native_window(platform_screen_window());
     install_icon_and_cursors();
     app_active = 1;
-    SetRect((RECT *) &window_screen_rect, 0, 0, g_screen_width, g_screen_height);
+    screen_rect_set(g_screen_width, g_screen_height);
     desktop_width = g_screen_width;
     desktop_height = g_screen_height;
     frame_buffer_bytes = (size_t) g_screen_width * (size_t) g_screen_height * 2;

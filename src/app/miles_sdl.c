@@ -11,13 +11,14 @@
 #include "app/media_lib.h"
 #include "app/play.h"
 
-#include <windows.h>
+#include <ctype.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include "SDL.h"
 #include "SDL_mixer.h"
+#include "platform/platform_file.h"
 
 #define MAX_SAMPLES 48
 #define MAX_STREAMS 16
@@ -43,7 +44,7 @@ typedef struct {
 
 typedef struct {
     int32_t used;
-    char path[MAX_PATH];
+    char path[PLATFORM_PATH_MAX];
     int32_t is_music;
     Mix_Music *music;
     uint8_t *file;
@@ -146,7 +147,7 @@ static SDL_RWops *audio_source(const uint8_t *data, uint32_t size)
 
 static uint8_t *read_whole_file(const char *path, uint32_t *size)
 {
-    FILE *f = fopen(path, "rb");
+    FILE *f = platform_fopen(path, "rb");
     if (!f) {
         return 0;
     }
@@ -163,12 +164,12 @@ static uint8_t *read_whole_file(const char *path, uint32_t *size)
     return data;
 }
 
-static int32_t __stdcall ail_startup(void)
+static int32_t MEDIA_API ail_startup(void)
 {
     return 1;
 }
 
-static void __stdcall ail_shutdown(void)
+static void MEDIA_API ail_shutdown(void)
 {
     if (miles.open) {
         Mix_HaltChannel(-1);
@@ -176,14 +177,14 @@ static void __stdcall ail_shutdown(void)
     }
 }
 
-static int32_t __stdcall ail_set_preference(uint32_t number, int32_t value)
+static int32_t MEDIA_API ail_set_preference(uint32_t number, int32_t value)
 {
     (void) number;
     (void) value;
     return 0;
 }
 
-static int32_t __stdcall ail_wave_out_open(void **driver, void **wave_out, int32_t device, void *format)
+static int32_t MEDIA_API ail_wave_out_open(void **driver, void **wave_out, int32_t device, void *format)
 {
     (void) device;
     (void) format;
@@ -199,10 +200,10 @@ static int32_t __stdcall ail_wave_out_open(void **driver, void **wave_out, int32
     return 0;
 }
 
-static void *__stdcall ail_file_read(const char *filename, void *dest)
+static void *MEDIA_API ail_file_read(const char *filename, void *dest)
 {
     (void) dest;
-    FILE *f = filename ? fopen(filename, "rb") : 0;
+    FILE *f = filename ? platform_fopen(filename, "rb") : 0;
     if (!f) {
         return 0;
     }
@@ -237,7 +238,7 @@ static file_image *image_of(const void *data)
     return 0;
 }
 
-static void __stdcall ail_mem_free_lock(void *data)
+static void MEDIA_API ail_mem_free_lock(void *data)
 {
     file_image *image = image_of(data);
     if (!image) {
@@ -263,7 +264,7 @@ static void __stdcall ail_mem_free_lock(void *data)
     free(image);
 }
 
-static int32_t __stdcall ail_allocate_sample_handle(void *driver)
+static int32_t MEDIA_API ail_allocate_sample_handle(void *driver)
 {
     (void) driver;
     for (int32_t i = 0; i < MAX_SAMPLES; i++) {
@@ -280,7 +281,7 @@ static int32_t __stdcall ail_allocate_sample_handle(void *driver)
     return 0;
 }
 
-static void __stdcall ail_release_sample_handle(int32_t handle)
+static void MEDIA_API ail_release_sample_handle(int32_t handle)
 {
     sample *s = sample_of(handle);
     if (s) {
@@ -291,7 +292,7 @@ static void __stdcall ail_release_sample_handle(int32_t handle)
     }
 }
 
-static void __stdcall ail_init_sample(int32_t handle)
+static void MEDIA_API ail_init_sample(int32_t handle)
 {
     sample *s = sample_of(handle);
     if (s) {
@@ -306,7 +307,7 @@ static void __stdcall ail_init_sample(int32_t handle)
     }
 }
 
-static int32_t __stdcall ail_set_sample_file(int32_t handle, void *data, int32_t block)
+static int32_t MEDIA_API ail_set_sample_file(int32_t handle, void *data, int32_t block)
 {
     (void) block;
     sample *s = sample_of(handle);
@@ -325,7 +326,7 @@ static int32_t __stdcall ail_set_sample_file(int32_t handle, void *data, int32_t
     return 1;
 }
 
-static void __stdcall ail_set_sample_volume(int32_t handle, int32_t volume)
+static void MEDIA_API ail_set_sample_volume(int32_t handle, int32_t volume)
 {
     sample *s = sample_of(handle);
     if (s) {
@@ -349,7 +350,7 @@ static void apply_pan(int32_t channel, int32_t pan)
     Mix_SetPanning(channel, (Uint8) left, (Uint8) right);
 }
 
-static void __stdcall ail_set_sample_pan(int32_t handle, int32_t pan)
+static void MEDIA_API ail_set_sample_pan(int32_t handle, int32_t pan)
 {
     sample *s = sample_of(handle);
     if (s) {
@@ -360,7 +361,7 @@ static void __stdcall ail_set_sample_pan(int32_t handle, int32_t pan)
     }
 }
 
-static void __stdcall ail_set_sample_loop_count(int32_t handle, int32_t loops)
+static void MEDIA_API ail_set_sample_loop_count(int32_t handle, int32_t loops)
 {
     sample *s = sample_of(handle);
     if (s) {
@@ -368,13 +369,13 @@ static void __stdcall ail_set_sample_loop_count(int32_t handle, int32_t loops)
     }
 }
 
-static int32_t __stdcall ail_sample_loop_count(int32_t handle)
+static int32_t MEDIA_API ail_sample_loop_count(int32_t handle)
 {
     sample *s = sample_of(handle);
     return s ? s->loops : 0;
 }
 
-static void __stdcall ail_set_sample_reverb(int32_t handle, float room, float time, float level)
+static void MEDIA_API ail_set_sample_reverb(int32_t handle, float room, float time, float level)
 {
     (void) handle;
     (void) room;
@@ -382,7 +383,7 @@ static void __stdcall ail_set_sample_reverb(int32_t handle, float room, float ti
     (void) level;
 }
 
-static void __stdcall ail_start_sample(int32_t handle)
+static void MEDIA_API ail_start_sample(int32_t handle)
 {
     sample *s = sample_of(handle);
     if (!s || !s->file || !s->file->chunk || !miles.open) {
@@ -395,7 +396,7 @@ static void __stdcall ail_start_sample(int32_t handle)
     s->started = 1;
 }
 
-static void __stdcall ail_end_sample(int32_t handle)
+static void MEDIA_API ail_end_sample(int32_t handle)
 {
     sample *s = sample_of(handle);
     if (s && miles.open) {
@@ -403,7 +404,7 @@ static void __stdcall ail_end_sample(int32_t handle)
     }
 }
 
-static int32_t __stdcall ail_sample_status(int32_t handle)
+static int32_t MEDIA_API ail_sample_status(int32_t handle)
 {
     sample *s = sample_of(handle);
     if (!s || !miles.open) {
@@ -414,9 +415,12 @@ static int32_t __stdcall ail_sample_status(int32_t handle)
 
 static int32_t is_music_path(const char *path)
 {
-    char lower[MAX_PATH];
-    lstrcpynA(lower, path, MAX_PATH);
-    _strlwr(lower);
+    char lower[PLATFORM_PATH_MAX];
+    size_t i = 0;
+    for (; path[i] && i + 1 < sizeof(lower); i++) {
+        lower[i] = (char) tolower((unsigned char) path[i]);
+    }
+    lower[i] = 0;
     return strstr(lower, "music") != 0;
 }
 
@@ -435,11 +439,11 @@ static void stream_stop(stream *s)
     }
 }
 
-static int32_t __stdcall ail_open_stream(void *driver, const char *filename, int32_t stream_memory)
+static int32_t MEDIA_API ail_open_stream(void *driver, const char *filename, int32_t stream_memory)
 {
     (void) driver;
     (void) stream_memory;
-    if (!filename || GetFileAttributesA(filename) == INVALID_FILE_ATTRIBUTES) {
+    if (!filename || !platform_file_exists(filename)) {
         return 0;
     }
     for (int32_t i = 0; i < MAX_STREAMS; i++) {
@@ -447,7 +451,7 @@ static int32_t __stdcall ail_open_stream(void *driver, const char *filename, int
         if (!s->used) {
             memset(s, 0, sizeof(*s));
             s->used = 1;
-            lstrcpynA(s->path, filename, MAX_PATH);
+            snprintf(s->path, sizeof(s->path), "%s", filename);
             s->is_music = is_music_path(filename);
             s->volume = 127;
             s->loops = 1;
@@ -458,7 +462,7 @@ static int32_t __stdcall ail_open_stream(void *driver, const char *filename, int
     return 0;
 }
 
-static void __stdcall ail_close_stream(int32_t handle)
+static void MEDIA_API ail_close_stream(int32_t handle)
 {
     stream *s = stream_of(handle);
     if (!s) {
@@ -475,7 +479,7 @@ static void __stdcall ail_close_stream(int32_t handle)
     memset(s, 0, sizeof(*s));
 }
 
-static void __stdcall ail_set_stream_volume(int32_t handle, int32_t volume)
+static void MEDIA_API ail_set_stream_volume(int32_t handle, int32_t volume)
 {
     stream *s = stream_of(handle);
     if (!s) {
@@ -494,13 +498,13 @@ static void __stdcall ail_set_stream_volume(int32_t handle, int32_t volume)
     }
 }
 
-static int32_t __stdcall ail_stream_volume(int32_t handle)
+static int32_t MEDIA_API ail_stream_volume(int32_t handle)
 {
     stream *s = stream_of(handle);
     return s ? s->volume : 0;
 }
 
-static void __stdcall ail_set_stream_loop_count(int32_t handle, int32_t loops)
+static void MEDIA_API ail_set_stream_loop_count(int32_t handle, int32_t loops)
 {
     stream *s = stream_of(handle);
     if (s) {
@@ -508,7 +512,7 @@ static void __stdcall ail_set_stream_loop_count(int32_t handle, int32_t loops)
     }
 }
 
-static void __stdcall ail_start_stream(int32_t handle)
+static void MEDIA_API ail_start_stream(int32_t handle)
 {
     stream *s = stream_of(handle);
     if (!s || !miles.open) {
@@ -546,7 +550,7 @@ static void __stdcall ail_start_stream(int32_t handle)
     play_log("miles: stream %s plays (%s, volume %d)", s->path, s->is_music ? "music" : "channel", s->volume);
 }
 
-static int32_t __stdcall ail_stream_status(int32_t handle)
+static int32_t MEDIA_API ail_stream_status(int32_t handle)
 {
     stream *s = stream_of(handle);
     if (!s || !miles.open || !s->started) {
@@ -558,7 +562,7 @@ static int32_t __stdcall ail_stream_status(int32_t handle)
     return Mix_Playing(stream_channel(s)) ? SMP_PLAYING : SMP_DONE;
 }
 
-static int32_t __stdcall ail_enumerate_3d_providers(int32_t *next, int32_t *dest, char **name)
+static int32_t MEDIA_API ail_enumerate_3d_providers(int32_t *next, int32_t *dest, char **name)
 {
     (void) next;
     (void) dest;
@@ -566,69 +570,69 @@ static int32_t __stdcall ail_enumerate_3d_providers(int32_t *next, int32_t *dest
     return 0;
 }
 
-static int32_t __stdcall ail_open_3d_provider(int32_t provider)
+static int32_t MEDIA_API ail_open_3d_provider(int32_t provider)
 {
     (void) provider;
     return 1;
 }
 
-static void __stdcall ail_close_3d_provider(int32_t provider)
+static void MEDIA_API ail_close_3d_provider(int32_t provider)
 {
 }
 
-static void __stdcall ail_3d_provider_attribute(int32_t provider, const char *name, void *value)
+static void MEDIA_API ail_3d_provider_attribute(int32_t provider, const char *name, void *value)
 {
 }
 
-static int32_t __stdcall ail_set_3d_provider_preference(int32_t provider, const char *name, const void *value)
-{
-    return 0;
-}
-
-static int32_t __stdcall ail_allocate_3d_sample_handle(int32_t provider)
+static int32_t MEDIA_API ail_set_3d_provider_preference(int32_t provider, const char *name, const void *value)
 {
     return 0;
 }
 
-static void __stdcall ail_release_3d_sample_handle(int32_t sample)
-{
-}
-
-static int32_t __stdcall ail_set_3d_sample_file(int32_t sample, void *data)
+static int32_t MEDIA_API ail_allocate_3d_sample_handle(int32_t provider)
 {
     return 0;
 }
 
-static void __stdcall ail_set_3d_sample_volume(int32_t sample, int32_t volume)
+static void MEDIA_API ail_release_3d_sample_handle(int32_t sample)
 {
 }
 
-static void __stdcall ail_set_3d_sample_loop_count(int32_t sample, int32_t loops)
-{
-}
-
-static void __stdcall ail_start_3d_sample(int32_t sample)
-{
-}
-
-static void __stdcall ail_end_3d_sample(int32_t sample)
-{
-}
-
-static int32_t __stdcall ail_3d_sample_status(int32_t sample)
+static int32_t MEDIA_API ail_set_3d_sample_file(int32_t sample, void *data)
 {
     return 0;
 }
 
-static void __stdcall ail_set_3d_position(int32_t sample, int32_t x, int32_t y, int32_t z)
+static void MEDIA_API ail_set_3d_sample_volume(int32_t sample, int32_t volume)
 {
 }
 
-static void __stdcall ail_set_3d_orientation(int32_t sample, int32_t front_x, int32_t front_y, int32_t front_z, int32_t up_x, int32_t up_y, int32_t up_z)
+static void MEDIA_API ail_set_3d_sample_loop_count(int32_t sample, int32_t loops)
 {
 }
 
-static void __stdcall ail_3d_update_position(int32_t sample, int32_t elapsed)
+static void MEDIA_API ail_start_3d_sample(int32_t sample)
+{
+}
+
+static void MEDIA_API ail_end_3d_sample(int32_t sample)
+{
+}
+
+static int32_t MEDIA_API ail_3d_sample_status(int32_t sample)
+{
+    return 0;
+}
+
+static void MEDIA_API ail_set_3d_position(int32_t sample, int32_t x, int32_t y, int32_t z)
+{
+}
+
+static void MEDIA_API ail_set_3d_orientation(int32_t sample, int32_t front_x, int32_t front_y, int32_t front_z, int32_t up_x, int32_t up_y, int32_t up_z)
+{
+}
+
+static void MEDIA_API ail_3d_update_position(int32_t sample, int32_t elapsed)
 {
 }
 

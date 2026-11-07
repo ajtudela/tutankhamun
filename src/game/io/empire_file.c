@@ -17,9 +17,9 @@
 #include "io/file_write.h"
 #include "io/game_file_internal.h"
 #include "io/io_data.h"
+#include "platform/platform_file.h"
 #include "scenario/scenario_climate.h"
 
-#include <io.h>
 #include <math.h>
 #include <stdint.h>
 #include <stdio.h>
@@ -229,9 +229,9 @@ static void pad_empire_file(const char *path, int32_t size)
 void empire_file_load(int32_t cleopatra)
 {
     const char *path = cleopatra ? str_pharaoh2_emp : str_pharaoh_emp;
-    FILE *file = fopen(path, file_mode_read_update_binary);
+    FILE *file = platform_fopen(path, file_mode_read_update_binary);
     if (file) {
-        int32_t size = _filelength(_fileno(file));
+        int32_t size = platform_stream_length(file);
         fclose(file);
         if (empire_file_needs_padding(size)) {
             pad_empire_file(path, size);

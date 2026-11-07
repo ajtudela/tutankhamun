@@ -9,11 +9,10 @@
 
 #include "core/text.h"
 #include "io/io_data.h"
+#include "platform/platform_file.h"
 #include "platform/status_log.h"
 #include "window/window_data.h"
 
-#include <fcntl.h>
-#include <io.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <string.h>
@@ -62,7 +61,7 @@ void file_set_extension(char *path, const char *extension)
 
 static int32_t open_for_reading(const char *path)
 {
-    return _open(path, _O_RDONLY | _O_BINARY, 0);
+    return platform_file_open(path, PLATFORM_OPEN_READ);
 }
 
 static int32_t is_readable(const char *path)
@@ -71,7 +70,7 @@ static int32_t is_readable(const char *path)
     if (fd < 0) {
         return 0;
     }
-    _close(fd);
+    platform_file_close(fd);
     return 1;
 }
 
@@ -82,8 +81,8 @@ int32_t file_exists(const char *path)
 
 static int32_t size_and_close(int32_t fd)
 {
-    int32_t size = _filelength(fd);
-    _close(fd);
+    int32_t size = platform_file_length(fd);
+    platform_file_close(fd);
     return size;
 }
 
@@ -107,10 +106,10 @@ int32_t file_get_size_from_offset(const char *path, int32_t offset)
 
 static int32_t read_from_descriptor(int32_t fd, void *buffer, int32_t size, int32_t offset, int32_t result)
 {
-    if (_lseek(fd, offset, SEEK_SET) != -1) {
-        result = _read(fd, buffer, (uint32_t) size);
+    if (platform_file_seek(fd, offset, SEEK_SET) != -1) {
+        result = platform_file_read(fd, buffer, (uint32_t) size);
     }
-    _close(fd);
+    platform_file_close(fd);
     return result;
 }
 
@@ -153,11 +152,11 @@ int32_t io_read_file_part(const char *path, void *buffer, int32_t size, int32_t 
 
 int32_t io_read_file_into_buffer(const char *path, void *buffer, int32_t offset)
 {
-    FILE *file = fopen(path, file_mode_read_binary);
+    FILE *file = platform_fopen(path, file_mode_read_binary);
     if (!file) {
         return 0;
     }
-    int32_t length = _filelength(_fileno(file));
+    int32_t length = platform_stream_length(file);
     fseek(file, offset, SEEK_SET);
     fread(buffer, 1, (uint32_t) (length - offset), file);
     fclose(file);
@@ -166,7 +165,7 @@ int32_t io_read_file_into_buffer(const char *path, void *buffer, int32_t offset)
 
 bool highscore_read_file(void *table, const char *path)
 {
-    FILE *file = fopen(path, file_mode_read_binary);
+    FILE *file = platform_fopen(path, file_mode_read_binary);
     if (!file) {
         return false;
     }

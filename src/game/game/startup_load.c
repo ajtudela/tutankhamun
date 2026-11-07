@@ -114,7 +114,7 @@ int32_t settings_read_ini(void)
         return 0;
     }
     memset(text, 0, INI_BUFFER_SIZE);
-    FILE *file = fopen("Pharaoh.ini", file_mode_read_binary);
+    FILE *file = platform_fopen("Pharaoh.ini", file_mode_read_binary);
     if (!file) {
         log_info_text(str_err_sierra_ini, 0);
         free(text);

@@ -81,9 +81,6 @@ enum window_proc_keys {
     NUMERIC_INPUT_CHEAT_DIGIT = 3,
 };
 
-enum window_proc_win32 {
-};
-
 static int32_t empire_nudge_step(void)
 {
     return (key_ctrl != 0) ? EMPIRE_NUDGE_CTRL_STEP : EMPIRE_NUDGE_STEP;
@@ -760,7 +757,7 @@ static void mouse_set_position(intptr_t lparam)
     mouse_window_y = (int16_t) ((uint32_t) lparam >> 16);
 }
 
-intptr_t __stdcall window_proc(void *hwnd, uint32_t message, uintptr_t wparam, intptr_t lparam)
+intptr_t window_proc(void *hwnd, uint32_t message, uintptr_t wparam, intptr_t lparam)
 {
     const video_player *player = video_player_ptr;
     if (player != 0 && player->done == 0) {

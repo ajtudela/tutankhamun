@@ -3,7 +3,6 @@
 
 #include "platform/platform_win.h"
 
-#include <direct.h>
 #include <stdint.h>
 #include "graphics/graphics_data.h"
 #include "platform/platform_data.h"

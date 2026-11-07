@@ -62,6 +62,16 @@ int32_t sound_lib_name_list_init(sound_name_list *list, int32_t n)
     return 1;
 }
 
+static char *text_duplicate(const char *text)
+{
+    size_t size = strlen(text) + 1;
+    char *copy = malloc(size);
+    if (copy) {
+        memcpy(copy, text, size);
+    }
+    return copy;
+}
+
 int32_t sound_lib_name_list_add(sound_name_list *list, const char *path, int32_t owned)
 {
     int32_t index = list->count;
@@ -77,7 +87,7 @@ int32_t sound_lib_name_list_add(sound_name_list *list, const char *path, int32_t
         }
     }
     if (owned) {
-        list->entries[index].name = _strdup(path);
+        list->entries[index].name = text_duplicate(path);
     } else {
         list->entries[index].name = path;
     }

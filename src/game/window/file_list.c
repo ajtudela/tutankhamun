@@ -186,7 +186,7 @@ bool player_data_read_file(player_data *self, const char *file)
     static player_data file_record;
     campaign_construct(&file_record.campaign);
     memset(&self->monuments, 0, sizeof(self->monuments));
-    FILE *f = fopen(file, file_mode_read_binary);
+    FILE *f = platform_fopen(file, file_mode_read_binary);
     if (!f) {
         return false;
     }

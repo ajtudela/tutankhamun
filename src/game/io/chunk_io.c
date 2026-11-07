@@ -8,8 +8,8 @@
 
 #include "graphics/graphics_data.h"
 #include "io/zip.h"
+#include "platform/platform_file.h"
 
-#include <io.h>
 #include <stdint.h>
 
 uint8_t *chunk_buffer;
@@ -28,13 +28,13 @@ int32_t io_write_compressed_chunk(int32_t fd, const void *data, int32_t size)
     }
     chunk_size = size;
     if (zip_compress(&chunk_crc, &chunk_header, data, spare_screen, size)) {
-        _write(fd, &chunk_header, sizeof(chunk_header));
-        _write(fd, chunk_buffer, chunk_header);
+        platform_file_write(fd, &chunk_header, sizeof(chunk_header));
+        platform_file_write(fd, chunk_buffer, chunk_header);
         return 1;
     }
     chunk_header = CHUNK_STORED;
-    _write(fd, &chunk_header, sizeof(chunk_header));
-    _write(fd, data, size);
+    platform_file_write(fd, &chunk_header, sizeof(chunk_header));
+    platform_file_write(fd, data, size);
     return 1;
 }
 
@@ -45,11 +45,11 @@ int32_t io_read_compressed_chunk(int32_t fd, void *data, int32_t size)
         return 0;
     }
     chunk_size = size;
-    if (!_read(fd, &chunk_header, sizeof(chunk_header))) {
+    if (!platform_file_read(fd, &chunk_header, sizeof(chunk_header))) {
         return 0;
     }
     if (chunk_header == CHUNK_STORED) {
-        if (!_read(fd, data, size)) {
+        if (!platform_file_read(fd, data, size)) {
             return 0;
         }
     } else if (chunk_header == 0) {
@@ -58,7 +58,7 @@ int32_t io_read_compressed_chunk(int32_t fd, void *data, int32_t size)
             p[i] = 0;
         }
     } else {
-        if (!_read(fd, chunk_buffer, chunk_header)) {
+        if (!platform_file_read(fd, chunk_buffer, chunk_header)) {
             return 0;
         }
         if (!zip_decompress(&chunk_crc, chunk_buffer, chunk_header, data, size)) {

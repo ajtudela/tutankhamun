@@ -1,7 +1,16 @@
 #!/usr/bin/env sh
-# The Linux workspace: not available yet. tutankhamun is a 32-bit Windows program today (MSVC, Win32, the Windows
-# API in its platform and start-up code); a Linux build needs a 64-bit build and a POSIX platform layer. The script
-# stops instead of making a build that would not run.
-echo "update-workspace-linux.sh: the Linux build is not available yet." >&2
-echo "tutankhamun builds only as a 32-bit Windows program (MSVC, Win32) today. On Windows use update-workspace.bat or build.bat." >&2
-exit 1
+# Configures the Linux workspace (64-bit, static SDL2 + SDL2_mixer + Bink, Ninja) through CMakePresets.json:
+# out/build/linux-dev or out/build/linux-release, with compile_commands.json for the editor.
+# Usage: update-workspace-linux.sh [Debug|Release]  (default: Debug). The AppImage: packaging/linux/build_appimage.sh.
+set -e
+case "${1:-Debug}" in
+    Debug | debug) preset=linux-dev ;;
+    Release | release) preset=linux-release ;;
+    *)
+        echo "usage: update-workspace-linux.sh [Debug|Release]" >&2
+        exit 2
+        ;;
+esac
+cd "$(dirname "$0")"
+cmake --preset "$preset"
+echo "update-workspace-linux.sh: configured out/build/$preset; build it with: cmake --build --preset $preset"

@@ -4,10 +4,10 @@
 #ifndef WINDOW_ADVISORS_H
 #define WINDOW_ADVISORS_H
 
+#include "core/config.h"
+
 #include <stdbool.h>
 #include <stdint.h>
-
-struct config_name;
 
 enum advisor {
     ADVISOR_NONE = 0,

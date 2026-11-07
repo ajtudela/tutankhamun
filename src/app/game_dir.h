@@ -10,7 +10,7 @@
 #include <stdint.h>
 
 #define GAME_DIR_MAX_GOG 32
-#define GAME_DIR_PATH_SIZE 260
+#define GAME_DIR_PATH_SIZE 1024
 
 typedef struct {
     const char *ini;

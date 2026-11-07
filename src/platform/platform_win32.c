@@ -6,7 +6,6 @@
 #include "platform/platform_win32.h"
 
 #include "platform/platform_dialog.h"
-#include "platform/platform_file.h"
 #include "platform/platform_input.h"
 #include "platform/platform_message.h"
 #include "platform/platform_shell.h"
@@ -78,6 +77,17 @@ static_assert(PLATFORM_KEY_F9 == VK_F9, "platform key codes are the Windows virt
 static_assert(PLATFORM_KEY_F10 == VK_F10, "platform key codes are the Windows virtual keys");
 static_assert(PLATFORM_KEY_F11 == VK_F11, "platform key codes are the Windows virtual keys");
 static_assert(PLATFORM_KEY_F12 == VK_F12, "platform key codes are the Windows virtual keys");
+static_assert(PLATFORM_MSG_QUIT == WM_QUIT && PLATFORM_MSG_SYS_KEY_UP == WM_SYSKEYUP, "platform message ids are the Windows ones");
+static_assert(PLATFORM_KEY_LEFT_BUTTON == VK_LBUTTON && PLATFORM_KEY_RIGHT_BUTTON == VK_RBUTTON && PLATFORM_KEY_TAB == VK_TAB &&
+                  PLATFORM_KEY_PAUSE == VK_PAUSE && PLATFORM_KEY_SPACE == VK_SPACE && PLATFORM_KEY_NUMPAD_0 == VK_NUMPAD0 &&
+                  PLATFORM_KEY_LEFT_SHIFT == VK_LSHIFT && PLATFORM_KEY_LEFT_CONTROL == VK_LCONTROL && PLATFORM_KEY_LEFT_ALT == VK_LMENU &&
+                  PLATFORM_KEY_OEM_PLUS == VK_OEM_PLUS && PLATFORM_KEY_OEM_COMMA == VK_OEM_COMMA && PLATFORM_KEY_OEM_MINUS == VK_OEM_MINUS &&
+                  PLATFORM_KEY_OEM_PERIOD == VK_OEM_PERIOD && PLATFORM_KEY_OEM_OPEN_BRACKET == VK_OEM_4 && PLATFORM_KEY_OEM_CLOSE_BRACKET == VK_OEM_6,
+              "platform key codes are the Windows virtual keys");
+static_assert(PLATFORM_BOX_TYPE_MASK == MB_TYPEMASK && PLATFORM_BOX_ICON_MASK == MB_ICONMASK && PLATFORM_BOX_ICON_ERROR == MB_ICONERROR &&
+                  PLATFORM_BOX_ICON_QUESTION == MB_ICONQUESTION && PLATFORM_BOX_ICON_WARNING == MB_ICONWARNING &&
+                  PLATFORM_BOX_ICON_INFORMATION == MB_ICONINFORMATION,
+              "platform message box types are MessageBox's");
 
 static uint32_t time_ms_windows(void)
 {
@@ -354,47 +364,6 @@ void platform_shell_open(void *window, const char *operation, const char *file)
 void platform_debug_output(const char *text)
 {
     OutputDebugStringA(text);
-}
-
-bool platform_dir_create(const char *path)
-{
-    return CreateDirectoryA(path, 0) != 0;
-}
-
-bool platform_dir_remove(const char *path)
-{
-    return RemoveDirectoryA(path) != 0;
-}
-
-static_assert(sizeof(WIN32_FIND_DATAA) <= sizeof(((platform_dir_listing *) 0)->native), "platform_dir_listing has room for a WIN32_FIND_DATAA");
-
-static void listing_take_name(platform_dir_listing *listing)
-{
-    listing->name = ((const WIN32_FIND_DATAA *) listing->native)->cFileName;
-}
-
-bool platform_dir_first(platform_dir_listing *listing, const char *pattern)
-{
-    listing->handle = FindFirstFileA(pattern, (WIN32_FIND_DATAA *) listing->native);
-    if (listing->handle == INVALID_HANDLE_VALUE) {
-        return false;
-    }
-    listing_take_name(listing);
-    return true;
-}
-
-bool platform_dir_next(platform_dir_listing *listing)
-{
-    if (!FindNextFileA(listing->handle, (WIN32_FIND_DATAA *) listing->native)) {
-        return false;
-    }
-    listing_take_name(listing);
-    return true;
-}
-
-void platform_dir_close(platform_dir_listing *listing)
-{
-    FindClose(listing->handle);
 }
 
 int32_t platform_desktop_width(void)

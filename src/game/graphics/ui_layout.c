@@ -14,6 +14,7 @@
 #include "graphics/text_draw.h"
 #include "input/input_data.h"
 #include "io/io_data.h"
+#include "platform/platform_file.h"
 #include "text/lang.h"
 #include "window/building_menu.h"
 #include "window/window_data.h"
@@ -205,7 +206,7 @@ static void clear_window_layout(ui_layout_window *window)
 
 int32_t dialog_loc_load(void)
 {
-    FILE *file = fopen(dialog_loc_name, file_mode_read_binary);
+    FILE *file = platform_fopen(dialog_loc_name, file_mode_read_binary);
     if (file == 0) {
         return 0;
     }

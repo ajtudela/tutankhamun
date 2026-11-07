@@ -70,6 +70,7 @@
 #include "map/terrain.h"
 #include "map/tiles.h"
 #include "map/vegetation.h"
+#include "platform/platform_file.h"
 #include "scenario/event_manager.h"
 #include "sound/city_view.h"
 #include "sound/sound_data.h"
@@ -86,12 +87,9 @@
 #include "window/mission_flow.h"
 #include "window/player_selection.h"
 
-#include <fcntl.h>
-#include <io.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <sys/stat.h>
 
 uint8_t game_loaded_flag;
 
@@ -198,7 +196,7 @@ static void read_raw_or_compressed(int32_t compressed, int32_t fd, void *buffer,
     if (compressed) {
         io_read_compressed_chunk(fd, buffer, size);
     } else {
-        _read(fd, buffer, (uint32_t) size);
+        platform_file_read(fd, buffer, (uint32_t) size);
     }
 }
 
@@ -539,7 +537,7 @@ void game_file_io_read_scenario_state(int32_t fd)
 {
     chunk_entry *magic = &scenario_chunk_table[0];
     read_raw_or_compressed(magic->compressed, fd, magic->data, magic->element_size * magic->count);
-    if (_stricmp(scenario_file_magic, scenario_file_magic_expected) != 0) {
+    if (platform_text_compare_nocase(scenario_file_magic, scenario_file_magic_expected) != 0) {
         show_old_file_error();
         return;
     }
@@ -628,7 +626,7 @@ static void write_chunks(int32_t fd, const chunk_entry *table, int32_t count)
         if (c->compressed) {
             io_write_compressed_chunk(fd, c->data, c->element_size * c->count);
         } else {
-            _write(fd, c->data, (uint32_t) (c->element_size * c->count));
+            platform_file_write(fd, c->data, (uint32_t) (c->element_size * c->count));
         }
     }
 }
@@ -641,12 +639,12 @@ int32_t game_file_io_write_saved_game(const char *path)
     strcpy(city_player_names[1].name, settings_data.player_name);
     map_terrain_shrub_to_tree();
     free_empire_route_paths();
-    int32_t fd = _open(path, _O_WRONLY | _O_CREAT | _O_TRUNC | _O_BINARY, _S_IREAD | _S_IWRITE);
+    int32_t fd = platform_file_open(path, PLATFORM_OPEN_REPLACE);
     if (fd == -1) {
         return 1;
     }
     write_chunks(fd, savegame_chunk_table, SAVEGAME_CHUNKS);
-    _close(fd);
+    platform_file_close(fd);
     city_warning_show(WARNING_GAME_SAVED);
     rebuild_empire_route_paths_after_save();
     return 0;
@@ -654,7 +652,7 @@ int32_t game_file_io_write_saved_game(const char *path)
 
 int32_t game_file_io_delete_saved_game(const char *path)
 {
-    if (remove(path) == -1) {
+    if (!platform_file_remove(path)) {
         return 1;
     }
     dir_list_files(0);
@@ -667,14 +665,14 @@ static int32_t load_saved_game(const char *path, int32_t keep_difficulty)
     floodplain_settings_reset(&floods_data.settings);
     map_grids_clear_all();
     game_loaded_flag = 0;
-    int32_t fd = _open(path, _O_RDONLY | _O_BINARY, 0);
+    int32_t fd = platform_file_open(path, PLATFORM_OPEN_READ);
     if (fd == -1) {
         return 1;
     }
     sound_lib_stop_stream(&sound_manager, SOUND_STREAM_CITY);
     sound_music_playing_special = 0;
     game_file_io_read_saved_game_state(fd);
-    _close(fd);
+    platform_file_close(fd);
     if (keep_difficulty) {
         settings_data.difficulty = difficulty;
         city_player *player = city_player_current();
@@ -800,7 +798,7 @@ int32_t game_file_io_write_scenario(const char *path)
     scenario_data.kingdom_supplies_grain = 0;
     strcpy(scenario_file_magic, scenario_file_magic_expected);
     savegame_file_version = SAVEGAME_VERSION;
-    int32_t fd = _open(path, _O_WRONLY | _O_CREAT | _O_TRUNC | _O_BINARY, _S_IREAD | _S_IWRITE);
+    int32_t fd = platform_file_open(path, PLATFORM_OPEN_REPLACE);
     if (fd == -1) {
         return 1;
     }
@@ -811,19 +809,19 @@ int32_t game_file_io_write_scenario(const char *path)
     free_empire_route_paths();
     write_chunks(fd, scenario_chunk_table, SCENARIO_CHUNKS);
     rebuild_empire_route_paths_after_save();
-    _close(fd);
+    platform_file_close(fd);
     return 0;
 }
 
 int32_t game_file_load_scenario_data(const char *path, int32_t skip_scripts)
 {
     floodplain_settings_reset(&floods_data.settings);
-    int32_t fd = _open(path, _O_RDONLY | _O_BINARY, 0);
+    int32_t fd = platform_file_open(path, PLATFORM_OPEN_READ);
     if (fd == -1) {
         return 1;
     }
     game_file_io_read_scenario_state(fd);
-    _close(fd);
+    platform_file_close(fd);
     scenario_climate_current = scenario_data.climate;
     if (!skip_scripts) {
         monument_load_animation_scripts();
@@ -858,13 +856,13 @@ int32_t game_file_load_campaign_mission(int32_t pak, int32_t skip_initialize)
     if (offset <= 0) {
         return 0;
     }
-    int32_t fd = _open(path, _O_RDONLY | _O_BINARY, 0);
+    int32_t fd = platform_file_open(path, PLATFORM_OPEN_READ);
     if (fd == -1) {
         return 0;
     }
-    _lseek(fd, offset, SEEK_SET);
+    platform_file_seek(fd, offset, SEEK_SET);
     game_file_io_read_saved_game_state(fd);
-    _close(fd);
+    platform_file_close(fd);
     settings_data.difficulty = difficulty;
     city_player_current()->cheats_used = 0;
     if (!skip_initialize) {

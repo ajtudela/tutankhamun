@@ -3,11 +3,10 @@
 
 #include "text/lang_load.h"
 
+#include "platform/platform_file.h"
 #include "text/lang.h"
 #include "text/text_data.h"
 
-#include <fcntl.h>
-#include <io.h>
 #include <stdint.h>
 #include <stdlib.h>
 
@@ -21,33 +20,33 @@ enum lang_file_sizes {
 
 int32_t lang_load(const char *text_file, const char *message_file)
 {
-    int32_t fd = _open(text_file, _O_RDONLY | _O_BINARY, 0);
+    int32_t fd = platform_file_open(text_file, PLATFORM_OPEN_READ);
     if (fd == -1) {
         return 0;
     }
-    int32_t size = (int32_t) _filelength(fd) - (TEXT_HEADER_SIZE + TEXT_INDEX_SIZE);
+    int32_t size = (int32_t) platform_file_length(fd) - (TEXT_HEADER_SIZE + TEXT_INDEX_SIZE);
     if (lang_text_base) {
         free(lang_text_base);
         lang_text_base = 0;
     }
     lang_text_base = malloc((size_t) size);
-    _read(fd, lang_text_header, TEXT_HEADER_SIZE);
-    _read(fd, lang_text_index, TEXT_INDEX_SIZE);
-    _read(fd, lang_text_base, (uint32_t) size);
-    _close(fd);
+    platform_file_read(fd, lang_text_header, TEXT_HEADER_SIZE);
+    platform_file_read(fd, lang_text_index, TEXT_INDEX_SIZE);
+    platform_file_read(fd, lang_text_base, (uint32_t) size);
+    platform_file_close(fd);
 
-    fd = _open(message_file, _O_RDONLY | _O_BINARY, 0);
+    fd = platform_file_open(message_file, PLATFORM_OPEN_READ);
     if (fd == -1) {
         return 0;
     }
-    size = (int32_t) _filelength(fd) - MESSAGE_INDEX_SIZE;
+    size = (int32_t) platform_file_length(fd) - MESSAGE_INDEX_SIZE;
     if (lang_message_data) {
         free(lang_message_data);
         lang_message_data = 0;
     }
     lang_message_data = malloc((size_t) size);
-    _read(fd, &lang_message_index, MESSAGE_INDEX_SIZE);
-    _read(fd, lang_message_data, (uint32_t) size);
-    _close(fd);
+    platform_file_read(fd, &lang_message_index, MESSAGE_INDEX_SIZE);
+    platform_file_read(fd, lang_message_data, (uint32_t) size);
+    platform_file_close(fd);
     return 1;
 }

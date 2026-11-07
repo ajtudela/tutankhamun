@@ -114,6 +114,31 @@
       "name": "win-msvc-release-x64-ninja",
       "displayName": "Windows MSVC x64 release: Release, static SDL2 + mixer, Bink (Ninja, vcvars64)",
       "inherits": ["base-win-ninja-x64", "base-buildtype-release"]
+    },
+    {
+      "name": "base-linux",
+      "hidden": true,
+      "generator": "Ninja",
+      "binaryDir": "${sourceDir}/out/build/${presetName}",
+      "installDir": "${sourceDir}/out/install/${presetName}",
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Linux"
+      },
+      "cacheVariables": {
+        "CMAKE_EXPORT_COMPILE_COMMANDS": "ON"
+      }
+    },
+    {
+      "name": "linux-dev",
+      "displayName": "Linux 64-bit dev: Debug, static SDL2 + mixer, Bink (Ninja)",
+      "inherits": ["base-linux", "base-buildtype-debug"]
+    },
+    {
+      "name": "linux-release",
+      "displayName": "Linux 64-bit release: Release, static SDL2 + mixer, Bink (Ninja)",
+      "inherits": ["base-linux", "base-buildtype-release"]
     }
   ],
   "buildPresets": [
@@ -159,6 +184,16 @@
     {
       "name": "win-msvc-release-x64-ninja",
       "configurePreset": "win-msvc-release-x64-ninja",
+      "targets": ["tutankhamun"]
+    },
+    {
+      "name": "linux-dev",
+      "configurePreset": "linux-dev",
+      "targets": ["tutankhamun"]
+    },
+    {
+      "name": "linux-release",
+      "configurePreset": "linux-release",
       "targets": ["tutankhamun"]
     }
   ]

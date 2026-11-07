@@ -10,6 +10,7 @@
 #include "city/city_data.h"
 #include "city/message.h"
 #include "core/static_init.h"
+#include "platform/platform_file.h"
 #include "scenario/event_helpers.h"
 #include "text/lang.h"
 #include "text/text_data.h"
@@ -72,7 +73,7 @@ int32_t text_expand_tokens(const event_phrase_table *self, const char *src, char
             if (entry->name == 0) {
                 return 0;
             }
-            if (_strnicmp(entry->name, src + start, (uint32_t) (i - start)) == 0) {
+            if (platform_text_compare_nocase_n(entry->name, src + start, (uint32_t) (i - start)) == 0) {
                 break;
             }
         }

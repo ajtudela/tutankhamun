@@ -14,6 +14,7 @@
 #include "app/play.h"
 #include "building/building_data.h"
 #include "graphics/graphics_data.h"
+#include "platform/platform_file.h"
 #include "video/video_data.h"
 #include "window/window_data.h"
 #include "platform/platform_screen.h"
@@ -22,7 +23,9 @@
 #include "third_party/akhenaten_bink/bink_c.h"
 #include "video/bink.h"
 
+#if defined(_WIN32)
 #include <windows.h>
+#endif
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -45,11 +48,11 @@ typedef struct {
     uint32_t frame_num;
     uint32_t magic;
     akh_bink *movie;
-    char path[MAX_PATH];
+    char path[PLATFORM_PATH_MAX];
     int32_t decoded;
     int32_t ok;
     uint32_t micros_per_frame;
-    LARGE_INTEGER start;
+    uint64_t start;
     int32_t started;
     int32_t frames_decoded;
     int32_t frames_shown;
@@ -61,7 +64,7 @@ typedef struct {
 static struct {
     int32_t checked;
     int32_t none;
-    LARGE_INTEGER frequency;
+    uint64_t frequency;
     int32_t surface_in;
     platform_surface *saved_primary;
     platform_surface *saved_back;
@@ -80,16 +83,15 @@ static void settings(void)
     }
     vb.checked = 1;
     const char *v = getenv("TUTANKHAMUN_VIDEO");
-    vb.none = v && _stricmp(v, "none") == 0;
-    QueryPerformanceFrequency(&vb.frequency);
+    vb.none = v && platform_text_compare_nocase(v, "none") == 0;
+    vb.frequency = SDL_GetPerformanceFrequency();
     akh_bink_set_log(play_log);
 }
 
-static double ms_since(const LARGE_INTEGER *t)
+static double ms_since(const uint64_t *t)
 {
-    LARGE_INTEGER now;
-    QueryPerformanceCounter(&now);
-    return (double) (now.QuadPart - t->QuadPart) * 1000.0 / (double) vb.frequency.QuadPart;
+    uint64_t now = SDL_GetPerformanceCounter();
+    return (double) (now - *t) * 1000.0 / (double) vb.frequency;
 }
 
 static video *handle_of(void *p)
@@ -260,6 +262,7 @@ static void audio_put(video *v)
     SDL_UnlockMutex(vb.mutex);
 }
 
+#if defined(_WIN32)
 static HHOOK message_hook;
 
 static LRESULT CALLBACK message_hook_proc(int code, WPARAM wparam, LPARAM lparam)
@@ -271,17 +274,40 @@ static LRESULT CALLBACK message_hook_proc(int code, WPARAM wparam, LPARAM lparam
     return CallNextHookEx(message_hook, code, wparam, lparam);
 }
 
+static void message_hook_install(void)
+{
+    if (!message_hook) {
+        message_hook = SetWindowsHookExA(WH_GETMESSAGE, message_hook_proc, 0, GetCurrentThreadId());
+    }
+}
+
+static void message_hook_remove(void)
+{
+    if (message_hook) {
+        UnhookWindowsHookEx(message_hook);
+        message_hook = 0;
+    }
+}
+#else
+static void message_hook_install(void)
+{
+}
+
+static void message_hook_remove(void)
+{
+}
+#endif
+
 static int32_t file_exists(const char *path)
 {
-    DWORD attributes = GetFileAttributesA(path);
-    return attributes != INVALID_FILE_ATTRIBUTES && !(attributes & FILE_ATTRIBUTE_DIRECTORY);
+    return platform_file_exists(path) && !platform_dir_exists(path);
 }
 
 static const char *find_nocase(const char *text, const char *part)
 {
     size_t n = strlen(part);
     for (const char *p = text; *p; p++) {
-        if (_strnicmp(p, part, n) == 0) {
+        if (platform_text_compare_nocase_n(p, part, n) == 0) {
             return p;
         }
     }
@@ -305,17 +331,17 @@ static int32_t map_path(const char *path, char *out, size_t size)
     }
     const char *name = strrchr(rest, '\\');
     name = name ? name + 1 : rest;
-    char base[MAX_PATH];
+    char base[PLATFORM_PATH_MAX];
     snprintf(base, sizeof(base), "%s", name);
     char *dot = strrchr(base, '.');
     if (dot) {
         *dot = 0;
     }
     size_t n = strlen(base);
-    if (n > 6 && _stricmp(base + n - 6, "_small") == 0) {
+    if (n > 6 && platform_text_compare_nocase(base + n - 6, "_small") == 0) {
         base[n - 6] = 0;
     }
-    if (n < 4 || _stricmp(base + strlen(base) - 4, "_big") != 0) {
+    if (n < 4 || platform_text_compare_nocase(base + strlen(base) - 4, "_big") != 0) {
         snprintf(out, size, "Video\\High\\%s_big.bik", base);
     } else {
         snprintf(out, size, "Video\\High\\%s.bik", base);
@@ -325,7 +351,7 @@ static int32_t map_path(const char *path, char *out, size_t size)
 
 static video *open_videos[4];
 
-static void *__stdcall bink_open(const char *path, uint32_t flags)
+static void *MEDIA_API bink_open(const char *path, uint32_t flags)
 {
     (void) flags;
     settings();
@@ -333,12 +359,13 @@ static void *__stdcall bink_open(const char *path, uint32_t flags)
         play_log("video: no video (BinkOpen %s)", path ? path : "(null)");
         return 0;
     }
-    char file[MAX_PATH];
+    char file[PLATFORM_PATH_MAX];
     if (!path || !map_path(path, file, sizeof(file))) {
         play_log("video: no file for BinkOpen %s", path ? path : "(null)");
         return 0;
     }
-    akh_bink *movie = akh_bink_open(file);
+    char native[PLATFORM_PATH_MAX];
+    akh_bink *movie = akh_bink_open(platform_path_native(file, native, sizeof(native)));
     if (!movie) {
         play_log("video: the decoder cannot open %s (BinkOpen %s)", file, path);
         return 0;
@@ -364,13 +391,11 @@ static void *__stdcall bink_open(const char *path, uint32_t flags)
         v->frames, v->micros_per_frame);
     surface_install();
     audio_open(v);
-    if (!message_hook) {
-        message_hook = SetWindowsHookExA(WH_GETMESSAGE, message_hook_proc, 0, GetCurrentThreadId());
-    }
+    message_hook_install();
     return v;
 }
 
-static void __stdcall bink_close(void *handle)
+static void MEDIA_API bink_close(void *handle)
 {
     video *v = handle_of(handle);
     int32_t known = 0;
@@ -390,16 +415,13 @@ static void __stdcall bink_close(void *handle)
         v->audio_bytes);
     audio_close();
     surface_remove();
-    if (message_hook) {
-        UnhookWindowsHookEx(message_hook);
-        message_hook = 0;
-    }
+    message_hook_remove();
     akh_bink_close(v->movie);
     v->magic = 0;
     free(v);
 }
 
-static int32_t __stdcall bink_do_frame(void *handle)
+static int32_t MEDIA_API bink_do_frame(void *handle)
 {
     video *v = handle_of(handle);
     if (!v || !v->ok) {
@@ -426,7 +448,7 @@ static int32_t __stdcall bink_do_frame(void *handle)
         return 0;
     }
     if (!v->started) {
-        QueryPerformanceCounter(&v->start);
+        v->start = SDL_GetPerformanceCounter();
         v->started = 1;
     } else if (ms_since(&v->start) > (double) (want - 1) * v->micros_per_frame / 1000.0 + 2.0 * v->micros_per_frame / 1000.0) {
         v->frames_late++;
@@ -436,7 +458,7 @@ static int32_t __stdcall bink_do_frame(void *handle)
     return 0;
 }
 
-static void __stdcall bink_next_frame(void *handle)
+static void MEDIA_API bink_next_frame(void *handle)
 {
     video *v = handle_of(handle);
     if (v) {
@@ -444,7 +466,7 @@ static void __stdcall bink_next_frame(void *handle)
     }
 }
 
-static int32_t __stdcall bink_wait(void *handle)
+static int32_t MEDIA_API bink_wait(void *handle)
 {
     video *v = handle_of(handle);
     if (!v || !v->started) {
@@ -452,49 +474,49 @@ static int32_t __stdcall bink_wait(void *handle)
     }
     double due = (double) ((int32_t) v->frame_num - 1) * v->micros_per_frame / 1000.0;
     if (ms_since(&v->start) < due) {
-        Sleep(1);
+        SDL_Delay(1);
         return 1;
     }
     return 0;
 }
 
-static int32_t __stdcall bink_service(void *handle)
+static int32_t MEDIA_API bink_service(void *handle)
 {
     (void) handle;
     return 0;
 }
 
-static const char *__stdcall bink_get_error(void)
+static const char *MEDIA_API bink_get_error(void)
 {
     return "";
 }
 
-static int32_t __stdcall bink_set_sound_system(void *open, uint32_t param)
+static int32_t MEDIA_API bink_set_sound_system(void *open, uint32_t param)
 {
     (void) open;
     (void) param;
     return 1;
 }
 
-static void *__stdcall bink_open_miles(uint32_t param)
+static void *MEDIA_API bink_open_miles(uint32_t param)
 {
     (void) param;
     return 0;
 }
 
-static uint32_t __stdcall bink_dd_surface_type(void *surface)
+static uint32_t MEDIA_API bink_dd_surface_type(void *surface)
 {
     (void) surface;
     vb.last_type = platform_screen_is_565() ? BINKSURFACE565 : BINKSURFACE555;
     return (uint32_t) vb.last_type;
 }
 
-static void __stdcall bink_buffer_close(void *buffer)
+static void MEDIA_API bink_buffer_close(void *buffer)
 {
     (void) buffer;
 }
 
-static int32_t __stdcall bink_copy_to_buffer(void *handle, void *dest, int32_t pitch, uint32_t height, uint32_t x, uint32_t y, uint32_t flags)
+static int32_t MEDIA_API bink_copy_to_buffer(void *handle, void *dest, int32_t pitch, uint32_t height, uint32_t x, uint32_t y, uint32_t flags)
 {
     video *v = handle_of(handle);
     const uint32_t *rgba = v ? akh_bink_frame_rgba(v->movie) : 0;
@@ -529,7 +551,7 @@ static int32_t __stdcall bink_copy_to_buffer(void *handle, void *dest, int32_t p
     return 0;
 }
 
-static void *__stdcall smack_open(const char *path, uint32_t flags, uint32_t extra)
+static void *MEDIA_API smack_open(const char *path, uint32_t flags, uint32_t extra)
 {
     (void) flags;
     (void) extra;
@@ -537,30 +559,30 @@ static void *__stdcall smack_open(const char *path, uint32_t flags, uint32_t ext
     return 0;
 }
 
-static void __stdcall smack_close(void *clip)
+static void MEDIA_API smack_close(void *clip)
 {
 }
 
-static int32_t __stdcall smack_wait(void *clip)
-{
-    return 0;
-}
-
-static int32_t __stdcall smack_do_frame(void *clip)
+static int32_t MEDIA_API smack_wait(void *clip)
 {
     return 0;
 }
 
-static void __stdcall smack_next_frame(void *clip)
-{
-}
-
-static int32_t __stdcall smack_sound_use_mss(uint32_t driver)
+static int32_t MEDIA_API smack_do_frame(void *clip)
 {
     return 0;
 }
 
-static void __stdcall smack_to_buffer(void *clip, uint32_t x, uint32_t y, uint32_t pitch, uint32_t height, void *buffer, uint32_t flags)
+static void MEDIA_API smack_next_frame(void *clip)
+{
+}
+
+static int32_t MEDIA_API smack_sound_use_mss(uint32_t driver)
+{
+    return 0;
+}
+
+static void MEDIA_API smack_to_buffer(void *clip, uint32_t x, uint32_t y, uint32_t pitch, uint32_t height, void *buffer, uint32_t flags)
 {
 }
 

@@ -15,10 +15,9 @@
 #include "io/file.h"
 #include "io/io_data.h"
 #include "platform/log.h"
+#include "platform/platform_file.h"
 #include "window/window_data.h"
 #include <assert.h>
-#include <fcntl.h>
-#include <io.h>
 #include <stdio.h>
 #include <stdint.h>
 #include <stdlib.h>
@@ -297,7 +296,7 @@ int32_t image_collection_load_file(const char *filename, int32_t slot_index)
         start_image = collection->image_count;
         is_new = 1;
     } else {
-        already_loaded = _stricmp(filename, slot->file_name) == 0;
+        already_loaded = platform_text_compare_nocase(filename, slot->file_name) == 0;
         start_image = slot->start_image;
         start_group = slot->start_group;
         collection->data_total -= slot->data_size;
@@ -377,15 +376,15 @@ int32_t image_get_size(int32_t image_id, int32_t *out_w, int32_t *out_h)
 static int32_t read_rows(int32_t fd, uint8_t *buffer, int32_t width_bytes, int32_t height, int32_t file_offset, int32_t row_skip)
 {
     int32_t total = 0;
-    if (_lseek(fd, file_offset, SEEK_SET) != -1 && height > 0) {
+    if (platform_file_seek(fd, file_offset, SEEK_SET) != -1 && height > 0) {
         uint8_t *row = buffer;
         for (int32_t i = 0; i < height; i++) {
-            total += _read(fd, row, (uint32_t) width_bytes);
-            _lseek(fd, row_skip, SEEK_CUR);
+            total += platform_file_read(fd, row, (uint32_t) width_bytes);
+            platform_file_seek(fd, row_skip, SEEK_CUR);
             row += width_bytes;
         }
     }
-    _close(fd);
+    platform_file_close(fd);
     return total;
 }
 
@@ -399,7 +398,7 @@ int32_t image_load_external_data(char *name, void *buf, int32_t width_bytes, int
     file_set_extension(path, file_extension_555);
     int32_t row_skip = ((int32_t) g_img_width * 2) - width_bytes;
     int32_t total = 0;
-    int32_t fd = _open(path, _O_RDONLY | _O_BINARY, 0);
+    int32_t fd = platform_file_open(path, PLATFORM_OPEN_READ);
     if (fd != -1) {
         total += read_rows(fd, buf, width_bytes, height, file_offset, row_skip);
     }

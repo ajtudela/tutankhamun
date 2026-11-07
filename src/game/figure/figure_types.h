@@ -18,8 +18,10 @@ enum figure_tile_list {
     FIGURE_TILE_INDEX_MAX = 20,
 };
 
+#if defined(_MSC_VER)
 #pragma warning(push)
 #pragma warning(disable : 4201)
+#endif
 enum figure_state {
     FIGURE_STATE_NONE = 0,
     FIGURE_STATE_ALIVE = 1,
@@ -259,7 +261,9 @@ typedef struct {
     int32_t invasion_event_id;
     int32_t cart_image_id;
 } figure;
+#if defined(_MSC_VER)
 #pragma warning(pop)
+#endif
 
 static_assert(sizeof(figure) == 0x184, "figure is a savegame record of 388 bytes");
 static_assert(offsetof(figure, progress_on_tile) == 0x39 && offsetof(figure, is_boat) == 0x76 && offsetof(figure, cc_direction) == 0x58 &&

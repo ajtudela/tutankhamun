@@ -8,6 +8,7 @@
 
 #include "city/city_player.h"
 #include "core/crt_compat.h"
+#include "platform/platform_file.h"
 #include "platform/platform_time.h"
 #include "sound/sound_data.h"
 #include "sound/sound_lib.h"
@@ -135,7 +136,7 @@ static void read_number(int32_t *value)
 
 void sound_music_load_config(music_state *self)
 {
-    FILE *fp = fopen("music.txt", "rt");
+    FILE *fp = platform_fopen("music.txt", "rt");
     if (!fp) {
         return;
     }
@@ -279,7 +280,7 @@ int32_t sound_speech_play_mission(const char *filename)
     strcpy(local, "audio\\voice\\mission\\");
     strcat(local, filename);
     strcpy(speech_mission_path, local);
-    FILE *fp = fopen(local, "rb");
+    FILE *fp = platform_fopen(local, "rb");
     if (!fp) {
         return -1;
     }

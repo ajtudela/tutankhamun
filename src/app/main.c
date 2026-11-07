@@ -2,6 +2,7 @@
 // in, its icon and cursors its own): the play mode, the export and check of the gameplay configs and the game
 // directory search (--find-game-dir).
 
+#include "app/app_files.h"
 #include "app/game_dir.h"
 #include "app/image.h"
 #include "app/play.h"
@@ -10,23 +11,24 @@
 #include "game/run.h"
 #include "platform/discord_rpc.h"
 #include "platform/log.h"
+#include "platform/platform_file.h"
 
-#include <windows.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
+static const char PLAY_LOG_NAME[] = "tutankhamun_play.log";
+
 static int32_t names_exe(const char *path)
 {
     size_t length = strlen(path);
-    return length >= 4 && _stricmp(path + length - 4, ".exe") == 0;
+    return length >= 4 && platform_text_compare_nocase(path + length - 4, ".exe") == 0;
 }
 
 static int32_t is_directory(const char *path)
 {
-    DWORD attributes = GetFileAttributesA(path);
-    return attributes != INVALID_FILE_ATTRIBUTES && (attributes & FILE_ATTRIBUTE_DIRECTORY);
+    return platform_dir_exists(path);
 }
 
 static int32_t is_game_argument(const char *path)
@@ -36,28 +38,28 @@ static int32_t is_game_argument(const char *path)
 
 static int32_t has_game_data(const char *dir)
 {
-    char data[MAX_PATH];
-    if (lstrlenA(dir) + sizeof("\\Data") > MAX_PATH) {
+    char data[PLATFORM_PATH_MAX];
+    if (strlen(dir) + sizeof("\\Data") > sizeof(data)) {
         return 0;
     }
-    wsprintfA(data, "%s\\Data", dir);
+    snprintf(data, sizeof(data), "%s\\Data", dir);
     return is_directory(data);
 }
 
 static int32_t enter_game_dir(const char *game)
 {
-    char dir[MAX_PATH];
-    lstrcpynA(dir, game, MAX_PATH);
+    char dir[PLATFORM_PATH_MAX];
+    snprintf(dir, sizeof(dir), "%s", game);
     if (names_exe(dir)) {
         char *slash = strrchr(dir, '\\'), *other = strrchr(dir, '/');
         slash = other > slash ? other : slash;
         if (!slash) {
-            lstrcpynA(dir, ".", MAX_PATH);
+            snprintf(dir, sizeof(dir), ".");
         } else {
             slash[slash == dir + 2 && dir[1] == ':' ? 1 : 0] = 0;
         }
     }
-    if (!SetCurrentDirectoryA(dir)) {
+    if (!platform_dir_enter(dir)) {
         platform_log("port: cannot enter the game directory %s", dir);
         fprintf(stderr, "cannot enter the game directory %s\n", dir);
         return 0;
@@ -98,6 +100,22 @@ static int32_t prepare(const char *game_dir)
     return 1;
 }
 
+static void default_log_path(char *path, size_t size)
+{
+#if defined(_WIN32)
+    platform_path_absolute(PLAY_LOG_NAME, path, (uint32_t) size);
+#else
+    char ini[PLATFORM_PATH_MAX];
+    char *slash = app_ini_path(ini, sizeof(ini)) ? strrchr(ini, '/') : NULL;
+    if (!slash) {
+        platform_path_absolute(PLAY_LOG_NAME, path, (uint32_t) size);
+        return;
+    }
+    *slash = 0;
+    snprintf(path, size, "%s/%s", ini, PLAY_LOG_NAME);
+#endif
+}
+
 static int32_t parse_size(const char *text, int32_t *width, int32_t *height)
 {
     char rest;
@@ -131,7 +149,7 @@ static int32_t play_first_argument(int32_t argc, char **argv)
 
 static int32_t play_main(int32_t argc, char **argv, int32_t first)
 {
-    const char *game_dir = 0, *save = 0, *log = "tutankhamun_play.log";
+    const char *game_dir = 0, *save = 0, *log = 0;
     int32_t size_width = 0, size_height = 0, start_fullscreen = -1, cursor_scale_percent = 100;
     for (int32_t i = first; i < argc; i++) {
         if ((strcmp(argv[i], "--size") == 0 || strcmp(argv[i], "--resolution") == 0) && i + 1 < argc) {
@@ -166,12 +184,16 @@ static int32_t play_main(int32_t argc, char **argv, int32_t first)
             return 1;
         }
     }
-    static char save_path[MAX_PATH], log_path[MAX_PATH];
+    static char save_path[PLATFORM_PATH_MAX], log_path[PLATFORM_PATH_MAX];
     if (save) {
-        GetFullPathNameA(save, MAX_PATH, save_path, 0);
+        platform_path_absolute(save, save_path, sizeof(save_path));
         save = save_path;
     }
-    GetFullPathNameA(log, MAX_PATH, log_path, 0);
+    if (!log) {
+        default_log_path(log_path, sizeof(log_path));
+    } else {
+        platform_path_absolute(log, log_path, sizeof(log_path));
+    }
     platform_log_open(log_path);
     static const play_host host = { platform_log, game_run_tick, game_run_frame };
     play_bind(&host);
@@ -203,7 +225,7 @@ static int32_t configs_main(int32_t argc, char **argv)
         return 1;
     }
     if (strcmp(argv[1], "--export-configs") == 0) {
-        CreateDirectoryA(argv[2], 0);
+        platform_dir_create(argv[2]);
         return config_export_all(argv[2]) ? 0 : 1;
     }
     return config_check_all(argv[2]) ? 0 : 1;

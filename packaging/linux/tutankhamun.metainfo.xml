@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="desktop-application">
+  <id>tutankhamun</id>
+  <metadata_license>CC0-1.0</metadata_license>
+  <project_license>AGPL-3.0-only</project_license>
+  <name>Tutankhamun</name>
+  <summary>Pharaoh + Cleopatra on the files of your own copy of the game</summary>
+  <description>
+    <p>
+      Tutankhamun is an open-source re-implementation of Pharaoh + Cleopatra 2.1 (Impressions Games, 2000) with the
+      original's game logic, look and saved games. It needs the data files of an installed Pharaoh + Cleopatra
+      (GOG, Steam or an original CD-ROM version updated to 2.1); no game assets are included.
+    </p>
+  </description>
+  <launchable type="desktop-id">tutankhamun.desktop</launchable>
+  <url type="homepage">https://github.com/dalerank/tutankhamun</url>
+  <content_rating type="oars-1.1"/>
+</component>

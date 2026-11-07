@@ -1,0 +1,11 @@
+[Desktop Entry]
+Type=Application
+Name=Tutankhamun
+GenericName=City-building game
+Comment=Pharaoh + Cleopatra on the files of your own copy of the game
+Exec=tutankhamun %f
+Icon=tutankhamun
+Terminal=false
+Categories=Game;StrategyGame;
+Keywords=pharaoh;cleopatra;egypt;city;builder;
+StartupWMClass=tutankhamun

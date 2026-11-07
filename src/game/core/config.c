@@ -6,6 +6,7 @@
 #include "core/config.h"
 
 #include "platform/log.h"
+#include "platform/platform_file.h"
 #include "third_party/parson/parson.h"
 
 #include <math.h>
@@ -58,7 +59,7 @@ static void config_path(char *path, const char *dir, const char *file)
 
 static int32_t config_file_exists(const char *path)
 {
-    FILE *file = fopen(path, "rb");
+    FILE *file = platform_fopen(path, "rb");
     if (!file) {
         return 0;
     }
@@ -528,7 +529,7 @@ int32_t config_table_export(const config_table *table, const char *dir)
 {
     char path[CONFIG_PATH_SIZE];
     config_path(path, dir, table->file);
-    FILE *file = fopen(path, "w");
+    FILE *file = platform_fopen(path, "w");
     if (!file) {
         config_report("config: cannot write %s", path);
         return 0;

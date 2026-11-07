@@ -279,7 +279,7 @@ bool campaign_load(campaign *self, const char *path)
 {
     campaign_link link = { 0 };
     campaign_link_init(&link);
-    void *file = fopen(path, file_mode_read_binary);
+    void *file = platform_fopen(path, file_mode_read_binary);
     if (!file) {
         return 0;
     }
@@ -306,7 +306,7 @@ bool campaign_load(campaign *self, const char *path)
             continue;
         }
         int32_t section = 0;
-        while (section < SECTION_COUNT && _stricmp(key, section_names[section]) != 0) {
+        while (section < SECTION_COUNT && platform_text_compare_nocase(key, section_names[section]) != 0) {
             section++;
         }
         const char *error = 0;

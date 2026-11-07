@@ -342,6 +342,11 @@ bool game_cheat_input_close(void)
     return game_cheat_apply_input();
 }
 
+void game_cheat_input_close_button(void)
+{
+    game_cheat_input_close();
+}
+
 int32_t game_cheat_handle_key(int32_t message, int32_t key)
 {
     int32_t alt = platform_key_state(PLATFORM_KEY_ALT) & CHEAT_KEY_PRESSED_MASK;

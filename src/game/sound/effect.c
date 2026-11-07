@@ -3,6 +3,7 @@
 
 #include "sound/effect.h"
 
+#include "platform/platform_file.h"
 #include "sound/sound_data.h"
 #include "sound/sound_lib.h"
 #include <stdio.h>
@@ -93,7 +94,7 @@ static const struct { int32_t type; int32_t variant; const char *path; } figure_
 
 int32_t sound_channel_load_file(const char *path)
 {
-    FILE *fp = fopen(path, "rb");
+    FILE *fp = platform_fopen(path, "rb");
     if (!fp) {
         return -1;
     }

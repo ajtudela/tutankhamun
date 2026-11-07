@@ -5,6 +5,6 @@
 
 #include <stdint.h>
 
-intptr_t __stdcall window_proc(void *hwnd, uint32_t message, uintptr_t wparam, intptr_t lparam);
+intptr_t window_proc(void *hwnd, uint32_t message, uintptr_t wparam, intptr_t lparam);
 
 #endif

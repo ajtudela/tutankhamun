@@ -82,7 +82,7 @@ cheat_entry cheat_table[CHEAT_COUNT] = {
     { cheat_buttons.names.mummys_revenge, cheat_mummys_revenge, 1, { 0, 0, 0 } } };
 
 cheat_buttons_records cheat_buttons = {
-    .close_button = { 0, 0, 150, 30, game_cheat_input_close, button_none, 0, 0, 0, 1, 1, 0 },
+    .close_button = { 0, 0, 150, 30, game_cheat_input_close_button, button_none, 0, 0, 0, 1, 1, 0 },
     .names = {
         .mummys_revenge = "Nvnnzp#Qfufmdf",
         .jail_break = "Ibjo#Aqfbh",

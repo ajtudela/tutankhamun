@@ -6,6 +6,7 @@
 #include "city/city_player.h"
 #include "game/game_data.h"
 #include "game/game_internal.h"
+#include "platform/platform_file.h"
 #include "scenario/scenario_data.h"
 #include "window/window_data.h"
 
@@ -25,7 +26,7 @@ const char *player_record_path(void)
 
 bool player_data_write_file(const void *self, const char *file)
 {
-    FILE *f = fopen(file, file_mode_write_binary);
+    FILE *f = platform_fopen(file, file_mode_write_binary);
     if (!f) {
         return 0;
     }

@@ -15,6 +15,7 @@
 #include "graphics/text_draw.h"
 #include "input/input_data.h"
 #include "io/file.h"
+#include "platform/platform_file.h"
 #include "scenario/campaign.h"
 #include "scenario/scenario_data.h"
 #include "text/lang.h"
@@ -175,7 +176,7 @@ int32_t high_scores_handle_scrollbar(void)
 
 bool highscore_write_file(void *self, const char *path)
 {
-    FILE *file = fopen(path, file_mode_write_binary);
+    FILE *file = platform_fopen(path, file_mode_write_binary);
     if (!file) {
         return false;
     }
@@ -241,7 +242,7 @@ void highscore_record_mission(void)
     if (record->used == 0) {
         hs_result = HIGH_SCORE_RESULT_NEW;
         highscore_set_entry(mission, monuments, score, months);
-    } else if (_stricmp(record->player_name, settings_data.player_name) == 0) {
+    } else if (platform_text_compare_nocase(record->player_name, settings_data.player_name) == 0) {
         if (record->score >= score) {
             hs_result = HIGH_SCORE_RESULT_OWN_KEPT;
         } else {

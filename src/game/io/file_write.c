@@ -11,6 +11,7 @@
 #include "game/game_data.h"
 #include "graphics/graphics_data.h"
 #include "io/io_data.h"
+#include "platform/platform_file.h"
 #include "platform/status_log.h"
 #include "text/lang.h"
 #include "text/text_data.h"
@@ -18,13 +19,10 @@
 #include "window/player_selection.h"
 #include "window/window_data.h"
 
-#include <fcntl.h>
-#include <io.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <sys/stat.h>
 
 enum file_write_limit {
     SETTINGS_FILE_SIZE = 564,
@@ -34,15 +32,15 @@ enum file_write_limit {
 
 static int32_t write_at(const char *path, const void *buffer, int32_t size, int32_t offset, int32_t origin)
 {
-    int32_t fd = _open(path, _O_WRONLY | _O_CREAT | _O_BINARY, _S_IREAD | _S_IWRITE);
+    int32_t fd = platform_file_open(path, PLATFORM_OPEN_WRITE);
     if (fd == -1) {
         return 0;
     }
-    if (_lseek(fd, offset, origin) == -1) {
+    if (platform_file_seek(fd, offset, origin) == -1) {
         return 0;
     }
-    int32_t written = _write(fd, buffer, (uint32_t) size);
-    _close(fd);
+    int32_t written = platform_file_write(fd, buffer, (uint32_t) size);
+    platform_file_close(fd);
     return written;
 }
 
@@ -58,12 +56,12 @@ int32_t io_append_file(const char *path, const void *buffer, int32_t size)
 
 int32_t io_write_file(const char *path, const void *buffer, int32_t size)
 {
-    int32_t fd = _open(path, _O_WRONLY | _O_CREAT | _O_TRUNC | _O_BINARY, _S_IREAD | _S_IWRITE);
+    int32_t fd = platform_file_open(path, PLATFORM_OPEN_REPLACE);
     if (fd == -1) {
         return 0;
     }
-    _write(fd, buffer, (uint32_t) size);
-    _close(fd);
+    platform_file_write(fd, buffer, (uint32_t) size);
+    platform_file_close(fd);
     return 1;
 }
 
@@ -81,7 +79,7 @@ void dir_list_files(char maps)
     for (int32_t i = 0; i < file_dialog_scroll_total; i++) {
         file_remove_extension(file_list_saves.names + file_list_saves.offsets[i]);
     }
-    file_list_sort(&file_list_saves, _stricmp);
+    file_list_sort(&file_list_saves, platform_text_compare_nocase);
     file_dialog_scroll = 0;
     file_dialog_selected = 0;
     file_dialog_error_frames = 0;

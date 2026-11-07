@@ -1,13 +1,14 @@
-# Tutankhamun [![Github Actions](https://github.com/dalerank/tutankhamun/actions/workflows/tutankhamun_windows.yml/badge.svg)](https://github.com/dalerank/tutankhamun/actions/workflows/tutankhamun_windows.yml)
+# Tutankhamun [![Github Actions](https://github.com/dalerank/tutankhamun/actions/workflows/tutankhamun_windows.yml/badge.svg)](https://github.com/dalerank/tutankhamun/actions/workflows/tutankhamun_windows.yml) [![Github Actions](https://github.com/dalerank/tutankhamun/actions/workflows/tutankhamun_linux.yml/badge.svg)](https://github.com/dalerank/tutankhamun/actions/workflows/tutankhamun_linux.yml)
 
 [![Discord](res/badges/discord.svg)](https://discord.gg/HS4njmBvpb)
 [![Windows](res/badges/windows.svg)](https://nightly.link/dalerank/tutankhamun/workflows/tutankhamun_windows/main/windows_build.zip)
 [![Windows x64](res/badges/windows_x64.svg)](https://nightly.link/dalerank/tutankhamun/workflows/tutankhamun_windows/main/windows_build_x64.zip)
+[![Linux](res/badges/linux.svg)](https://nightly.link/dalerank/tutankhamun/workflows/tutankhamun_linux/main/linux_appimage.zip)
 
 Tutankhamun is an open-source re-implementation of **Pharaoh + Cleopatra 2.1** (Impressions Games, 2000) in C: the
-game written again as a program of its own, `tutankhamun.exe`, that plays on the files of your own copy of the game
-in a window (SDL2) on modern Windows. It is also a readable reference for the game's behaviour, mainly to support
-[Akhenaten](https://github.com/dalerank/Akhenaten).
+game written again as a program of its own, `tutankhamun`, that plays on the files of your own copy of the game
+in a window (SDL2) on modern Windows and Linux. It is also a readable reference for the game's behaviour, mainly to
+support [Akhenaten](https://github.com/dalerank/Akhenaten).
 
 ![Tutankhamun: a city of the Pharaoh campaign](res/screenshots/tutankhamun.png)
 
@@ -26,10 +27,11 @@ are also present in Tutankhamun. No game assets are part of this repository.
 | -------- | -------------- | -------------- |
 | Windows  | -              | [![Github Actions](https://github.com/dalerank/tutankhamun/actions/workflows/tutankhamun_windows.yml/badge.svg)](https://nightly.link/dalerank/tutankhamun/workflows/tutankhamun_windows/main/windows_build.zip) |
 | Windows x64 | -           | [![Github Actions](https://github.com/dalerank/tutankhamun/actions/workflows/tutankhamun_windows.yml/badge.svg)](https://nightly.link/dalerank/tutankhamun/workflows/tutankhamun_windows/main/windows_build_x64.zip) |
+| Linux    | -              | [![Github Actions](https://github.com/dalerank/tutankhamun/actions/workflows/tutankhamun_linux.yml/badge.svg)](https://nightly.link/dalerank/tutankhamun/workflows/tutankhamun_linux/main/linux_appimage.zip) |
 
-The unstable build is the latest build of `main`: a zip with `tutankhamun.exe` and its `config` folder. Unpack it
-anywhere; the game finds your Pharaoh + Cleopatra installation as described below. Linux and macOS builds are not
-available yet (see BUILD.md).
+The unstable build is the latest build of `main`: on Windows a zip with `tutankhamun.exe` and its `config` folder
+(unpack it anywhere), on Linux a zip with `Tutankhamun-x86_64.AppImage` (see [Linux](#linux)). The game finds your
+Pharaoh + Cleopatra installation as described below. A macOS build is not available yet.
 
 On Windows `windows_build.zip` holds the 32-bit program and `windows_build_x64.zip` the 64-bit one: they play the
 same game and read and write the same saved games.
@@ -75,6 +77,28 @@ progress, mission records or high scores.
 **Discord**: while Discord runs on the same computer, the game shows the mission's title and date in your Discord
 status. `config\discord.json` turns it off with `"enabled": 0`.
 
+### Linux
+
+The AppImage is one file with the program and its configs; it runs on 64-bit distributions with glibc 2.34 or newer
+(Ubuntu 22.04, Debian 12, Fedora 35 and later) under X11 or Wayland, with PulseAudio, PipeWire or ALSA sound:
+
+    chmod +x Tutankhamun-x86_64.AppImage
+    ./Tutankhamun-x86_64.AppImage [game dir] [save.sav]
+
+The command line is the one below. You need the game's data from an installed Pharaoh + Cleopatra, for example the
+Steam version installed through Proton or the GOG version installed with Wine or Heroic; the data files can also
+just be copied from a Windows installation. The game directory is looked for as on Windows, with these differences:
+
+- Steam: the `steamapps` of `~/.steam/steam`, `~/.local/share/Steam`, the Flatpak and the Snap Steam, and the
+  libraries listed in their `libraryfolders.vdf`;
+- GOG: `~/GOG Games`, `~/Games/Heroic` and the Wine prefix `~/.wine` (Pharaoh + Cleopatra or Pharaoh Gold);
+- the folder picker is `zenity` or `kdialog` when one of them is installed.
+
+The file names of the game's data may be in any case (`Data` or `DATA`, `Audio` or `AUDIO`). `tutankhamun.ini` and
+the log `tutankhamun_play.log` are in `~/.config/tutankhamun/` (`$XDG_CONFIG_HOME/tutankhamun/`); a folder
+`~/.config/tutankhamun/config` with your own gameplay tables replaces the configs inside the AppImage
+(`./Tutankhamun-x86_64.AppImage --export-configs ~/.config/tutankhamun/config` writes a full set to edit).
+
 ## Building from source
 
 Windows 10/11 with Visual Studio 2022 ("Desktop development with C++"), CMake 3.22 or newer and git. The game builds
@@ -96,9 +120,13 @@ The build is in `out\build\<preset>` and the game folder (tutankhamun.exe and co
 `TUTANKHAMUN_JOBS` limits the parallel build jobs. The exit code is 0 when the game folder is complete, 1 when the
 build failed and 2 for an unknown option.
 
-[BUILD.md](BUILD.md) has the details and the other ways to build.
+Linux (64-bit) with GCC or Clang, CMake 3.22 or newer, Ninja, git and the development headers of X11, Wayland, ALSA
+and PulseAudio:
 
-Linux and macOS are not supported yet: `update-workspace-linux.sh` and `update-workspace-mac.sh` only say so.
+    packaging/linux/build_appimage.sh
+
+builds the AppImage into `build/appimage`. [BUILD.md](BUILD.md) has the details and the other ways to build. macOS is
+not supported yet: `update-workspace-mac.sh` only says so.
 
 ## Command line
 
@@ -115,7 +143,7 @@ Linux and macOS are not supported yet: `update-workspace-linux.sh` and `update-w
 | `--window`, `--windowed` | | start in a window | as remembered |
 | `--fullscreen` | | start in full screen | as remembered |
 | `--cursor-scale` | N | the size of the mouse cursors: `1`, `1.5` or `2` | `1` |
-| `--log` | file | the log file | `tutankhamun_play.log` in the current folder |
+| `--log` | file | the log file | `tutankhamun_play.log` in the current folder (on Linux in `~/.config/tutankhamun`) |
 | `--discord-log` | | a detailed log of the Discord status in the log file | off |
 | `--export-configs` | dir | writes the built-in gameplay tables into dir as JSON (a fresh `config` folder) | |
 | `--check-configs` | dir | loads every config of dir and compares it with the built-in tables; exit 0 when all are identical | |

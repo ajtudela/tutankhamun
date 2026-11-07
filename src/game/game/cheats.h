@@ -24,6 +24,7 @@ int32_t game_cheat_find(const char *text);
 bool game_cheat_execute(int32_t index);
 bool game_cheat_apply_input(void);
 bool game_cheat_input_close(void);
+void game_cheat_input_close_button(void);
 int32_t game_cheat_handle_key(int32_t message, int32_t key);
 void cheat_life_from_death(void);
 void cheat_bounty(void);

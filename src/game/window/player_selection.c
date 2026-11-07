@@ -222,7 +222,7 @@ void player_selection_load_files(const char *pattern)
     for (int32_t i = 0; i < player_file_list.count; i++) {
         file_remove_extension(plist_entry(i));
     }
-    file_list_sort(&player_file_list, _stricmp);
+    file_list_sort(&player_file_list, platform_text_compare_nocase);
 }
 
 void window_player_selection_show(void)
@@ -258,7 +258,7 @@ void player_selection_button_delete(void)
 
 static bool player_record_exists(void)
 {
-    FILE *file = fopen(player_record_path(), file_mode_read_binary);
+    FILE *file = platform_fopen(player_record_path(), file_mode_read_binary);
     if (file == 0) {
         return false;
     }
@@ -311,7 +311,7 @@ static void delete_player_files(void)
     file_list saves;
     char pattern[PATH_SIZE];
     char path[PATH_SIZE];
-    remove(player_record_path());
+    platform_file_remove(player_record_path());
     file_list_construct(&saves);
     strcpy(pattern, dir_save_path());
     strcat(pattern, save_file_pattern);
@@ -320,7 +320,7 @@ static void delete_player_files(void)
         strcpy(path, dir_save_path());
         strcat(path, path_separator);
         strcat(path, file_list_entry(&saves, i));
-        remove(path);
+        platform_file_remove(path);
     }
     platform_dir_remove(dir_save_path());
     file_list_destroy(&saves);

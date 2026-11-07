@@ -9,12 +9,10 @@
 #include "building/building_data.h"
 #include "core/text.h"
 #include "graphics/graphics_data.h"
-#include <fcntl.h>
-#include <io.h>
+#include "platform/platform_file.h"
 #include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
-#include <sys/stat.h>
 
 uint8_t *screenshot_buffer;
 
@@ -94,7 +92,7 @@ int32_t graphics_save_screenshot(const char *file_name)
     info_header.planes = 1;
     info_header.bits_per_pixel = BMP_SCREENSHOT_BITS_PER_PIXEL;
     info_header.image_size = image_size;
-    int32_t fd = _open(file_name, _O_WRONLY | _O_CREAT | _O_TRUNC | _O_BINARY, _S_IREAD | _S_IWRITE);
+    int32_t fd = platform_file_open(file_name, PLATFORM_OPEN_REPLACE);
     if (fd != -1) {
         memcpy(screenshot_buffer, &file_header, sizeof(file_header));
         memcpy(screenshot_buffer + sizeof(file_header), &info_header, sizeof(info_header));
@@ -112,8 +110,8 @@ int32_t graphics_save_screenshot(const char *file_name)
             height = g_screen_height;
             row_end -= width;
         }
-        _write(fd, screenshot_buffer, (uint32_t) (((height * width) * SCREENSHOT_BYTES_PER_PIXEL) + BMP_HEADERS_SIZE));
-        _close(fd);
+        platform_file_write(fd, screenshot_buffer, (uint32_t) (((height * width) * SCREENSHOT_BYTES_PER_PIXEL) + BMP_HEADERS_SIZE));
+        platform_file_close(fd);
     }
     if (screenshot_buffer) {
         free(screenshot_buffer);

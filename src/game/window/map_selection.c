@@ -22,6 +22,7 @@
 #include "graphics/text_draw.h"
 #include "input/input_data.h"
 #include "io/game_file.h"
+#include "platform/platform_file.h"
 #include "scenario/campaign.h"
 #include "scenario/event_manager.h"
 #include "scenario/scenario_internal.h"
@@ -799,7 +800,7 @@ void map_selection_load_list(const char *pattern)
     for (int32_t i = 0; i < map_file_list.total; i++) {
         file_remove_extension(list_name(i));
     }
-    file_list_sort(&map_file_list.files, _stricmp);
+    file_list_sort(&map_file_list.files, platform_text_compare_nocase);
 }
 
 void window_map_selection_show(void)

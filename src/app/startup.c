@@ -3,6 +3,7 @@
 // texts, models and tables a saved game is loaded into. A play may ask for another display mode than the settings'.
 
 #include "app/image.h"
+#include "app/app_files.h"
 #include "building/building_data.h"
 #include "building/model_load.h"
 #include "building/monument_part_offsets.h"
@@ -13,6 +14,8 @@
 #include "graphics/graphics_data.h"
 #include "input/input_data.h"
 #include "platform/log.h"
+#include "platform/platform_dialog.h"
+#include "platform/platform_window.h"
 #include "platform/platform_data.h"
 #include "scenario/campaign_load.h"
 #include "scenario/reason_phrases.h"
@@ -21,7 +24,6 @@
 #include "widget/widget_data.h"
 #include "window/display_resolution_list.h"
 
-#include <windows.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -50,8 +52,8 @@ static void platform_init_without_display(void)
     g_clip_x1 = width;
     g_clip_y0 = 0;
     g_clip_y1 = height;
-    desktop_width = GetSystemMetrics(SM_CXSCREEN);
-    desktop_height = GetSystemMetrics(SM_CYSCREEN);
+    desktop_width = platform_desktop_width();
+    desktop_height = platform_desktop_height();
     screen_rgb565_ptr = calloc(1, (size_t) (width * 2 * height));
     platform_log("startup: screen %dx%d without a display", width, height);
 }
@@ -87,28 +89,21 @@ void app_report_no_configs_in_box(void)
 
 static int32_t report_no_configs(const char *dir)
 {
-    char text[MAX_PATH + 160];
-    wsprintfA(text, "no configs: the folder %s is missing.\nThe config folder must be beside tutankhamun.exe.", dir);
+    char text[1200];
+    snprintf(text, sizeof(text), "no configs: the folder %s is missing.\nThe config folder must be beside the tutankhamun program.", dir);
     platform_log("startup: %s", text);
     fprintf(stderr, "%s\n", text);
     if (no_configs_message_box) {
-        MessageBoxA(0, text, "tutankhamun: no configs", MB_OK | MB_ICONERROR);
+        platform_message_box(0, text, "tutankhamun: no configs", PLATFORM_BOX_OK | PLATFORM_BOX_ICON_ERROR);
     }
     return 0;
 }
 
 static int32_t load_configs_beside_program(void)
 {
-    char dir[MAX_PATH];
-    DWORD length = GetModuleFileNameA(0, dir, MAX_PATH);
-    char *slash = length > 0 && length < MAX_PATH ? strrchr(dir, '\\') : 0;
-    if (!slash || (size_t) (slash - dir) + sizeof("\\config") > MAX_PATH) {
-        return report_no_configs("<the program's folder is not known>\\config");
-    }
-    lstrcpyA(slash, "\\config");
-    DWORD attributes = GetFileAttributesA(dir);
-    if (attributes == INVALID_FILE_ATTRIBUTES || !(attributes & FILE_ATTRIBUTE_DIRECTORY)) {
-        return report_no_configs(dir);
+    char dir[1024];
+    if (!app_config_dir(dir, sizeof(dir))) {
+        return report_no_configs(dir[0] ? dir : "<the program's folder is not known>/config");
     }
     platform_log("startup: configs from %s", dir);
     config_load_all(dir);

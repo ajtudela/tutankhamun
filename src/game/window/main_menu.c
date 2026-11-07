@@ -22,6 +22,7 @@
 #include "io/game_file.h"
 #include "io/io_data.h"
 #include "platform/platform_dialog.h"
+#include "platform/platform_file.h"
 #include "platform/platform_input.h"
 #include "platform/platform_message.h"
 #include "platform/platform_shell.h"
@@ -369,7 +370,7 @@ void window_main_menu_show(void)
     menu_can_continue = 0;
     menu_has_saves = 0;
     if (campaign_object.campaign.saved_game_path[0] != 0) {
-        FILE *file = fopen(campaign_object.campaign.saved_game_path, file_mode_read_binary);
+        FILE *file = platform_fopen(campaign_object.campaign.saved_game_path, file_mode_read_binary);
         if (file) {
             fclose(file);
             menu_can_continue = 1;

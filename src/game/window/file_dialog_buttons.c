@@ -14,6 +14,7 @@
 #include "io/file_write.h"
 #include "io/game_file.h"
 #include "platform/platform_dialog.h"
+#include "platform/platform_file.h"
 #include "platform/platform_input.h"
 #include "platform/platform_message.h"
 #include "scenario/campaign.h"
@@ -97,7 +98,7 @@ void file_menu_delete_game(void)
 
 static int32_t file_dialog_confirm_overwrite(const char *path)
 {
-    FILE *file = fopen(path, file_mode_read);
+    FILE *file = platform_fopen(path, file_mode_read);
     if (!file) {
         return 1;
     }

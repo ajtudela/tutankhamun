@@ -1,6 +1,6 @@
 # Code style
 
-The sources are C99 (MSVC, 32-bit). `.clang-format` at the root does the formatting: 4 spaces, no tabs, the `{` of a
+The sources are C99 (MSVC, 32 and 64-bit; GCC and Clang on Linux compile them as C11). `.clang-format` at the root does the formatting: 4 spaces, no tabs, the `{` of a
 function on its own line and every other `{` on the line of its statement, braces around every body, a space after
 a cast, the pointer star with the name, lines up to 160 columns.
 

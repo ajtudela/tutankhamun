@@ -24,6 +24,7 @@
 #include "map/farm.h"
 #include "map/map_data.h"
 #include "platform/log.h"
+#include "platform/platform_file.h"
 #include "scenario/campaign.h"
 #include "scenario/campaign_load.h"
 #include "scenario/scenario_internal.h"
@@ -34,7 +35,6 @@
 #include "text/event_text.h"
 #include "text/text_data.h"
 
-#include <io.h>
 #include <stddef.h>
 #include <stdint.h>
 #include <stdio.h>
@@ -206,7 +206,7 @@ static int32_t read_key_texts(key_text_table *self, const text_key *keys, char *
                 }
             }
             index = 0;
-            while (index < self->count && _stricmp(keys[index].name, buf + i) != 0) {
+            while (index < self->count && platform_text_compare_nocase(keys[index].name, buf + i) != 0) {
                 index++;
             }
             if (index >= self->count) {
@@ -247,11 +247,11 @@ void key_text_table_load(key_text_table *self, const char *filename, const text_
     if (!filename) {
         return;
     }
-    void *file = fopen(filename, file_mode_read_binary);
+    void *file = platform_fopen(filename, file_mode_read_binary);
     if (!file) {
         return;
     }
-    int32_t len = (int32_t) _filelength(_fileno(file));
+    int32_t len = (int32_t) platform_stream_length(file);
     char *buf = malloc((size_t) len + 1);
     if (!buf) {
         fclose(file);
