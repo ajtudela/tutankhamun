@@ -1,0 +1,1 @@
+Open-source Pharaoh + Cleopatra engine. Needs your own copy of the game files.

@@ -1,0 +1,16 @@
+Tutankhamun is an open-source re-implementation of the city-building game Pharaoh + Cleopatra 2.1 (2000), written again in C. It plays on the files of your own copy of the game: the same rules, the same look, and saved games that are compatible with the original.
+
+THE GAME FILES ARE NOT INCLUDED. You need an installed Pharaoh + Cleopatra 2.1 (for example the GOG or Steam version, or an updated CD version). Copy the whole game folder (the one with Data, campaign.txt and Pharaoh_Text.eng) to your device, for example into Download, and choose it at the first start.
+
+• The Pharaoh and Cleopatra campaigns and free play of every mission
+• Saved games compatible with the original game
+• Touch controls: tap to click, long press to right click, drag to scroll and to lay roads, walls and canals
+• Tap to place a building's ghost, tap it again to build; a button cancels the building
+• The on-screen keyboard for player names and saved games
+• Landscape, full screen, on phones and tablets
+
+The app collects no data and needs no internet connection.
+
+Tutankhamun is free software under the GNU AGPL v3: https://github.com/dalerank/tutankhamun
+
+Tutankhamun is an independent fan project. It is not affiliated with or endorsed by the owners of Pharaoh, Cleopatra or Impressions Games; their names are used only to say which game files the app needs. All trademarks belong to their owners.

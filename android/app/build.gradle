@@ -1,12 +1,30 @@
 // The app: libmain.so (the game, CMakeLists.txt at the top of the repository), libSDL2.so and libSDL2_mixer.so for
 // arm64-v8a, armeabi-v7a and x86_64, SDL2's Java glue (src/main/java/org/libsdl/app, SDL 2.32.10), the activity and the
 // game folder picker (src/main/java/com/github/dalerank/tutankhamun), and the gameplay configs (config/) as assets,
-// which the activity copies into the app's storage at every start.
+// which the activity copies into the app's storage at every start. The store listing and the release notes of Google
+// Play are in src/main/play (Gradle Play Publisher's layout).
 plugins {
     id 'com.android.application'
+    id 'com.github.triplet.play'
 }
 
 def configAssetsDir = layout.buildDirectory.dir('generated/tutankhamun_assets')
+
+// The upload key of Google Play: android/keystore.properties (storeFile relative to android/ or absolute, storePassword,
+// keyAlias, keyPassword; not in git) or the TUTANKHAMUN_UPLOAD_* environment variables of the CI. Without one the
+// release build is signed with the debug key, so that a local build installs.
+def uploadKey = new Properties()
+def uploadKeyFile = rootProject.file('keystore.properties')
+if (uploadKeyFile.exists()) {
+    uploadKeyFile.withInputStream { uploadKey.load(it) }
+}
+def uploadKeyValue = { String name, String env -> uploadKey.getProperty(name) ?: System.getenv(env) }
+def uploadStoreFile = uploadKeyValue('storeFile', 'TUTANKHAMUN_UPLOAD_STORE_FILE')
+def hasUploadKey = uploadStoreFile != null && rootProject.file(uploadStoreFile).exists()
+
+// versionCode grows with every upload to Google Play: -PversionCode=<n> or TUTANKHAMUN_VERSION_CODE (the CI's run
+// number), else 1
+def appVersionCode = (project.findProperty('versionCode') ?: System.getenv('TUTANKHAMUN_VERSION_CODE') ?: '1') as int
 
 tasks.register('syncConfigAssets', Sync) {
     from rootProject.file('../config')
@@ -22,8 +40,8 @@ android {
         applicationId 'com.github.dalerank.tutankhamun'
         minSdk 21
         targetSdk 36
-        versionCode 1
-        versionName '0.1'
+        versionCode appVersionCode
+        versionName "0.1.${appVersionCode}"
         externalNativeBuild {
             cmake {
                 arguments '-DANDROID_STL=c++_static', '-DANDROID_SUPPORT_FLEXIBLE_PAGE_SIZES=ON'
@@ -47,14 +65,29 @@ android {
         }
     }
 
+    signingConfigs {
+        if (hasUploadKey) {
+            upload {
+                storeFile rootProject.file(uploadStoreFile)
+                storePassword uploadKeyValue('storePassword', 'TUTANKHAMUN_UPLOAD_STORE_PASSWORD')
+                keyAlias uploadKeyValue('keyAlias', 'TUTANKHAMUN_UPLOAD_KEY_ALIAS')
+                keyPassword uploadKeyValue('keyPassword', 'TUTANKHAMUN_UPLOAD_KEY_PASSWORD')
+            }
+        }
+    }
+
     buildTypes {
         debug {
             applicationIdSuffix '.debug'
         }
         release {
             minifyEnabled false
-            // signed with the debug key so that a local build installs; a published build needs its own key
-            signingConfig signingConfigs.debug
+            // the upload key for Google Play (bundleRelease: the .aab), else the debug key
+            signingConfig hasUploadKey ? signingConfigs.upload : signingConfigs.debug
+            ndk {
+                // the native symbols for the crash reports of Google Play
+                debugSymbolLevel 'SYMBOL_TABLE'
+            }
         }
     }
 
@@ -66,6 +99,21 @@ android {
 
 tasks.named('preBuild') {
     dependsOn 'syncConfigAssets'
+}
+
+// Google Play, as in Julius (Gradle Play Publisher): publishReleaseBundle uploads the bundle to the internal testing
+// track with the release notes of src/main/play/release-notes, publishReleaseListing the store listing. The service
+// account's JSON key is the playCredentials path of android/keystore.properties, else android/play-publisher.json (both
+// not in git), or, in the CI, the ANDROID_PUBLISHER_CREDENTIALS environment variable, which the plugin reads itself.
+// --track and --release-status (draft until the app's first review) override the defaults on the command line.
+play {
+    def credentialsPath = uploadKey.getProperty('playCredentials')
+    def credentials = credentialsPath ? rootProject.file(credentialsPath) : rootProject.file('play-publisher.json')
+    if (credentials.exists()) {
+        serviceAccountCredentials.set(credentials)
+    }
+    defaultToAppBundles.set(true)
+    track.set('internal')
 }
 
 dependencies {

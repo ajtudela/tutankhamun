@@ -4,3 +4,9 @@ out/
 _deps/
 *.exe
 *.sav
+
+# the upload key and the service account key of Google Play (android/app/build.gradle)
+android/keystore.properties
+*.jks
+*.keystore
+android/play-publisher.json
