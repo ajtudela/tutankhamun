@@ -1,11 +1,14 @@
 cmake_minimum_required(VERSION 3.22)
+# macOS: the oldest system the app runs on (clock_gettime needs 10.12); set before project() as CMake asks
+set(CMAKE_OSX_DEPLOYMENT_TARGET "10.13" CACHE STRING "The oldest macOS the program runs on")
 project(tutankhamun C CXX)
 
 # Tutankhamun: tutankhamun, the game of Pharaoh + Cleopatra in C. The game (src/game), the platform layer
 # (src/platform) and the program around them, SDL2 and SDL2_mixer fetched and linked statically, Akhenaten's Bink
 # decoder for the videos and parson for the JSON configs. Windows (MSVC, Win32 or x64), Linux (GCC or Clang, 64-bit;
-# the AppImage: packaging/linux) and Android (the NDK through the Gradle project in android/: the game is libmain.so
-# beside a shared SDL2 and SDL2_mixer).
+# the AppImage: packaging/linux), macOS (Apple Clang; the app bundle Tutankhamun.app, arm64 + x86_64 with
+# -DCMAKE_OSX_ARCHITECTURES="arm64;x86_64", the disk image: packaging/macos) and Android (the NDK through the Gradle
+# project in android/: the game is libmain.so beside a shared SDL2 and SDL2_mixer).
 if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
     set(CMAKE_BUILD_TYPE Release)
 endif()
@@ -67,6 +70,13 @@ else()
     endif()
     if(WIN32)
         target_link_libraries(tutankhamun_platform PUBLIC winmm version imm32 setupapi)
+    elseif(APPLE)
+        # the frameworks of the static SDL2 (its sdl2.pc, Libs.private); the newer ones weak, for the older systems
+        target_link_libraries(tutankhamun_platform PUBLIC iconv m
+            "-framework CoreVideo" "-framework Cocoa" "-framework IOKit" "-framework ForceFeedback" "-framework Carbon"
+            "-framework CoreAudio" "-framework AudioToolbox" "-framework AVFoundation" "-framework Foundation"
+            "-weak_framework GameController" "-weak_framework Metal" "-weak_framework QuartzCore"
+            "-weak_framework CoreHaptics")
     else()
         find_package(Threads REQUIRED)
         target_link_libraries(tutankhamun_platform PUBLIC Threads::Threads ${CMAKE_DL_LIBS} m)
@@ -121,6 +131,40 @@ if(ANDROID)
     # SDLActivity loads the game as libmain.so and calls its main (TutankhamunActivity.getMainFunction)
     add_library(tutankhamun SHARED ${TUTANKHAMUN_SOURCES})
     set_target_properties(tutankhamun PROPERTIES OUTPUT_NAME main)
+elseif(APPLE)
+    # The app bundle Tutankhamun.app: Contents/MacOS/Tutankhamun, the icon and the configs in Contents/Resources
+    # (packaging/macos: the Info.plist template, the disk image).
+    set(TUTANKHAMUN_ICNS "${CMAKE_BINARY_DIR}/tutankhamun.icns")
+    find_program(SIPS_PROGRAM sips)
+    find_program(ICONUTIL_PROGRAM iconutil)
+    if(SIPS_PROGRAM AND ICONUTIL_PROGRAM AND NOT EXISTS "${TUTANKHAMUN_ICNS}")
+        set(iconset "${CMAKE_BINARY_DIR}/tutankhamun.iconset")
+        file(MAKE_DIRECTORY "${iconset}")
+        foreach(icon 16:icon_16x16 32:icon_16x16@2x 32:icon_32x32 64:icon_32x32@2x 128:icon_128x128
+                     256:icon_128x128@2x 256:icon_256x256)
+            string(REPLACE ":" ";" icon "${icon}")
+            list(GET icon 0 icon_size)
+            list(GET icon 1 icon_name)
+            execute_process(COMMAND ${SIPS_PROGRAM} -z ${icon_size} ${icon_size} "${CMAKE_SOURCE_DIR}/res/tutankhamun_256.png"
+                --out "${iconset}/${icon_name}.png" OUTPUT_QUIET ERROR_QUIET)
+        endforeach()
+        execute_process(COMMAND ${ICONUTIL_PROGRAM} -c icns "${iconset}" -o "${TUTANKHAMUN_ICNS}")
+        file(REMOVE_RECURSE "${iconset}")
+    endif()
+    set(TUTANKHAMUN_BUNDLE_FILES "")
+    if(EXISTS "${TUTANKHAMUN_ICNS}")
+        set(TUTANKHAMUN_BUNDLE_FILES "${TUTANKHAMUN_ICNS}")
+        set_source_files_properties("${TUTANKHAMUN_ICNS}" PROPERTIES MACOSX_PACKAGE_LOCATION Resources)
+    endif()
+    add_executable(tutankhamun MACOSX_BUNDLE ${TUTANKHAMUN_SOURCES} ${TUTANKHAMUN_BUNDLE_FILES})
+    set_target_properties(tutankhamun PROPERTIES
+        OUTPUT_NAME Tutankhamun
+        MACOSX_BUNDLE_INFO_PLIST "${CMAKE_SOURCE_DIR}/packaging/macos/Info.plist.in"
+        MACOSX_BUNDLE_BUNDLE_NAME Tutankhamun
+        MACOSX_BUNDLE_GUI_IDENTIFIER com.github.dalerank.tutankhamun
+        MACOSX_BUNDLE_ICON_FILE tutankhamun.icns
+        MACOSX_BUNDLE_BUNDLE_VERSION 1.0
+        MACOSX_BUNDLE_SHORT_VERSION_STRING 1.0)
 else()
     add_executable(tutankhamun ${TUTANKHAMUN_SOURCES})
 endif()
@@ -133,7 +177,7 @@ if(MSVC)
 else()
     target_compile_options(tutankhamun PRIVATE -Werror=implicit-function-declaration -Werror=int-conversion -Werror=incompatible-pointer-types
         -Werror=return-type -Werror=pointer-to-int-cast -Werror=int-to-pointer-cast)
-    if(NOT ANDROID)
+    if(NOT ANDROID AND NOT APPLE)
         # the C++ run time of the Bink decoder is linked in: the program needs only the system's C library
         target_link_options(tutankhamun PRIVATE -static-libstdc++ -static-libgcc -rdynamic)
     endif()
@@ -148,12 +192,21 @@ endif()
 
 set_target_properties(tutankhamun PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
-# The gameplay configs (config/*.json) are copied beside the program on every build.
+# The gameplay configs (config/*.json) are copied beside the program on every build (macOS: into the bundle's
+# Contents/Resources).
+if(APPLE)
+    set(TUTANKHAMUN_CONFIG_OUT "$<TARGET_BUNDLE_CONTENT_DIR:tutankhamun>/Resources/config")
+else()
+    set(TUTANKHAMUN_CONFIG_OUT "$<TARGET_FILE_DIR:tutankhamun>/config")
+endif()
 add_custom_target(tutankhamun_configs COMMAND ${CMAKE_COMMAND} -E copy_directory
-    "${CMAKE_SOURCE_DIR}/config" "$<TARGET_FILE_DIR:tutankhamun>/config")
+    "${CMAKE_SOURCE_DIR}/config" "${TUTANKHAMUN_CONFIG_OUT}")
 add_dependencies(tutankhamun tutankhamun_configs)
 
-if(WIN32)
+if(APPLE)
+    # `cmake --install` with a prefix: Tutankhamun.app in it (packaging/macos/build_dmg.sh)
+    install(TARGETS tutankhamun BUNDLE DESTINATION .)
+elseif(WIN32)
     # The game folder (`cmake --install`, build.bat): tutankhamun.exe and config\ beside it.
     install(TARGETS tutankhamun RUNTIME DESTINATION .)
     install(DIRECTORY config/ DESTINATION config)

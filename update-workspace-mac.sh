@@ -1,8 +1,17 @@
 #!/usr/bin/env sh
-# The macOS workspace: not available yet. The platform layer of the Linux build (src/platform/platform_posix.c,
-# src/platform/platform_file.c, src/app/port_posix.c) is POSIX and SDL, but the program's own files
-# (src/app/app_files.c: /proc/self/exe) and the build have not been made and tried on macOS. The script stops instead
-# of making a build that may not run.
-echo "update-workspace-mac.sh: the macOS build is not available yet." >&2
-echo "tutankhamun builds on Windows (update-workspace.bat, build.bat) and Linux (update-workspace-linux.sh)." >&2
-exit 1
+# Configures the macOS workspace (static SDL2 + SDL2_mixer + Bink, Ninja) through CMakePresets.json:
+# out/build/macos-dev (this Mac's architecture) or out/build/macos-release (universal arm64 + x86_64), with
+# compile_commands.json for the editor; the program is the app bundle bin/Tutankhamun.app.
+# Usage: update-workspace-mac.sh [Debug|Release]  (default: Debug). The disk image: packaging/macos/build_dmg.sh.
+set -e
+case "${1:-Debug}" in
+    Debug | debug) preset=macos-dev ;;
+    Release | release) preset=macos-release ;;
+    *)
+        echo "usage: update-workspace-mac.sh [Debug|Release]" >&2
+        exit 2
+        ;;
+esac
+cd "$(dirname "$0")"
+cmake --preset "$preset"
+echo "update-workspace-mac.sh: configured out/build/$preset; build it with: cmake --build --preset $preset"

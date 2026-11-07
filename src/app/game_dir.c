@@ -3,7 +3,8 @@
 // listed with the file it lacks. `tutankhamun --find-game-dir` runs the lookup alone on given sources, read only.
 // On Windows the Steam and GOG installs come from the registry and the picker is the shell's folder dialog; elsewhere
 // Steam is looked for in its usual folders (native, Flatpak, Snap), GOG in the usual folders of its Linux installers,
-// Heroic and Wine, and the picker is zenity or kdialog when one of them is installed.
+// Heroic and Wine, and the picker is zenity or kdialog when one of them is installed; on macOS Steam is also looked for
+// in ~/Library/Application Support/Steam and the picker is the Finder's folder dialog through osascript.
 
 #include "app/game_dir.h"
 
@@ -345,6 +346,10 @@ static int32_t pick_folder(char *folder)
 static int32_t pick_folder(char *folder)
 {
     static const char *const pickers[] = {
+#if defined(__APPLE__)
+        "osascript -e 'POSIX path of (choose folder with prompt \"tutankhamun: choose the folder of Pharaoh + Cleopatra "
+        "(the one with Data and campaign.txt)\")' 2>/dev/null",
+#endif
         "zenity --file-selection --directory --title='tutankhamun: choose the folder of Pharaoh + Cleopatra' 2>/dev/null",
         "kdialog --getexistingdirectory \"$HOME\" --title 'tutankhamun: choose the folder of Pharaoh + Cleopatra' 2>/dev/null",
     };
@@ -544,6 +549,9 @@ static void read_steam_root(char *root)
         ".local/share/Steam",
         ".var/app/com.valvesoftware.Steam/.local/share/Steam",
         "snap/steam/common/.local/share/Steam",
+#if defined(__APPLE__)
+        "Library/Application Support/Steam",
+#endif
     };
     const char *home = getenv("HOME");
     root[0] = 0;

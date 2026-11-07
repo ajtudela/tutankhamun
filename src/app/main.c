@@ -180,6 +180,8 @@ static int32_t play_main(int32_t argc, char **argv, int32_t first)
             log = argv[++i];
         } else if (strcmp(argv[i], "--discord-log") == 0) {
             discord_rpc_set_verbose(true);
+        } else if (strncmp(argv[i], "-psn_", 5) == 0) {
+            // the process serial number that older macOS Finders pass to an app they start
         } else if (strncmp(argv[i], "--", 2) == 0) {
             fprintf(stderr, "unknown option %s\n", argv[i]);
             print_usage();

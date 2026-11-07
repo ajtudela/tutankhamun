@@ -1,8 +1,9 @@
 // The program's own files. On Windows: GetModuleFileName for the program, the config folder and the ini beside it,
-// the ini read and written by the Windows profile functions. Elsewhere: /proc/self/exe for the program, the configs
-// in the user's configuration folder when there, else beside the program or in ../share/tutankhamun/config, the ini
-// in the user's configuration folder (on Android both in the app's internal storage), read and written here
-// ([section] lines and key=value lines; a write keeps the other lines as they are).
+// the ini read and written by the Windows profile functions. Elsewhere: /proc/self/exe (macOS: _NSGetExecutablePath)
+// for the program, the configs in the user's folder when there, else beside the program, in
+// ../share/tutankhamun/config or, in the macOS app bundle, in Contents/Resources/config, the ini in the user's folder
+// (~/.config/tutankhamun; macOS: ~/Library/Application Support/tutankhamun; on Android both in the app's internal
+// storage), read and written here ([section] lines and key=value lines; a write keeps the other lines as they are).
 
 #include "app/app_files.h"
 
@@ -85,6 +86,11 @@ bool app_ini_write(const char *ini, const char *section, const char *key, const 
 #include "platform/platform_android.h"
 #endif
 
+#if defined(__APPLE__)
+#include <limits.h>
+#include <mach-o/dyld.h>
+#include <stdint.h>
+#endif
 #include <ctype.h>
 #include <errno.h>
 #include <strings.h>
@@ -96,6 +102,20 @@ enum app_ini_limits {
     INI_FILE_MAX = 65536,
 };
 
+#if defined(__APPLE__)
+bool app_program_path(char *path, size_t size)
+{
+    char link[1024];
+    uint32_t link_size = sizeof(link);
+    char resolved[PATH_MAX];
+    if (_NSGetExecutablePath(link, &link_size) != 0 || !realpath(link, resolved) || strlen(resolved) >= size) {
+        path[0] = 0;
+        return false;
+    }
+    strcpy(path, resolved);
+    return true;
+}
+#else
 bool app_program_path(char *path, size_t size)
 {
     ssize_t length = readlink("/proc/self/exe", path, size - 1);
@@ -106,6 +126,7 @@ bool app_program_path(char *path, size_t size)
     path[length] = 0;
     return true;
 }
+#endif
 
 bool app_program_dir(char *dir, size_t size)
 {
@@ -126,17 +147,37 @@ static bool is_dir(const char *path)
     return stat(path, &info) == 0 && S_ISDIR(info.st_mode);
 }
 
-static bool user_config_dir(char *dir, size_t size)
+// the user's own folder of the program: ~/Library/Application Support/tutankhamun on macOS, else
+// $XDG_CONFIG_HOME/tutankhamun or ~/.config/tutankhamun
+static bool user_dir(char *dir, size_t size)
 {
-    const char *config_home = getenv("XDG_CONFIG_HOME");
     const char *home = getenv("HOME");
+#if defined(__APPLE__)
+    if (!home || !home[0]) {
+        return false;
+    }
+    snprintf(dir, size, "%s/Library/Application Support/tutankhamun", home);
+    return true;
+#else
+    const char *config_home = getenv("XDG_CONFIG_HOME");
     if (config_home && config_home[0] == '/') {
-        snprintf(dir, size, "%s/tutankhamun/config", config_home);
+        snprintf(dir, size, "%s/tutankhamun", config_home);
     } else if (home && home[0]) {
-        snprintf(dir, size, "%s/.config/tutankhamun/config", home);
+        snprintf(dir, size, "%s/.config/tutankhamun", home);
     } else {
         return false;
     }
+    return true;
+#endif
+}
+
+static bool user_config_dir(char *dir, size_t size)
+{
+    char user[1024];
+    if (!user_dir(user, sizeof(user))) {
+        return false;
+    }
+    snprintf(dir, size, "%s/config", user);
     return is_dir(dir);
 }
 
@@ -161,6 +202,13 @@ bool app_config_dir(char *dir, size_t size)
     if (is_dir(dir)) {
         return true;
     }
+#if defined(__APPLE__)
+    // the app bundle: Contents/MacOS/tutankhamun and Contents/Resources/config
+    snprintf(dir, size, "%s/../Resources/config", program);
+    if (is_dir(dir)) {
+        return true;
+    }
+#endif
     snprintf(dir, size, "%s/config", program);
     return false;
 }
@@ -186,14 +234,8 @@ bool app_ini_path(char *path, size_t size)
     snprintf(path, size, "%s/tutankhamun.ini", android_storage_path());
     return true;
 #endif
-    const char *config_home = getenv("XDG_CONFIG_HOME");
-    const char *home = getenv("HOME");
     char dir[1024];
-    if (config_home && config_home[0] == '/') {
-        snprintf(dir, sizeof(dir), "%s/tutankhamun", config_home);
-    } else if (home && home[0]) {
-        snprintf(dir, sizeof(dir), "%s/.config/tutankhamun", home);
-    } else {
+    if (!user_dir(dir, sizeof(dir))) {
         path[0] = 0;
         return false;
     }

@@ -1,0 +1,25 @@
+name: Tutankhamun Build macOS
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+  workflow_dispatch:
+
+jobs:
+  dmg:
+    name: build the disk image
+    runs-on: macos-14
+    steps:
+    - uses: actions/checkout@v4
+    - name: install the build tools
+      run: brew install ninja
+    - name: build
+      run: bash packaging/macos/build_dmg.sh build/macos
+    - name: check the configs
+      run: build/macos/bin/Tutankhamun.app/Contents/MacOS/Tutankhamun --check-configs config
+    - uses: actions/upload-artifact@v4
+      with:
+        name: macos_dmg
+        path: build/macos/Tutankhamun.dmg

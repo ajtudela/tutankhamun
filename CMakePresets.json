@@ -139,6 +139,34 @@
       "name": "linux-release",
       "displayName": "Linux 64-bit release: Release, static SDL2 + mixer, Bink (Ninja)",
       "inherits": ["base-linux", "base-buildtype-release"]
+    },
+    {
+      "name": "base-macos",
+      "hidden": true,
+      "generator": "Ninja",
+      "binaryDir": "${sourceDir}/out/build/${presetName}",
+      "installDir": "${sourceDir}/out/install/${presetName}",
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Darwin"
+      },
+      "cacheVariables": {
+        "CMAKE_EXPORT_COMPILE_COMMANDS": "ON"
+      }
+    },
+    {
+      "name": "macos-dev",
+      "displayName": "macOS dev: Debug, this Mac's architecture, static SDL2 + mixer, Bink (Ninja)",
+      "inherits": ["base-macos", "base-buildtype-debug"]
+    },
+    {
+      "name": "macos-release",
+      "displayName": "macOS release: Release, universal arm64 + x86_64 app, static SDL2 + mixer, Bink (Ninja)",
+      "inherits": ["base-macos", "base-buildtype-release"],
+      "cacheVariables": {
+        "CMAKE_OSX_ARCHITECTURES": "arm64;x86_64"
+      }
     }
   ],
   "buildPresets": [
@@ -194,6 +222,16 @@
     {
       "name": "linux-release",
       "configurePreset": "linux-release",
+      "targets": ["tutankhamun"]
+    },
+    {
+      "name": "macos-dev",
+      "configurePreset": "macos-dev",
+      "targets": ["tutankhamun"]
+    },
+    {
+      "name": "macos-release",
+      "configurePreset": "macos-release",
       "targets": ["tutankhamun"]
     }
   ]

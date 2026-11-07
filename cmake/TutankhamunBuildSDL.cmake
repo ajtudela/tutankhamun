@@ -30,6 +30,17 @@ set(TUTANKHAMUN_SDL_GENERATOR "${CMAKE_GENERATOR}")
 if(MSVC AND CMAKE_GENERATOR STREQUAL "Ninja")
     set(TUTANKHAMUN_SDL_GENERATOR "Ninja Multi-Config")
 endif()
+# macOS: the nested SDL builds get the program's architectures (arm64;x86_64 for the universal app) and oldest system
+# through the environment, which CMake reads into CMAKE_OSX_ARCHITECTURES / CMAKE_OSX_DEPLOYMENT_TARGET; the list's
+# semicolon would not survive the command line of execute_process.
+if(APPLE)
+    if(CMAKE_OSX_ARCHITECTURES)
+        set(ENV{CMAKE_OSX_ARCHITECTURES} "${CMAKE_OSX_ARCHITECTURES}")
+    endif()
+    if(CMAKE_OSX_DEPLOYMENT_TARGET)
+        set(ENV{MACOSX_DEPLOYMENT_TARGET} "${CMAKE_OSX_DEPLOYMENT_TARGET}")
+    endif()
+endif()
 
 set(LOCAL_DEPS_ROOT "${CMAKE_SOURCE_DIR}/_deps")
 set(TUTANKHAMUN_SDL_LIBS_DIR "${CMAKE_BINARY_DIR}/libs" CACHE PATH "The folder of the installed static SDL2 and SDL2_mixer")

@@ -1,14 +1,15 @@
-# Tutankhamun [![Github Actions](https://github.com/dalerank/tutankhamun/actions/workflows/tutankhamun_windows.yml/badge.svg)](https://github.com/dalerank/tutankhamun/actions/workflows/tutankhamun_windows.yml) [![Github Actions](https://github.com/dalerank/tutankhamun/actions/workflows/tutankhamun_linux.yml/badge.svg)](https://github.com/dalerank/tutankhamun/actions/workflows/tutankhamun_linux.yml) [![Github Actions](https://github.com/dalerank/tutankhamun/actions/workflows/tutankhamun_android.yml/badge.svg)](https://github.com/dalerank/tutankhamun/actions/workflows/tutankhamun_android.yml)
+# Tutankhamun [![Github Actions](https://github.com/dalerank/tutankhamun/actions/workflows/tutankhamun_windows.yml/badge.svg)](https://github.com/dalerank/tutankhamun/actions/workflows/tutankhamun_windows.yml) [![Github Actions](https://github.com/dalerank/tutankhamun/actions/workflows/tutankhamun_linux.yml/badge.svg)](https://github.com/dalerank/tutankhamun/actions/workflows/tutankhamun_linux.yml) [![Github Actions](https://github.com/dalerank/tutankhamun/actions/workflows/tutankhamun_android.yml/badge.svg)](https://github.com/dalerank/tutankhamun/actions/workflows/tutankhamun_android.yml) [![Github Actions](https://github.com/dalerank/tutankhamun/actions/workflows/tutankhamun_macos.yml/badge.svg)](https://github.com/dalerank/tutankhamun/actions/workflows/tutankhamun_macos.yml)
 
 [![Discord](res/badges/discord.svg)](https://discord.gg/HS4njmBvpb)
 [![Windows](res/badges/windows.svg)](https://nightly.link/dalerank/tutankhamun/workflows/tutankhamun_windows/main/windows_build.zip)
 [![Windows x64](res/badges/windows_x64.svg)](https://nightly.link/dalerank/tutankhamun/workflows/tutankhamun_windows/main/windows_build_x64.zip)
 [![Linux](res/badges/linux.svg)](https://nightly.link/dalerank/tutankhamun/workflows/tutankhamun_linux/main/linux_appimage.zip)
 [![Android](res/badges/android.svg)](https://nightly.link/dalerank/tutankhamun/workflows/tutankhamun_android/main/android_apk.zip)
+[![macOS](res/badges/macos.svg)](https://nightly.link/dalerank/tutankhamun/workflows/tutankhamun_macos/main/macos_dmg.zip)
 
 Tutankhamun is an open-source re-implementation of **Pharaoh + Cleopatra 2.1** (Impressions Games, 2000) in C: the
 game written again as a program of its own, `tutankhamun`, that plays on the files of your own copy of the game
-in a window (SDL2) on modern Windows and Linux, and on Android. It is also a readable reference for the game's
+in a window (SDL2) on modern Windows, Linux and macOS, and on Android. It is also a readable reference for the game's
 behaviour, mainly to support [Akhenaten](https://github.com/dalerank/Akhenaten).
 
 ![Tutankhamun: a city of the Pharaoh campaign](res/screenshots/tutankhamun.png)
@@ -30,10 +31,12 @@ are also present in Tutankhamun. No game assets are part of this repository.
 | Windows x64 | -           | [![Github Actions](https://github.com/dalerank/tutankhamun/actions/workflows/tutankhamun_windows.yml/badge.svg)](https://nightly.link/dalerank/tutankhamun/workflows/tutankhamun_windows/main/windows_build_x64.zip) |
 | Linux    | -              | [![Github Actions](https://github.com/dalerank/tutankhamun/actions/workflows/tutankhamun_linux.yml/badge.svg)](https://nightly.link/dalerank/tutankhamun/workflows/tutankhamun_linux/main/linux_appimage.zip) |
 | Android  | -              | [![Github Actions](https://github.com/dalerank/tutankhamun/actions/workflows/tutankhamun_android.yml/badge.svg)](https://nightly.link/dalerank/tutankhamun/workflows/tutankhamun_android/main/android_apk.zip) |
+| macOS    | -              | [![Github Actions](https://github.com/dalerank/tutankhamun/actions/workflows/tutankhamun_macos.yml/badge.svg)](https://nightly.link/dalerank/tutankhamun/workflows/tutankhamun_macos/main/macos_dmg.zip) |
 
 The unstable build is the latest build of `main`: on Windows a zip with `tutankhamun.exe` and its `config` folder
 (unpack it anywhere), on Linux a zip with `Tutankhamun-x86_64.AppImage` (see [Linux](#linux)), on Android a zip with
-`app-release.apk` (see [Android](#android)). The game finds your Pharaoh + Cleopatra installation as described below. A macOS build is not available yet.
+`app-release.apk` (see [Android](#android)), on macOS a zip with `Tutankhamun.dmg` (see [macOS](#macos)). The game
+finds your Pharaoh + Cleopatra installation as described below.
 
 On Windows `windows_build.zip` holds the 32-bit program and `windows_build_x64.zip` the 64-bit one: they play the
 same game and read and write the same saved games.
@@ -114,7 +117,26 @@ on the map shows where it goes and a second tap on it builds it; roads, walls, c
 that are dragged are dragged as with a mouse; the button at the top right of the map (or a long press) drops the
 building. The release APK is signed with a debug key: uninstall an APK signed with another key first.
 
+### macOS
+
+`Tutankhamun.app` is one universal program for Apple silicon and Intel Macs, macOS 10.13 or newer. Open
+`Tutankhamun.dmg` and drag the app to Applications. The app is signed ad hoc, not by a registered developer, so
+macOS refuses it at the first start: open it with right click (Control-click) > Open > Open, or allow it in System
+Settings > Privacy & Security, or run `xattr -cr /Applications/Tutankhamun.app`.
+
+You need the game's data from an installed Pharaoh + Cleopatra, for example copied from a Windows installation or
+from the GOG or Steam version installed with CrossOver or Wine. Started from the Finder, the game asks for the folder
+with the Finder's folder dialog and remembers it. The game directory is looked for as on Linux, plus the Steam
+library in `~/Library/Application Support/Steam`. From the Terminal it takes the command line below:
+
+    /Applications/Tutankhamun.app/Contents/MacOS/Tutankhamun [game dir] [save.sav]
+
+`tutankhamun.ini` and the log `tutankhamun_play.log` are in `~/Library/Application Support/tutankhamun/`; a folder
+`config` there with your own gameplay tables replaces the configs inside the app.
+
 ## Building from source
+
+### Windows
 
 Windows 10/11 with Visual Studio 2022 ("Desktop development with C++"), CMake 3.22 or newer and git. The game builds
 as a 32-bit (Win32, the default) or a 64-bit (x64) program. In short:
@@ -135,21 +157,68 @@ The build is in `out\build\<preset>` and the game folder (tutankhamun.exe and co
 `TUTANKHAMUN_JOBS` limits the parallel build jobs. The exit code is 0 when the game folder is complete, 1 when the
 build failed and 2 for an unknown option.
 
-Linux (64-bit) with GCC or Clang, CMake 3.22 or newer, Ninja, git and the development headers of X11, Wayland, ALSA
-and PulseAudio:
+### Linux
 
-    packaging/linux/build_appimage.sh
+A 64-bit Linux with GCC 9+ or Clang 10+, CMake 3.22 or newer, Ninja, git, wget and the development headers SDL is
+built against (SDL loads X11, Wayland, ALSA and PulseAudio when the game starts, they are not linked). On Debian and
+Ubuntu:
 
-builds the AppImage into `build/appimage`.
+    sudo apt install build-essential cmake ninja-build git wget libgl1-mesa-dev libx11-dev libxext-dev libxrandr-dev \
+        libxcursor-dev libxi-dev libxss-dev libxfixes-dev libwayland-dev libxkbcommon-dev wayland-protocols \
+        libdecor-0-dev libasound2-dev libpulse-dev libdbus-1-dev libudev-dev
 
-Android with JDK 17 and the Android SDK (platform 36, NDK 27.2.12479018, CMake 3.22.1); `android/local.properties`
-or `ANDROID_HOME` tells Gradle where the SDK is:
+| command | builds | result |
+|---|---|---|
+| `./update-workspace-linux.sh [Debug\|Release]`, then `cmake --build --preset linux-dev` (or `linux-release`) | the `linux-dev` (Debug, the default) or `linux-release` preset, with `compile_commands.json` | `out/build/<preset>/bin/tutankhamun` with `config/` beside it |
+| `packaging/linux/build_appimage.sh [build dir]` | Release, installed into an AppDir and packed by linuxdeploy | `build/appimage/Tutankhamun-x86_64.AppImage` (or in the given folder) |
 
-    cd android
-    ./gradlew assembleRelease
+The first configure fetches SDL2 2.32.10 and SDL2_mixer 2.8.0 and builds them as static libraries, as on Windows;
+the C++ run time is linked in too, so the program needs only the C library. Run the preset build as
+`out/build/linux-release/bin/tutankhamun [game dir] [save.sav]`. build_appimage.sh downloads linuxdeploy on the first
+run (`LINUXDEPLOY=<path>` uses one you have). An AppImage needs a glibc at least as new as the one it was built with,
+so build it on the oldest distribution it should run on: the CI builds on Ubuntu 22.04 (glibc 2.34).
 
-builds `android/app/build/outputs/apk/release/app-release.apk` (`assembleDebug` the debug APK, installed beside it as
-`com.github.dalerank.tutankhamun.debug`). SDL2 and SDL2_mixer are downloaded by CMake at the first build.
+### macOS
+
+The Xcode command line tools (`xcode-select --install`), CMake 3.22 or newer, Ninja and git, for example from
+Homebrew:
+
+    brew install cmake ninja
+
+| command | builds | result |
+|---|---|---|
+| `./update-workspace-mac.sh [Debug\|Release]`, then `cmake --build --preset macos-dev` (or `macos-release`) | the `macos-dev` (Debug, this Mac's architecture, the default) or `macos-release` (universal arm64 + x86_64) preset, with `compile_commands.json` | `out/build/<preset>/bin/Tutankhamun.app` |
+| `packaging/macos/build_dmg.sh [build dir]` | Release, universal, signed ad hoc and put into a disk image | `build/macos/Tutankhamun.dmg` (or in the given folder) |
+
+As on the other systems the first configure fetches SDL2 and SDL2_mixer and builds them as static libraries (for both
+architectures in a universal build), so the app needs nothing but the system. The configs are copied into the app's
+`Contents/Resources/config` at every build. `ARCHS=arm64 packaging/macos/build_dmg.sh` builds a disk image for Apple
+silicon only, which is faster.
+
+### Android
+
+JDK 17 and the Android SDK with platform 36, NDK 27.2.12479018 and CMake 3.22.1. Android Studio installs them
+(SDK Manager), or with the command-line tools:
+
+    sdkmanager "platforms;android-36" "build-tools;36.0.0" "ndk;27.2.12479018" "cmake;3.22.1"
+
+Gradle finds the SDK through `ANDROID_HOME` or `android/local.properties` (`sdk.dir=/path/to/Android/Sdk`; on Windows
+`sdk.dir=D\:\\Android\\Sdk`). In the `android` folder (`gradlew.bat` on Windows):
+
+| command | builds | result |
+|---|---|---|
+| `./gradlew assembleDebug` | the debug APK, package `com.github.dalerank.tutankhamun.debug` (installs beside the release one) | `android/app/build/outputs/apk/debug/app-debug.apk` |
+| `./gradlew assembleRelease` | the release APK, package `com.github.dalerank.tutankhamun`, signed with the debug key | `android/app/build/outputs/apk/release/app-release.apk` |
+| `./gradlew installDebug` | the debug APK, installed on the connected device (USB debugging on) | |
+
+The APK holds `libmain.so` (the game, built by CMake from the top `CMakeLists.txt`), `libSDL2.so` and
+`libSDL2_mixer.so` for arm64-v8a, armeabi-v7a and x86_64, and the `config` folder as assets, copied from the
+repository at every build. The first build fetches SDL2 and SDL2_mixer and builds them for the three ABIs, so it takes
+a while. An APK built elsewhere is signed with another debug key: uninstall the app before installing it
+(`adb install -r <apk>` replaces one with the same key). The game's log is `tutankhamun_play.log` in the app's
+storage; of the debug build it can be read with
+
+    adb shell run-as com.github.dalerank.tutankhamun.debug cat files/tutankhamun_play.log
 
 [BUILD.md](BUILD.md) has the details and the other ways to build. macOS is not supported yet:
 `update-workspace-mac.sh` only says so.
@@ -169,7 +238,7 @@ builds `android/app/build/outputs/apk/release/app-release.apk` (`assembleDebug` 
 | `--window`, `--windowed` | | start in a window | as remembered |
 | `--fullscreen` | | start in full screen | as remembered |
 | `--cursor-scale` | N | the size of the mouse cursors: `1`, `1.5` or `2` | `1` |
-| `--log` | file | the log file | `tutankhamun_play.log` in the current folder (on Linux in `~/.config/tutankhamun`) |
+| `--log` | file | the log file | `tutankhamun_play.log` in the current folder (on Linux in `~/.config/tutankhamun`, on macOS in `~/Library/Application Support/tutankhamun`) |
 | `--discord-log` | | a detailed log of the Discord status in the log file | off |
 | `--export-configs` | dir | writes the built-in gameplay tables into dir as JSON (a fresh `config` folder) | |
 | `--check-configs` | dir | loads every config of dir and compares it with the built-in tables; exit 0 when all are identical | |
