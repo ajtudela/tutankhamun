@@ -53,6 +53,15 @@
       }
     },
     {
+      "name": "base-win-ninja-x64",
+      "hidden": true,
+      "inherits": "base-win-ninja",
+      "architecture": {
+        "value": "x64",
+        "strategy": "external"
+      }
+    },
+    {
       "name": "base-buildtype-debug",
       "hidden": true,
       "cacheVariables": {
@@ -95,6 +104,16 @@
       "name": "win-msvc-release-x64-vs2022",
       "displayName": "Windows MSVC x64 release: Release, static SDL2 + mixer, Bink (VS 2022)",
       "inherits": ["base-win-vs2022-x64", "base-buildtype-release"]
+    },
+    {
+      "name": "win-msvc-dev-x64-ninja",
+      "displayName": "Windows MSVC x64 dev: Debug, static SDL2 + mixer, Bink (Ninja, vcvars64)",
+      "inherits": ["base-win-ninja-x64", "base-buildtype-debug"]
+    },
+    {
+      "name": "win-msvc-release-x64-ninja",
+      "displayName": "Windows MSVC x64 release: Release, static SDL2 + mixer, Bink (Ninja, vcvars64)",
+      "inherits": ["base-win-ninja-x64", "base-buildtype-release"]
     }
   ],
   "buildPresets": [
@@ -130,6 +149,16 @@
       "name": "win-msvc-release-x64-vs2022",
       "configurePreset": "win-msvc-release-x64-vs2022",
       "configuration": "Release",
+      "targets": ["tutankhamun"]
+    },
+    {
+      "name": "win-msvc-dev-x64-ninja",
+      "configurePreset": "win-msvc-dev-x64-ninja",
+      "targets": ["tutankhamun"]
+    },
+    {
+      "name": "win-msvc-release-x64-ninja",
+      "configurePreset": "win-msvc-release-x64-ninja",
       "targets": ["tutankhamun"]
     }
   ]

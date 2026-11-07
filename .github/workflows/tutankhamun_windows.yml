@@ -9,17 +9,27 @@ on:
 
 jobs:
   windows:
-    name: build on windows
+    name: build on windows (${{ matrix.arch }})
     runs-on: windows-2022
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - arch: Win32
+            preset: win-msvc-release-vs2022
+            artifact: windows_build
+          - arch: x64
+            preset: win-msvc-release-x64-vs2022
+            artifact: windows_build_x64
     steps:
     - uses: actions/checkout@v4
     - name: configure
-      run: cmake --preset win-msvc-release-vs2022
+      run: cmake --preset ${{ matrix.preset }}
     - name: build
-      run: cmake --build --preset win-msvc-release-vs2022
+      run: cmake --build --preset ${{ matrix.preset }}
     - name: install
-      run: cmake --install out/build/win-msvc-release-vs2022 --config Release --prefix windows_build
+      run: cmake --install out/build/${{ matrix.preset }} --config Release --prefix ${{ matrix.artifact }}
     - uses: actions/upload-artifact@v4
       with:
-        name: windows_build
-        path: windows_build
+        name: ${{ matrix.artifact }}
+        path: ${{ matrix.artifact }}

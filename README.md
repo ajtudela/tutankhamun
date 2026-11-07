@@ -2,6 +2,7 @@
 
 [![Discord](res/badges/discord.svg)](https://discord.gg/HS4njmBvpb)
 [![Windows](res/badges/windows.svg)](https://nightly.link/dalerank/tutankhamun/workflows/tutankhamun_windows/main/windows_build.zip)
+[![Windows x64](res/badges/windows_x64.svg)](https://nightly.link/dalerank/tutankhamun/workflows/tutankhamun_windows/main/windows_build_x64.zip)
 
 Tutankhamun is an open-source re-implementation of **Pharaoh + Cleopatra 2.1** (Impressions Games, 2000) in C: the
 game written again as a program of its own, `tutankhamun.exe`, that plays on the files of your own copy of the game
@@ -22,10 +23,14 @@ are also present in Tutankhamun. No game assets are part of this repository.
 | Platform | Latest release | Unstable build |
 | -------- | -------------- | -------------- |
 | Windows  | -              | [![Github Actions](https://github.com/dalerank/tutankhamun/actions/workflows/tutankhamun_windows.yml/badge.svg)](https://nightly.link/dalerank/tutankhamun/workflows/tutankhamun_windows/main/windows_build.zip) |
+| Windows x64 | -           | [![Github Actions](https://github.com/dalerank/tutankhamun/actions/workflows/tutankhamun_windows.yml/badge.svg)](https://nightly.link/dalerank/tutankhamun/workflows/tutankhamun_windows/main/windows_build_x64.zip) |
 
 The unstable build is the latest build of `main`: a zip with `tutankhamun.exe` and its `config` folder. Unpack it
 anywhere; the game finds your Pharaoh + Cleopatra installation as described below. Linux and macOS builds are not
 available yet (see BUILD.md).
+
+On Windows `windows_build.zip` holds the 32-bit program and `windows_build_x64.zip` the 64-bit one: they play the
+same game and read and write the same saved games.
 
 You need an installed Pharaoh + Cleopatra, version 2.1 (Pharaoh with the Cleopatra expansion). Only the game's data
 is used, not its executables or DLLs. The game folder is `tutankhamun.exe` with its `config` folder beside it:
@@ -70,13 +75,14 @@ status. `config\discord.json` turns it off with `"enabled": 0`.
 
 ## Building from source
 
-Windows 10/11 with Visual Studio 2022 ("Desktop development with C++"), CMake 3.22 or newer and git. The game is a
-32-bit program. In short:
+Windows 10/11 with Visual Studio 2022 ("Desktop development with C++"), CMake 3.22 or newer and git. The game builds
+as a 32-bit (Win32, the default) or a 64-bit (x64) program. In short:
 
     build.bat
+    build.bat release vs x64
 
 builds the Release preset and writes the game folder (tutankhamun.exe and config\) into
-`out\install\win-msvc-release-vs2022`. [BUILD.md](BUILD.md) has the details and the other ways to build.
+`out\install\win-msvc-release-vs2022` (the 64-bit one into `out\install\win-msvc-release-x64-vs2022`). [BUILD.md](BUILD.md) has the details and the other ways to build.
 
 Linux and macOS are not supported yet: `update-workspace-linux.sh` and `update-workspace-mac.sh` only say so.
 

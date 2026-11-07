@@ -8,23 +8,23 @@
   build folder fetches SDL2 2.32.10 and SDL2_mixer 2.8.0 from GitHub and builds them as static libraries.
 - Ninja, only for the Ninja presets.
 
-The game is a 32-bit program, so every build is Win32.
+The presets build a 32-bit program (Win32) or, with `-x64` in their name, a 64-bit one (x64).
 
 ## build.bat
 
-    build.bat [release|debug] [vs|ninja]
+    build.bat [release|debug] [vs|ninja] [x86|x64]
 
-configures and builds one preset (default `release vs`), installs the game folder (tutankhamun.exe and `config\`)
+configures and builds one preset (default `release vs x86`; `x64` builds the 64-bit program), installs the game folder (tutankhamun.exe and `config\`)
 into `out\install\<preset>` and prints both paths. With `ninja` it sets up the vcvars32 environment itself;
-`TUTANKHAMUN_JOBS` limits the parallel jobs. `update-workspace.bat [Debug|Release]` configures the Visual Studio preset
+`TUTANKHAMUN_JOBS` limits the parallel jobs. `update-workspace.bat [Debug|Release] [x86|x64]` configures the Visual Studio preset
 and opens its solution.
 
 ## Presets
 
-| configuration | Visual Studio 2022 (Win32) | Ninja (vcvars32 environment) |
-|---|---|---|
-| Debug | `win-msvc-dev-vs2022` | `win-msvc-dev-ninja` |
-| Release | `win-msvc-release-vs2022` | `win-msvc-release-ninja` |
+| configuration | Visual Studio 2022 (Win32) | Visual Studio 2022 (x64) | Ninja (vcvars32 environment) | Ninja (vcvars64 environment) |
+|---|---|---|---|---|
+| Debug | `win-msvc-dev-vs2022` | `win-msvc-dev-x64-vs2022` | `win-msvc-dev-ninja` | `win-msvc-dev-x64-ninja` |
+| Release | `win-msvc-release-vs2022` | `win-msvc-release-x64-vs2022` | `win-msvc-release-ninja` | `win-msvc-release-x64-ninja` |
 
     cmake --preset win-msvc-release-vs2022
     cmake --build --preset win-msvc-release-vs2022
