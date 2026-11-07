@@ -9,6 +9,8 @@ game written again as a program of its own, `tutankhamun.exe`, that plays on the
 in a window (SDL2) on modern Windows. It is also a readable reference for the game's behaviour, mainly to support
 [Akhenaten](https://github.com/dalerank/Akhenaten).
 
+![Tutankhamun: a city of the Pharaoh campaign](res/screenshots/tutankhamun.png)
+
 Tutankhamun will not run without the original Pharaoh + Cleopatra files. You can buy a digital copy from
 [GOG](https://www.gog.com/game/pharaoh_cleopatra) or
 [Steam](https://store.steampowered.com/app/564530/Pharaoh__Cleopatra/), or use an original CD-ROM version updated to
