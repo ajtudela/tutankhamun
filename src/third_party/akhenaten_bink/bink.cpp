@@ -230,7 +230,7 @@ class bink_file {
 public:
     static bink_file load(const std::string& path) {
         bink_file result;
-        FILE* fp = std::fopen(path.c_str(), "rb");
+        FILE* fp = vfs::open_read(path.c_str());
         if (!fp) {
             logs::error("BIK: Unable to open BIK file.");
             return result;
@@ -400,7 +400,7 @@ public:
         if (!file.valid()) {
             return;
         }
-        fp_ = std::fopen(file.path().c_str(), "rb");
+        fp_ = vfs::open_read(file.path().c_str());
         if (!fp_) {
             logs::error("BIK: Unable to open BIK stream.");
             return;

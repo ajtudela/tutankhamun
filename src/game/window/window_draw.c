@@ -46,6 +46,7 @@
 #include "widget/sidebar.h"
 #include "widget/sidebar_buttons.h"
 #include "widget/tooltip.h"
+#include "widget/touch_construction.h"
 #include "widget/widget_data.h"
 #include "window/advisor/labor.h"
 #include "window/advisor/military.h"
@@ -479,6 +480,7 @@ void window_draw_foreground_dispatch(void)
             debug_draw_evolve_info();
             debug_draw_building_info();
             debug_draw_figure_info();
+            touch_construction_draw();
             city_message_process_queue();
             debug_frame_update();
         } else {

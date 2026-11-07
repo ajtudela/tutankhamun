@@ -3,8 +3,9 @@ project(tutankhamun C CXX)
 
 # Tutankhamun: tutankhamun, the game of Pharaoh + Cleopatra in C. The game (src/game), the platform layer
 # (src/platform) and the program around them, SDL2 and SDL2_mixer fetched and linked statically, Akhenaten's Bink
-# decoder for the videos and parson for the JSON configs. Windows (MSVC, Win32 or x64) and Linux (GCC or Clang, 64-bit;
-# the AppImage: packaging/linux).
+# decoder for the videos and parson for the JSON configs. Windows (MSVC, Win32 or x64), Linux (GCC or Clang, 64-bit;
+# the AppImage: packaging/linux) and Android (the NDK through the Gradle project in android/: the game is libmain.so
+# beside a shared SDL2 and SDL2_mixer).
 if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
     set(CMAKE_BUILD_TYPE Release)
 endif()
@@ -13,6 +14,9 @@ if(MSVC)
     set(CMAKE_C_STANDARD 99)
 else()
     set(CMAKE_C_STANDARD 11)
+endif()
+if(ANDROID)
+    set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 endif()
 if(MSVC)
     set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
@@ -27,34 +31,46 @@ endif()
 file(GLOB_RECURSE GAME_SOURCES CONFIGURE_DEPENDS src/game/*.c)
 
 # The platform: SDL2 window, input and SDL_mixer audio; static SDL2 + SDL2_mixer built once per build folder
-# (cmake/TutankhamunBuildSDL.cmake; -DTUTANKHAMUN_SDL_LIBS_DIR=<dir> shares the built libraries between build folders).
+# (cmake/TutankhamunBuildSDL.cmake; -DTUTANKHAMUN_SDL_LIBS_DIR=<dir> shares the built libraries between build folders),
+# shared ones on Android (cmake/TutankhamunAndroidSDL.cmake).
 add_library(tutankhamun_platform STATIC EXCLUDE_FROM_ALL
     src/platform/screen.c
     src/platform/sound_device.c
 )
 target_include_directories(tutankhamun_platform PUBLIC src PRIVATE src/game)
 
-include(${CMAKE_SOURCE_DIR}/cmake/TutankhamunBuildSDL.cmake)
-if(NOT TUTANKHAMUN_SDL_READY)
-    message(FATAL_ERROR "SDL2 / SDL2_mixer did not become ready")
-endif()
-target_include_directories(tutankhamun_platform PUBLIC
-    ${SDL2_INCLUDE_DIR}
-    ${SDL2_INCLUDE_ADD_DIR}
-    ${SDL2_MIXER_INCLUDE_DIR}
-)
-target_link_libraries(tutankhamun_platform PUBLIC
-    ${SDL2_MIXER_LIBRARY}
-    ${SDL2_LIBRARY}
-)
-if(SDL2_MAIN_LIBRARY)
-    target_link_libraries(tutankhamun_platform PUBLIC ${SDL2_MAIN_LIBRARY})
-endif()
-if(WIN32)
-    target_link_libraries(tutankhamun_platform PUBLIC winmm version imm32 setupapi)
+if(ANDROID)
+    include(${CMAKE_SOURCE_DIR}/cmake/TutankhamunAndroidSDL.cmake)
+    if(NOT TUTANKHAMUN_SDL_READY)
+        message(FATAL_ERROR "SDL2 / SDL2_mixer did not become ready")
+    endif()
+    target_link_libraries(tutankhamun_platform PUBLIC SDL2_mixer::SDL2_mixer SDL2::SDL2)
+    find_library(ANDROID_LOG_LIBRARY log)
+    find_library(ANDROID_SYSTEM_LIBRARY android)
+    target_link_libraries(tutankhamun_platform PUBLIC ${ANDROID_LOG_LIBRARY} ${ANDROID_SYSTEM_LIBRARY} ${CMAKE_DL_LIBS} m)
 else()
-    find_package(Threads REQUIRED)
-    target_link_libraries(tutankhamun_platform PUBLIC Threads::Threads ${CMAKE_DL_LIBS} m)
+    include(${CMAKE_SOURCE_DIR}/cmake/TutankhamunBuildSDL.cmake)
+    if(NOT TUTANKHAMUN_SDL_READY)
+        message(FATAL_ERROR "SDL2 / SDL2_mixer did not become ready")
+    endif()
+    target_include_directories(tutankhamun_platform PUBLIC
+        ${SDL2_INCLUDE_DIR}
+        ${SDL2_INCLUDE_ADD_DIR}
+        ${SDL2_MIXER_INCLUDE_DIR}
+    )
+    target_link_libraries(tutankhamun_platform PUBLIC
+        ${SDL2_MIXER_LIBRARY}
+        ${SDL2_LIBRARY}
+    )
+    if(SDL2_MAIN_LIBRARY)
+        target_link_libraries(tutankhamun_platform PUBLIC ${SDL2_MAIN_LIBRARY})
+    endif()
+    if(WIN32)
+        target_link_libraries(tutankhamun_platform PUBLIC winmm version imm32 setupapi)
+    else()
+        find_package(Threads REQUIRED)
+        target_link_libraries(tutankhamun_platform PUBLIC Threads::Threads ${CMAKE_DL_LIBS} m)
+    endif()
 endif()
 
 # The videos: Bink 1 on Akhenaten's decoder (C++, src/third_party/akhenaten_bink, AGPL-3.0).
@@ -62,22 +78,25 @@ add_library(akhenaten_bink STATIC EXCLUDE_FROM_ALL
     src/third_party/akhenaten_bink/bink.cpp
     src/third_party/akhenaten_bink/bink_c.cpp
 )
-set_target_properties(akhenaten_bink PROPERTIES CXX_STANDARD 17 CXX_STANDARD_REQUIRED ON)
+set_target_properties(akhenaten_bink PROPERTIES CXX_STANDARD 17 CXX_STANDARD_REQUIRED ON POSITION_INDEPENDENT_CODE ON)
 target_include_directories(akhenaten_bink PRIVATE src/third_party/akhenaten_bink)
 target_compile_options(akhenaten_bink PRIVATE ${TUTANKHAMUN_THIRD_PARTY_WARNINGS})
 target_link_libraries(akhenaten_bink PRIVATE tutankhamun_platform)
 
 # The gameplay configs: parson 1.5.3 (C, MIT, src/third_party/parson).
 add_library(parson STATIC src/third_party/parson/parson.c)
+set_target_properties(parson PROPERTIES POSITION_INDEPENDENT_CODE ON)
 target_compile_options(parson PRIVATE ${TUTANKHAMUN_THIRD_PARTY_WARNINGS})
 
 if(WIN32)
     set(TUTANKHAMUN_SYSTEM_SOURCES res/tutankhamun.rc src/app/port.c src/platform/platform_win32.c)
+elseif(ANDROID)
+    set(TUTANKHAMUN_SYSTEM_SOURCES src/app/port_posix.c src/platform/platform_posix.c src/platform/platform_android.c)
 else()
     set(TUTANKHAMUN_SYSTEM_SOURCES src/app/port_posix.c src/platform/platform_posix.c)
 endif()
 
-add_executable(tutankhamun
+set(TUTANKHAMUN_SOURCES
     ${TUTANKHAMUN_SYSTEM_SOURCES}
     src/app/app_files.c
     src/app/app_icon.c
@@ -98,6 +117,13 @@ add_executable(tutankhamun
     src/platform/platform_screen.c
     ${GAME_SOURCES}
 )
+if(ANDROID)
+    # SDLActivity loads the game as libmain.so and calls its main (TutankhamunActivity.getMainFunction)
+    add_library(tutankhamun SHARED ${TUTANKHAMUN_SOURCES})
+    set_target_properties(tutankhamun PROPERTIES OUTPUT_NAME main)
+else()
+    add_executable(tutankhamun ${TUTANKHAMUN_SOURCES})
+endif()
 target_include_directories(tutankhamun PRIVATE src src/game)
 # a call that does not match its prototype, or a call without one, is an error
 if(MSVC)
@@ -107,11 +133,19 @@ if(MSVC)
 else()
     target_compile_options(tutankhamun PRIVATE -Werror=implicit-function-declaration -Werror=int-conversion -Werror=incompatible-pointer-types
         -Werror=return-type -Werror=pointer-to-int-cast -Werror=int-to-pointer-cast)
-    # the C++ run time of the Bink decoder is linked in: the program needs only the system's C library
-    target_link_options(tutankhamun PRIVATE -static-libstdc++ -static-libgcc -rdynamic)
+    if(NOT ANDROID)
+        # the C++ run time of the Bink decoder is linked in: the program needs only the system's C library
+        target_link_options(tutankhamun PRIVATE -static-libstdc++ -static-libgcc -rdynamic)
+    endif()
 endif()
 target_compile_definitions(tutankhamun PRIVATE SDL_MAIN_HANDLED)
 target_link_libraries(tutankhamun PRIVATE parson tutankhamun_platform akhenaten_bink)
+
+if(ANDROID)
+    # the configs go into the APK's assets (android/app/build.gradle) and are copied to the app's storage at start
+    return()
+endif()
+
 set_target_properties(tutankhamun PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
 # The gameplay configs (config/*.json) are copied beside the program on every build.

@@ -81,8 +81,8 @@ int32_t image_draw_minimap_tile(int32_t image_id, int32_t x, int32_t y)
     }
     intptr_t data = image_pixels_address(&collection->headers[image_id]);
     g_data_ptr = data;
-    if (data <= 0) {
-        return (int32_t) data;
+    if (data == 0) {
+        return 0;
     }
     g_draw_x = x;
     g_draw_y = y;

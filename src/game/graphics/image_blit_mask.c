@@ -219,7 +219,7 @@ int32_t image_draw_masked(int32_t image_id, int32_t x, int32_t y, int32_t mask)
     }
     const image_header *header = &collection->headers[image_id];
     g_data_ptr = image_pixels_address(header);
-    if (g_data_ptr <= 0) {
+    if (g_data_ptr == 0) {
         return 0;
     }
     g_img_width = header->width;

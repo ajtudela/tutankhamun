@@ -11,6 +11,11 @@
 // - in a video a key down or a left click ends it as the Win32 message would, and the key's text is not passed on;
 // - the screen fade draws on the frame buffer in RGB565 when the game draws in 565 (display mode 2), else RGB555, and
 //   takes as many random numbers as on the DirectDraw surface (mode 1: one per row).
+// On Android the game is full screen in landscape at a size of the screen's shape about 720 high; a tap is a left
+// click, a long press a right click, a drag a left drag, and the back button is Escape; a click's button goes up at
+// the next frame, since the game reads the buttons once a frame. A tap in a text field (where the game drew its cursor)
+// opens the on-screen keyboard, as Julius does; a tap elsewhere, or the field gone for a while, closes it. Building
+// takes a confirming second tap and has a cancel button (widget/touch_construction.c).
 
 #include "app/play.h"
 
@@ -40,6 +45,7 @@
 #include "window/display_resolution_list.h"
 #include "window/free_play.h"
 #include "window/window_proc.h"
+#include "widget/touch_construction.h"
 
 #if defined(_WIN32)
 #include <windows.h>
@@ -532,6 +538,8 @@ static int32_t virtual_key(SDL_Keycode key)
             return PLATFORM_KEY_OEM_CLOSE_BRACKET;
         case SDLK_PAUSE:
             return PLATFORM_KEY_PAUSE;
+        case SDLK_AC_BACK:
+            return PLATFORM_KEY_ESCAPE;
         default:
             return 0;
     }
@@ -576,8 +584,215 @@ static void text_event(const char *text)
     }
 }
 
+#if defined(__ANDROID__)
+enum touch_state {
+    TOUCH_NONE = 0,
+    TOUCH_PENDING = 1,
+    TOUCH_DRAG = 2,
+    TOUCH_DONE = 3,
+};
+
+enum touch_limits {
+    TOUCH_LONG_PRESS_MS = 500,
+    TOUCH_DRAG_PIXELS = 12,
+};
+
+enum android_screen {
+    ANDROID_SCREEN_HEIGHT = 720,
+};
+
+enum text_field_area {
+    TEXT_FIELD_LEFT = 16,
+    TEXT_FIELD_TOP = 12,
+    TEXT_FIELD_WIDTH = 336,
+    TEXT_FIELD_HEIGHT = 40,
+    TEXT_FIELD_GONE_FRAMES = 30,
+};
+
+static struct {
+    uint32_t draws;
+    int32_t idle_frames;
+} text_field = { 0, TEXT_FIELD_GONE_FRAMES };
+
+static bool text_field_shown(void)
+{
+    return text_field.idle_frames < TEXT_FIELD_GONE_FRAMES;
+}
+
+static void text_field_frame(void)
+{
+    if (text_field_draws != text_field.draws) {
+        text_field.draws = text_field_draws;
+        text_field.idle_frames = 0;
+    } else if (text_field.idle_frames < TEXT_FIELD_GONE_FRAMES) {
+        text_field.idle_frames++;
+    }
+    if (!text_field_shown() && SDL_IsTextInputActive()) {
+        SDL_StopTextInput();
+    }
+}
+
+static void text_field_input_rect(int32_t left, int32_t top)
+{
+    SDL_Window *window = platform_screen_window();
+    int32_t window_width = 0;
+    int32_t window_height = 0;
+    if (window) {
+        SDL_GetWindowSize(window, &window_width, &window_height);
+    }
+    if (window_width <= 0 || window_height <= 0 || g_screen_width <= 0 || g_screen_height <= 0) {
+        return;
+    }
+    float scale_x = (float) window_width / (float) g_screen_width;
+    float scale_y = (float) window_height / (float) g_screen_height;
+    float scale = scale_x < scale_y ? scale_x : scale_y;
+    float origin_x = ((float) window_width - ((float) g_screen_width * scale)) / 2.0f;
+    float origin_y = ((float) window_height - ((float) g_screen_height * scale)) / 2.0f;
+    SDL_Rect rect = {
+        (int) (origin_x + ((float) left * scale)),
+        (int) (origin_y + ((float) top * scale)),
+        (int) ((float) TEXT_FIELD_WIDTH * scale),
+        (int) ((float) TEXT_FIELD_HEIGHT * scale),
+    };
+    SDL_SetTextInputRect(&rect);
+}
+
+static void text_field_tap(int32_t x, int32_t y)
+{
+    int32_t left = text_field_x - TEXT_FIELD_LEFT;
+    int32_t top = text_field_y - TEXT_FIELD_TOP;
+    bool inside = text_field_shown() && x >= left && x < left + TEXT_FIELD_WIDTH && y >= top && y < top + TEXT_FIELD_HEIGHT;
+    if (!inside) {
+        if (SDL_IsTextInputActive()) {
+            SDL_StopTextInput();
+        }
+        return;
+    }
+    text_field_input_rect(left, top);
+    if (!SDL_IsTextInputActive()) {
+        SDL_StartTextInput();
+    }
+}
+
+static struct {
+    int32_t state;
+    int32_t x;
+    int32_t y;
+    uint32_t down_ms;
+    int32_t release_message;
+    int32_t release_key;
+} touch;
+
+static void touch_left_down(int32_t x, int32_t y)
+{
+    key_state(PLATFORM_KEY_LEFT_BUTTON, 1);
+    mouse_message(PLATFORM_MSG_LEFT_DOWN, x, y);
+}
+
+static void touch_left_up(int32_t x, int32_t y)
+{
+    key_state(PLATFORM_KEY_LEFT_BUTTON, 0);
+    mouse_message(PLATFORM_MSG_LEFT_UP, x, y);
+}
+
+static void touch_click(int32_t key, int32_t down_message, int32_t up_message, int32_t x, int32_t y)
+{
+    key_state(key, 1);
+    mouse_message(down_message, x, y);
+    touch.release_message = up_message;
+    touch.release_key = key;
+    touch.x = x;
+    touch.y = y;
+}
+
+static void touch_release(void)
+{
+    if (!touch.release_message) {
+        return;
+    }
+    key_state(touch.release_key, 0);
+    mouse_message(touch.release_message, touch.x, touch.y);
+    touch.release_message = 0;
+}
+
+static bool touch_moved_far(int32_t x, int32_t y)
+{
+    int32_t dx = x - touch.x;
+    int32_t dy = y - touch.y;
+    return (dx * dx) + (dy * dy) > TOUCH_DRAG_PIXELS * TOUCH_DRAG_PIXELS;
+}
+
+static bool touch_event(const SDL_Event *e)
+{
+    switch (e->type) {
+        case SDL_MOUSEBUTTONDOWN:
+            if (e->button.which != SDL_TOUCH_MOUSEID) {
+                return false;
+            }
+            touch_release();
+            touch.state = TOUCH_PENDING;
+            touch.x = e->button.x;
+            touch.y = e->button.y;
+            touch.down_ms = SDL_GetTicks();
+            mouse_message(PLATFORM_MSG_MOUSE_MOVE, touch.x, touch.y);
+            return true;
+        case SDL_MOUSEMOTION:
+            if (e->motion.which != SDL_TOUCH_MOUSEID) {
+                return false;
+            }
+            if (touch.state == TOUCH_PENDING && touch_moved_far(e->motion.x, e->motion.y)) {
+                touch.state = TOUCH_DRAG;
+                touch_left_down(touch.x, touch.y);
+            }
+            mouse_message(PLATFORM_MSG_MOUSE_MOVE, e->motion.x, e->motion.y);
+            return true;
+        case SDL_MOUSEBUTTONUP:
+            if (e->button.which != SDL_TOUCH_MOUSEID) {
+                return false;
+            }
+            if (touch.state == TOUCH_PENDING) {
+                touch_click(PLATFORM_KEY_LEFT_BUTTON, PLATFORM_MSG_LEFT_DOWN, PLATFORM_MSG_LEFT_UP, e->button.x, e->button.y);
+                text_field_tap(e->button.x, e->button.y);
+            } else if (touch.state == TOUCH_DRAG) {
+                touch_left_up(e->button.x, e->button.y);
+            }
+            touch.state = TOUCH_NONE;
+            return true;
+        default:
+            return false;
+    }
+}
+
+static void touch_long_press(void)
+{
+    if (touch.state != TOUCH_PENDING || SDL_GetTicks() - touch.down_ms < TOUCH_LONG_PRESS_MS) {
+        return;
+    }
+    touch.state = TOUCH_DONE;
+    touch_click(PLATFORM_KEY_RIGHT_BUTTON, PLATFORM_MSG_RIGHT_DOWN, PLATFORM_MSG_RIGHT_UP, touch.x, touch.y);
+}
+
+static void android_display_size(play_display_request *request)
+{
+    SDL_DisplayMode desktop;
+    if (SDL_GetDesktopDisplayMode(0, &desktop) != 0 || desktop.w <= 0 || desktop.h <= 0) {
+        return;
+    }
+    int32_t long_side = desktop.w > desktop.h ? desktop.w : desktop.h;
+    int32_t short_side = desktop.w > desktop.h ? desktop.h : desktop.w;
+    int32_t height = short_side < ANDROID_SCREEN_HEIGHT ? short_side : ANDROID_SCREEN_HEIGHT;
+    request->height = height;
+    request->width = ((height * long_side) / short_side) & ~1;
+}
+#endif
+
 static void handle_event(const SDL_Event *e)
 {
+#if defined(__ANDROID__)
+    if (touch_event(e)) {
+        return;
+    }
+#endif
     switch (e->type) {
         case SDL_QUIT:
             play.quit = 1;
@@ -701,9 +916,16 @@ static void deliver_posted_keys(void)
 static void frame_begin(void)
 {
     SDL_Event e;
+#if defined(__ANDROID__)
+    touch_release();
+#endif
     while (SDL_PollEvent(&e)) {
         handle_event(&e);
     }
+#if defined(__ANDROID__)
+    touch_long_press();
+    text_field_frame();
+#endif
     deliver_posted_keys();
 }
 
@@ -867,6 +1089,12 @@ int32_t play_display_prepare(const play_display_request *command_line)
     if (command_line->fullscreen >= 0) {
         request.fullscreen = command_line->fullscreen;
     }
+#if defined(__ANDROID__)
+    if (request.width <= 0 || request.height <= 0) {
+        android_display_size(&request);
+    }
+    request.fullscreen = 1;
+#endif
     display_start.chosen = use_ini;
     display_start.fullscreen = request.fullscreen;
     if (request.width <= 0 || request.height <= 0) {
@@ -931,6 +1159,10 @@ static void display_remember_if_changed(void)
 int32_t play_run(const char *save)
 {
     SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "linear");
+#if defined(__ANDROID__)
+    SDL_SetHint(SDL_HINT_ORIENTATIONS, "LandscapeLeft LandscapeRight");
+    touch_construction_enabled = 1;
+#endif
     if (!platform_screen_create("Tutankhamun", g_screen_width, g_screen_height)) {
         fprintf(stderr, "cannot open the window: %s\n", SDL_GetError());
         return 2;
@@ -963,7 +1195,9 @@ int32_t play_run(const char *save)
     if (save) {
         play_load_save(save);
     }
+#if !defined(__ANDROID__)
     SDL_StartTextInput();
+#endif
     while (!play.quit) {
         frame_begin();
         host.run_tick();

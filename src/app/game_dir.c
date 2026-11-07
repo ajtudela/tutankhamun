@@ -12,6 +12,10 @@
 #include "platform/platform_dialog.h"
 #include "platform/platform_file.h"
 
+#if defined(__ANDROID__)
+#include "platform/platform_android.h"
+#endif
+
 #if defined(_WIN32)
 #include <windows.h>
 #include <shlobj.h>
@@ -432,6 +436,40 @@ int32_t game_dir_remember(const char *ini, const char *dir)
     platform_log(written ? "port: game directory %s remembered in %s" : "port: cannot remember %s in %s", dir, ini ? ini : "?");
     return written;
 }
+
+#if defined(__ANDROID__)
+static int32_t android_folder_chosen(game_dir_choice *choice, const char *reason)
+{
+    copy_text(choice->dir, ".");
+    choice->reason = reason;
+    platform_log("port: game folder chosen: %s", reason);
+    return 1;
+}
+
+int32_t game_dir_pick_android(const char *ini, game_dir_choice *choice)
+{
+    char uri[GAME_DIR_PATH_SIZE];
+    memset(choice, 0, sizeof(*choice));
+    app_ini_read_text(ini, GAME_DIR_INI_SECTION, GAME_DIR_INI_KEY, uri, sizeof(uri));
+    if (uri[0] && android_game_folder_set(uri) && !game_dir_missing_file(".")) {
+        return android_folder_chosen(choice, "remembered in the ini");
+    }
+    bool again = false;
+    while (android_game_folder_pick(again, uri, sizeof(uri))) {
+        const char *missing = game_dir_missing_file(".");
+        if (!missing) {
+            game_dir_remember(ini, uri);
+            return android_folder_chosen(choice, "the folder picker");
+        }
+        char text[GAME_DIR_PATH_SIZE + 200];
+        snprintf(text, sizeof(text), "This is not the game folder: it has no %s.\nChoose the folder of Pharaoh + Cleopatra.", missing);
+        platform_message_box(0, text, "tutankhamun: not the game folder", PLATFORM_BOX_OK | PLATFORM_BOX_ICON_WARNING);
+        again = true;
+    }
+    platform_log("port: the folder picker was cancelled");
+    return 0;
+}
+#endif
 
 #if defined(_WIN32)
 static void read_steam_root(char *root)

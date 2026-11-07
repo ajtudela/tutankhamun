@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Tutankhamun</string>
+    <string name="directory_selector_instructions">"Tutankhamun needs the files of your own Pharaoh + Cleopatra 2.1 (GOG, Steam or the CD-ROM version updated to 2.1) to run. Please follow these steps:\n\n1. Copy your whole Pharaoh + Cleopatra folder (the one with Data, campaign.txt and Pharaoh_Text.eng) from your computer to your Android device, with USB file transfer or a similar tool.\n\n2. Select that folder with the button below. The game also keeps your players and saved games there, as the original does."</string>
+    <string name="directory_selector_button">Select the game folder</string>
+</resources>

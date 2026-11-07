@@ -1,6 +1,7 @@
 // Text drawing and measuring with the font images: characters, strings, centred and multiline text, numbers,
 // amounts and years, the lang_text_* variants and the blinking cursor of a text field. Drawing supports the hash
-// mode ('#' replaced by substituted characters) and records where the input cursor falls.
+// mode ('#' replaced by substituted characters) and records where the input cursor falls; drawing the cursor also
+// records where the text field is (text_field_x/y, counted in text_field_draws) for the platform's on-screen keyboard.
 //
 // Widths are not the same everywhere:
 // - measuring and drawing use different space widths and letter spacing for the large fonts;
@@ -466,6 +467,9 @@ static int32_t cursor_blink_visible(void)
 
 void graphics_draw_text_cursor(int32_t x, int32_t y, int32_t color)
 {
+    text_field_x = x;
+    text_field_y = y;
+    text_field_draws++;
     if (!cursor_blink_visible()) {
         return;
     }

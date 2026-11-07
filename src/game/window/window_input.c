@@ -38,6 +38,7 @@
 #include "widget/minimap.h"
 #include "widget/sidebar_buttons.h"
 #include "widget/top_menu.h"
+#include "widget/touch_construction.h"
 #include "widget/widget_data.h"
 #include "window/advisors.h"
 #include "window/build_menu.h"
@@ -181,6 +182,9 @@ static void input_city_construction(void)
 {
     city_view_mouse_select();
     construction_place_ok = 0;
+    if (touch_construction_input()) {
+        return;
+    }
     if (map_info.selected_grid == 0) {
         construction_place_ok = 0;
         return;
@@ -218,6 +222,9 @@ static void input_city_construction(void)
 static void input_city(void)
 {
     int32_t handled;
+    if (editor_active == 0 && touch_construction_cancel_input()) {
+        return;
+    }
 
     if (editor_active == 1) {
         top_menu_focus_menu_id = menu_bar_focus(menu_bar_editor, 4);

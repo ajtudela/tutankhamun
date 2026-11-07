@@ -1,7 +1,9 @@
 // The platform's files and directories. On Windows the game's paths go to the C runtime and the Windows directory
 // functions as they are. Elsewhere a path's backslashes become slashes and every part of it that is not found as
 // written is looked up in its directory whatever its case (the game's data files are named in mixed case and the game
-// asks for them in its own); a pattern of the file dialogs matches whatever the case, as on Windows.
+// asks for them in its own); a pattern of the file dialogs matches whatever the case, as on Windows. On Android a
+// relative path is in the game folder the user picked and goes through the Storage Access Framework
+// (platform_android.c); an absolute one is in the app's storage, as on Linux.
 
 #if !defined(_WIN32) && !defined(_GNU_SOURCE)
 #define _GNU_SOURCE
@@ -170,6 +172,47 @@ void platform_dir_close(platform_dir_listing *listing)
 #include <sys/stat.h>
 #include <unistd.h>
 
+#if defined(__ANDROID__)
+#include "platform/platform_android.h"
+
+#include <stdlib.h>
+
+typedef struct {
+    char **names;
+    int32_t count;
+    int32_t next;
+} game_listing;
+
+static bool is_game_path(const char *path)
+{
+    return path[0] != '/';
+}
+
+static const char *game_open_mode(const char *mode)
+{
+    bool update = strchr(mode, '+') != NULL;
+    if (strchr(mode, 'a')) {
+        return update ? "rw" : "wa";
+    }
+    if (strchr(mode, 'w')) {
+        return update ? "rwt" : "wt";
+    }
+    return update ? "rw" : "r";
+}
+
+static const char *game_open_mode_of(platform_open_mode mode)
+{
+    switch (mode) {
+        case PLATFORM_OPEN_WRITE:
+            return "rw";
+        case PLATFORM_OPEN_REPLACE:
+            return "wt";
+        default:
+            return "r";
+    }
+}
+#endif
+
 static bool path_exists(const char *path)
 {
     struct stat info;
@@ -236,6 +279,12 @@ const char *platform_path_native(const char *path, char *native, uint32_t size)
 
 bool platform_path_absolute(const char *path, char *absolute, uint32_t size)
 {
+#if defined(__ANDROID__)
+    if (is_game_path(path)) {
+        snprintf(absolute, size, "%s", path);
+        return true;
+    }
+#endif
     char native[PLATFORM_PATH_MAX];
     platform_path_native(path, native, sizeof(native));
     if (native[0] == '/') {
@@ -253,6 +302,11 @@ bool platform_path_absolute(const char *path, char *absolute, uint32_t size)
 
 bool platform_dir_enter(const char *path)
 {
+#if defined(__ANDROID__)
+    if (is_game_path(path)) {
+        return android_path_kind(path) == ANDROID_PATH_DIR;
+    }
+#endif
     char native[PLATFORM_PATH_MAX];
     return chdir(platform_path_native(path, native, sizeof(native))) == 0;
 }
@@ -271,6 +325,11 @@ static int open_flags(platform_open_mode mode)
 
 int32_t platform_file_open(const char *path, platform_open_mode mode)
 {
+#if defined(__ANDROID__)
+    if (is_game_path(path)) {
+        return android_file_open(path, game_open_mode_of(mode));
+    }
+#endif
     char native[PLATFORM_PATH_MAX];
     return open(platform_path_native(path, native, sizeof(native)), open_flags(mode), 0644);
 }
@@ -303,6 +362,16 @@ void platform_file_close(int32_t fd)
 
 FILE *platform_fopen(const char *path, const char *mode)
 {
+#if defined(__ANDROID__)
+    if (is_game_path(path)) {
+        int fd = android_file_open(path, game_open_mode(mode));
+        FILE *file = fd >= 0 ? fdopen(fd, mode) : NULL;
+        if (fd >= 0 && !file) {
+            close(fd);
+        }
+        return file;
+    }
+#endif
     char native[PLATFORM_PATH_MAX];
     return fopen(platform_path_native(path, native, sizeof(native)), mode);
 }
@@ -315,18 +384,33 @@ int32_t platform_stream_length(FILE *file)
 
 bool platform_file_remove(const char *path)
 {
+#if defined(__ANDROID__)
+    if (is_game_path(path)) {
+        return android_file_delete(path);
+    }
+#endif
     char native[PLATFORM_PATH_MAX];
     return remove(platform_path_native(path, native, sizeof(native))) == 0;
 }
 
 bool platform_file_exists(const char *path)
 {
+#if defined(__ANDROID__)
+    if (is_game_path(path)) {
+        return android_path_kind(path) != ANDROID_PATH_NONE;
+    }
+#endif
     char native[PLATFORM_PATH_MAX];
     return path_exists(platform_path_native(path, native, sizeof(native)));
 }
 
 bool platform_dir_exists(const char *path)
 {
+#if defined(__ANDROID__)
+    if (is_game_path(path)) {
+        return android_path_kind(path) == ANDROID_PATH_DIR;
+    }
+#endif
     char native[PLATFORM_PATH_MAX];
     struct stat info;
     return stat(platform_path_native(path, native, sizeof(native)), &info) == 0 && S_ISDIR(info.st_mode);
@@ -344,18 +428,29 @@ int32_t platform_text_compare_nocase_n(const char *a, const char *b, uint32_t co
 
 bool platform_dir_create(const char *path)
 {
+#if defined(__ANDROID__)
+    if (is_game_path(path)) {
+        return android_dir_create(path);
+    }
+#endif
     char native[PLATFORM_PATH_MAX];
     return mkdir(platform_path_native(path, native, sizeof(native)), 0755) == 0;
 }
 
 bool platform_dir_remove(const char *path)
 {
+#if defined(__ANDROID__)
+    if (is_game_path(path)) {
+        return android_file_delete(path);
+    }
+#endif
     char native[PLATFORM_PATH_MAX];
     return rmdir(platform_path_native(path, native, sizeof(native))) == 0;
 }
 
 typedef struct {
     char pattern[256];
+    int32_t in_game_folder;
 } dir_listing_state;
 
 _Static_assert(sizeof(dir_listing_state) <= sizeof(((platform_dir_listing *) 0)->native), "platform_dir_listing has room for its pattern");
@@ -363,6 +458,19 @@ _Static_assert(sizeof(dir_listing_state) <= sizeof(((platform_dir_listing *) 0)-
 bool platform_dir_next(platform_dir_listing *listing)
 {
     const dir_listing_state *state = (const dir_listing_state *) listing->native;
+#if defined(__ANDROID__)
+    if (state->in_game_folder) {
+        game_listing *names = (game_listing *) listing->handle;
+        while (names->next < names->count) {
+            const char *name = names->names[names->next++];
+            if (fnmatch(state->pattern, name, FNM_CASEFOLD) == 0) {
+                listing->name = name;
+                return true;
+            }
+        }
+        return false;
+    }
+#endif
     struct dirent *entry;
     while ((entry = readdir((DIR *) listing->handle)) != NULL) {
         if (fnmatch(state->pattern, entry->d_name, FNM_CASEFOLD) == 0) {
@@ -373,13 +481,49 @@ bool platform_dir_next(platform_dir_listing *listing)
     return false;
 }
 
+#if defined(__ANDROID__)
+static bool game_dir_first(platform_dir_listing *listing, const char *pattern)
+{
+    dir_listing_state *state = (dir_listing_state *) listing->native;
+    char directory[PLATFORM_PATH_MAX];
+    snprintf(directory, sizeof(directory), "%s", pattern);
+    char *slash = strrchr(directory, '/');
+    char *backslash = strrchr(directory, '\\');
+    slash = backslash > slash ? backslash : slash;
+    snprintf(state->pattern, sizeof(state->pattern), "%s", slash ? slash + 1 : directory);
+    if (slash) {
+        *slash = 0;
+    } else {
+        directory[0] = 0;
+    }
+    state->in_game_folder = 1;
+    game_listing *names = calloc(1, sizeof(game_listing));
+    if (!names) {
+        return false;
+    }
+    names->names = android_dir_list(directory, &names->count);
+    listing->handle = names;
+    if (!platform_dir_next(listing)) {
+        platform_dir_close(listing);
+        return false;
+    }
+    return true;
+}
+#endif
+
 bool platform_dir_first(platform_dir_listing *listing, const char *pattern)
 {
+#if defined(__ANDROID__)
+    if (is_game_path(pattern)) {
+        return game_dir_first(listing, pattern);
+    }
+#endif
     char native[PLATFORM_PATH_MAX];
     platform_path_native(pattern, native, sizeof(native));
     char *slash = strrchr(native, '/');
     const char *name = slash ? slash + 1 : native;
     dir_listing_state *state = (dir_listing_state *) listing->native;
+    state->in_game_folder = 0;
     strncpy(state->pattern, name, sizeof(state->pattern) - 1);
     state->pattern[sizeof(state->pattern) - 1] = 0;
     if (slash) {
@@ -402,10 +546,21 @@ bool platform_dir_first(platform_dir_listing *listing, const char *pattern)
 
 void platform_dir_close(platform_dir_listing *listing)
 {
-    if (listing->handle) {
-        closedir((DIR *) listing->handle);
-        listing->handle = NULL;
+    if (!listing->handle) {
+        return;
     }
+#if defined(__ANDROID__)
+    const dir_listing_state *state = (const dir_listing_state *) listing->native;
+    if (state->in_game_folder) {
+        game_listing *names = (game_listing *) listing->handle;
+        android_dir_list_free(names->names, names->count);
+        free(names);
+        listing->handle = NULL;
+        return;
+    }
+#endif
+    closedir((DIR *) listing->handle);
+    listing->handle = NULL;
 }
 
 #endif

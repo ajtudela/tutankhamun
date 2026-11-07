@@ -517,6 +517,29 @@ static int32_t update_drag_tool(int32_t type, int32_t x_start, int32_t y_start, 
     }
 }
 
+int32_t building_construction_is_drag_tool(int32_t type)
+{
+    switch (type) {
+        case BUILDING_ROAD:
+        case BUILDING_MUD_WALL:
+        case BUILDING_BRICK_WALL:
+        case BUILDING_WALL:
+        case BUILDING_MENU_WATER_LIFT:
+        case BUILDING_IRRIGATION_DITCH:
+        case BUILDING_CLEAR_LAND:
+        case BUILDING_HOUSE_CRUDE_HUT:
+        case BUILDING_BANDSTAND:
+        case BUILDING_BOOTH:
+        case BUILDING_PAVILION:
+        case BUILDING_FESTIVAL_SQUARE:
+        case BUILDING_PLAZA:
+        case BUILDING_GARDENS:
+            return 1;
+        default:
+            return 0;
+    }
+}
+
 static void link_ferry_landings(int32_t x, int32_t y, int32_t offset)
 {
     construction_ferry_hover_ok = 0;

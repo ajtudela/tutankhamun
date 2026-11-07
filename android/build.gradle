@@ -1,0 +1,5 @@
+// The Android build of tutankhamun: the app module (app/) builds the game's native code with the top-level
+// CMakeLists.txt through the NDK and packs it with SDL2's Java glue and the game folder picker into an APK.
+plugins {
+    id 'com.android.application' version '8.11.1' apply false
+}

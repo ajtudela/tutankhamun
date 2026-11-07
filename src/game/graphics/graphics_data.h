@@ -119,6 +119,12 @@ extern int32_t g_cursor_width;
 
 extern int32_t text_cursor_y;
 
+extern int32_t text_field_x;
+
+extern int32_t text_field_y;
+
+extern uint32_t text_field_draws;
+
 extern uint8_t g_multiline_flag;
 
 extern int32_t capture_cursor_position[20];

@@ -504,7 +504,7 @@ int32_t image_draw_isometric_top(int32_t image_id, int32_t x, int32_t y)
         return 0;
     }
     intptr_t data = image_pixels_address(header);
-    if (data < 1) {
+    if (data == 0) {
         return 0;
     }
     g_data_ptr = data + header->isometric_top_offset;
@@ -601,7 +601,7 @@ int32_t image_draw(int32_t image_id, int32_t x, int32_t y)
         mirrored = 1;
     }
     intptr_t data = image_pixels_address(header);
-    if (data < 1) {
+    if (data == 0) {
         return 0;
     }
     g_data_ptr = data;
@@ -624,7 +624,7 @@ int32_t image_draw_mirrored(int32_t image_id, int32_t x, int32_t y)
     }
     intptr_t data = image_pixels_address(header);
     g_data_ptr = data;
-    if (data < 1) {
+    if (data == 0) {
         return 0;
     }
     g_img_width = header->width;

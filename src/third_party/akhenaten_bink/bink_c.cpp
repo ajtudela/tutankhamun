@@ -2,6 +2,7 @@
 
 #include "bink_c.h"
 #include "bink.h"
+#include "content/vfs.h"
 #include "core/log.h"
 
 #include <cstdarg>
@@ -52,7 +53,7 @@ void akh_bink_set_log(void (*log)(const char *format, ...))
 akh_bink *akh_bink_open(const char *filename)
 {
     unsigned char header[12];
-    FILE *fp = std::fopen(filename, "rb");
+    FILE *fp = vfs::open_read(filename);
     if (!fp) {
         return 0;
     }

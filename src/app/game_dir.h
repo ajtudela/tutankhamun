@@ -1,7 +1,8 @@
 // Finding the user's game data when the game starts without a game directory, as Akhenaten does: the directory
 // remembered in the ini beside the program, the current folder and the program's folder, the Steam and GOG installs,
 // then a folder picker when asked for. The sources are passed in, so --find-game-dir can be given other folders than
-// the registry's.
+// the registry's. On Android the game folder is the one picked through the Storage Access Framework, remembered by its
+// URI (game_dir_pick_android).
 
 #ifndef APP_GAME_DIR_H
 #define APP_GAME_DIR_H
@@ -34,5 +35,6 @@ int32_t game_dir_find(const game_dir_sources *sources, game_dir_choice *choice, 
 int32_t game_dir_remember(const char *ini, const char *dir);
 void game_dir_report_not_found(const char *tried, int32_t box);
 int32_t game_dir_probe_main(int32_t argc, char **argv);
+int32_t game_dir_pick_android(const char *ini, game_dir_choice *choice);
 
 #endif

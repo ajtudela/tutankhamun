@@ -84,5 +84,6 @@ void building_construction_place_plaza(int32_t x_start, int32_t y_start, int32_t
 void building_construction_place_garden(int32_t x_start, int32_t y_start, int32_t x_end, int32_t y_end);
 bool construction_area_has_entry_point(int32_t x0, int32_t y0, int32_t x1, int32_t y1);
 uint32_t construction_site_mask(int32_t type);
+int32_t building_construction_is_drag_tool(int32_t type);
 
 #endif

@@ -1,6 +1,7 @@
 // tutankhamun's run time on Linux and the other POSIX systems: the game's static initializers run, and a crash (a
 // fatal signal) is logged with its address and the return addresses of the stack, relative to the program's image,
-// before the program ends with the fault's exit code (3).
+// before the program ends with the fault's exit code (3). Android has no backtrace before API 33: there the fault
+// alone is logged.
 
 #define _GNU_SOURCE
 
@@ -9,7 +10,9 @@
 #include "platform/log.h"
 
 #include <dlfcn.h>
+#if !defined(__ANDROID__)
 #include <execinfo.h>
+#endif
 #include <signal.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -52,7 +55,11 @@ static void handle_crash(int number, siginfo_t *info, void *context)
 {
     (void) context;
     void *frames[PORT_CRASH_FRAMES];
+#if defined(__ANDROID__)
+    int count = 0;
+#else
     int count = backtrace(frames, PORT_CRASH_FRAMES);
+#endif
     uintptr_t base = image_base();
     platform_log("port: %s (signal %d) at address 0x%llX", signal_name(number), number, (unsigned long long) (uintptr_t) info->si_addr);
     fprintf(stderr, "%s (signal %d) at address 0x%llX\n", signal_name(number), number, (unsigned long long) (uintptr_t) info->si_addr);
@@ -61,12 +68,14 @@ static void handle_crash(int number, siginfo_t *info, void *context)
         uintptr_t pc = (uintptr_t) frames[i];
         platform_log("port:   frame %d 0x%llX (offset 0x%llX)", i, (unsigned long long) pc, (unsigned long long) (pc - base));
     }
+#if !defined(__ANDROID__)
     char **names = backtrace_symbols(frames, count);
     if (names) {
         for (int i = 0; i < count; i++) {
             platform_log("port:   %s", names[i]);
         }
     }
+#endif
     _exit(PORT_CRASH_EXIT_CODE);
 }
 

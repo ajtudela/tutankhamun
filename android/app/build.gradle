@@ -1,0 +1,73 @@
+// The app: libmain.so (the game, CMakeLists.txt at the top of the repository), libSDL2.so and libSDL2_mixer.so for
+// arm64-v8a, armeabi-v7a and x86_64, SDL2's Java glue (src/main/java/org/libsdl/app, SDL 2.32.10), the activity and the
+// game folder picker (src/main/java/com/github/dalerank/tutankhamun), and the gameplay configs (config/) as assets,
+// which the activity copies into the app's storage at every start.
+plugins {
+    id 'com.android.application'
+}
+
+def configAssetsDir = layout.buildDirectory.dir('generated/tutankhamun_assets')
+
+tasks.register('syncConfigAssets', Sync) {
+    from rootProject.file('../config')
+    into configAssetsDir.map { it.dir('config') }
+}
+
+android {
+    namespace 'com.github.dalerank.tutankhamun'
+    compileSdk 36
+    ndkVersion '27.2.12479018'
+
+    defaultConfig {
+        applicationId 'com.github.dalerank.tutankhamun'
+        minSdk 21
+        targetSdk 36
+        versionCode 1
+        versionName '0.1'
+        externalNativeBuild {
+            cmake {
+                arguments '-DANDROID_STL=c++_static', '-DANDROID_SUPPORT_FLEXIBLE_PAGE_SIZES=ON'
+            }
+        }
+        ndk {
+            abiFilters 'arm64-v8a', 'armeabi-v7a', 'x86_64'
+        }
+    }
+
+    externalNativeBuild {
+        cmake {
+            path '../../CMakeLists.txt'
+            version '3.22.1'
+        }
+    }
+
+    sourceSets {
+        main {
+            assets.srcDir configAssetsDir
+        }
+    }
+
+    buildTypes {
+        debug {
+            applicationIdSuffix '.debug'
+        }
+        release {
+            minifyEnabled false
+            // signed with the debug key so that a local build installs; a published build needs its own key
+            signingConfig signingConfigs.debug
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+}
+
+tasks.named('preBuild') {
+    dependsOn 'syncConfigAssets'
+}
+
+dependencies {
+    implementation 'androidx.appcompat:appcompat:1.6.1'
+}

@@ -73,6 +73,15 @@ static int32_t enter_game_dir(const char *game)
     return 1;
 }
 
+#if defined(__ANDROID__)
+static int32_t find_game_dir(game_dir_sources *sources, game_dir_choice *choice)
+{
+    char ini[PLATFORM_PATH_MAX];
+    app_ini_path(ini, sizeof(ini));
+    sources->ini = 0;
+    return game_dir_pick_android(ini, choice);
+}
+#else
 static int32_t find_game_dir(game_dir_sources *sources, game_dir_choice *choice)
 {
     static char tried[4096];
@@ -83,6 +92,7 @@ static int32_t find_game_dir(game_dir_sources *sources, game_dir_choice *choice)
     game_dir_report_not_found(tried, 1);
     return 0;
 }
+#endif
 
 static int32_t prepare(const char *game_dir)
 {

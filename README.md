@@ -1,14 +1,15 @@
-# Tutankhamun [![Github Actions](https://github.com/dalerank/tutankhamun/actions/workflows/tutankhamun_windows.yml/badge.svg)](https://github.com/dalerank/tutankhamun/actions/workflows/tutankhamun_windows.yml) [![Github Actions](https://github.com/dalerank/tutankhamun/actions/workflows/tutankhamun_linux.yml/badge.svg)](https://github.com/dalerank/tutankhamun/actions/workflows/tutankhamun_linux.yml)
+# Tutankhamun [![Github Actions](https://github.com/dalerank/tutankhamun/actions/workflows/tutankhamun_windows.yml/badge.svg)](https://github.com/dalerank/tutankhamun/actions/workflows/tutankhamun_windows.yml) [![Github Actions](https://github.com/dalerank/tutankhamun/actions/workflows/tutankhamun_linux.yml/badge.svg)](https://github.com/dalerank/tutankhamun/actions/workflows/tutankhamun_linux.yml) [![Github Actions](https://github.com/dalerank/tutankhamun/actions/workflows/tutankhamun_android.yml/badge.svg)](https://github.com/dalerank/tutankhamun/actions/workflows/tutankhamun_android.yml)
 
 [![Discord](res/badges/discord.svg)](https://discord.gg/HS4njmBvpb)
 [![Windows](res/badges/windows.svg)](https://nightly.link/dalerank/tutankhamun/workflows/tutankhamun_windows/main/windows_build.zip)
 [![Windows x64](res/badges/windows_x64.svg)](https://nightly.link/dalerank/tutankhamun/workflows/tutankhamun_windows/main/windows_build_x64.zip)
 [![Linux](res/badges/linux.svg)](https://nightly.link/dalerank/tutankhamun/workflows/tutankhamun_linux/main/linux_appimage.zip)
+[![Android](res/badges/android.svg)](https://nightly.link/dalerank/tutankhamun/workflows/tutankhamun_android/main/android_apk.zip)
 
 Tutankhamun is an open-source re-implementation of **Pharaoh + Cleopatra 2.1** (Impressions Games, 2000) in C: the
 game written again as a program of its own, `tutankhamun`, that plays on the files of your own copy of the game
-in a window (SDL2) on modern Windows and Linux. It is also a readable reference for the game's behaviour, mainly to
-support [Akhenaten](https://github.com/dalerank/Akhenaten).
+in a window (SDL2) on modern Windows and Linux, and on Android. It is also a readable reference for the game's
+behaviour, mainly to support [Akhenaten](https://github.com/dalerank/Akhenaten).
 
 ![Tutankhamun: a city of the Pharaoh campaign](res/screenshots/tutankhamun.png)
 
@@ -28,10 +29,11 @@ are also present in Tutankhamun. No game assets are part of this repository.
 | Windows  | -              | [![Github Actions](https://github.com/dalerank/tutankhamun/actions/workflows/tutankhamun_windows.yml/badge.svg)](https://nightly.link/dalerank/tutankhamun/workflows/tutankhamun_windows/main/windows_build.zip) |
 | Windows x64 | -           | [![Github Actions](https://github.com/dalerank/tutankhamun/actions/workflows/tutankhamun_windows.yml/badge.svg)](https://nightly.link/dalerank/tutankhamun/workflows/tutankhamun_windows/main/windows_build_x64.zip) |
 | Linux    | -              | [![Github Actions](https://github.com/dalerank/tutankhamun/actions/workflows/tutankhamun_linux.yml/badge.svg)](https://nightly.link/dalerank/tutankhamun/workflows/tutankhamun_linux/main/linux_appimage.zip) |
+| Android  | -              | [![Github Actions](https://github.com/dalerank/tutankhamun/actions/workflows/tutankhamun_android.yml/badge.svg)](https://nightly.link/dalerank/tutankhamun/workflows/tutankhamun_android/main/android_apk.zip) |
 
 The unstable build is the latest build of `main`: on Windows a zip with `tutankhamun.exe` and its `config` folder
-(unpack it anywhere), on Linux a zip with `Tutankhamun-x86_64.AppImage` (see [Linux](#linux)). The game finds your
-Pharaoh + Cleopatra installation as described below. A macOS build is not available yet.
+(unpack it anywhere), on Linux a zip with `Tutankhamun-x86_64.AppImage` (see [Linux](#linux)), on Android a zip with
+`app-release.apk` (see [Android](#android)). The game finds your Pharaoh + Cleopatra installation as described below. A macOS build is not available yet.
 
 On Windows `windows_build.zip` holds the 32-bit program and `windows_build_x64.zip` the 64-bit one: they play the
 same game and read and write the same saved games.
@@ -99,6 +101,19 @@ the log `tutankhamun_play.log` are in `~/.config/tutankhamun/` (`$XDG_CONFIG_HOM
 `~/.config/tutankhamun/config` with your own gameplay tables replaces the configs inside the AppImage
 (`./Tutankhamun-x86_64.AppImage --export-configs ~/.config/tutankhamun/config` writes a full set to edit).
 
+### Android
+
+The APK runs on Android 5.0 or newer (arm64-v8a, armeabi-v7a and x86_64). Copy your whole Pharaoh + Cleopatra
+folder (the one with `Data`, `campaign.txt` and `Pharaoh_Text.eng`) to the device, for example into `Download`; at
+the first start the game asks for that folder and remembers it. It reads the data and writes the players and saved
+games there, as on Windows.
+
+The game is full screen in landscape. A tap is a left click, a long press a right click, a drag a left drag, and
+the back button is Escape. A tap in a text field opens the on-screen keyboard. With a building chosen, the first tap
+on the map shows where it goes and a second tap on it builds it; roads, walls, canals, housing and the other tools
+that are dragged are dragged as with a mouse; the button at the top right of the map (or a long press) drops the
+building. The release APK is signed with a debug key: uninstall an APK signed with another key first.
+
 ## Building from source
 
 Windows 10/11 with Visual Studio 2022 ("Desktop development with C++"), CMake 3.22 or newer and git. The game builds
@@ -125,8 +140,19 @@ and PulseAudio:
 
     packaging/linux/build_appimage.sh
 
-builds the AppImage into `build/appimage`. [BUILD.md](BUILD.md) has the details and the other ways to build. macOS is
-not supported yet: `update-workspace-mac.sh` only says so.
+builds the AppImage into `build/appimage`.
+
+Android with JDK 17 and the Android SDK (platform 36, NDK 27.2.12479018, CMake 3.22.1); `android/local.properties`
+or `ANDROID_HOME` tells Gradle where the SDK is:
+
+    cd android
+    ./gradlew assembleRelease
+
+builds `android/app/build/outputs/apk/release/app-release.apk` (`assembleDebug` the debug APK, installed beside it as
+`com.github.dalerank.tutankhamun.debug`). SDL2 and SDL2_mixer are downloaded by CMake at the first build.
+
+[BUILD.md](BUILD.md) has the details and the other ways to build. macOS is not supported yet:
+`update-workspace-mac.sh` only says so.
 
 ## Command line
 

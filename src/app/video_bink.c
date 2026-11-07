@@ -48,6 +48,7 @@ typedef struct {
     uint32_t frame_num;
     uint32_t magic;
     akh_bink *movie;
+    int32_t fd;
     char path[PLATFORM_PATH_MAX];
     int32_t decoded;
     int32_t ok;
@@ -365,7 +366,17 @@ static void *MEDIA_API bink_open(const char *path, uint32_t flags)
         return 0;
     }
     char native[PLATFORM_PATH_MAX];
+#if defined(__ANDROID__)
+    int32_t fd = platform_file_open(file, PLATFORM_OPEN_READ);
+    snprintf(native, sizeof(native), "fd:%d", (int) fd);
+    akh_bink *movie = fd >= 0 ? akh_bink_open(native) : 0;
+    if (!movie && fd >= 0) {
+        platform_file_close(fd);
+    }
+#else
+    int32_t fd = -1;
     akh_bink *movie = akh_bink_open(platform_path_native(file, native, sizeof(native)));
+#endif
     if (!movie) {
         play_log("video: the decoder cannot open %s (BinkOpen %s)", file, path);
         return 0;
@@ -373,6 +384,7 @@ static void *MEDIA_API bink_open(const char *path, uint32_t flags)
     video *v = calloc(1, sizeof(video));
     v->magic = HANDLE_MAGIC;
     v->movie = movie;
+    v->fd = fd;
     snprintf(v->path, sizeof(v->path), "%s", file);
     v->width = v->stretch_width = (uint32_t) akh_bink_width(movie);
     v->height = v->stretch_height = (uint32_t) akh_bink_height(movie);
@@ -417,6 +429,9 @@ static void MEDIA_API bink_close(void *handle)
     surface_remove();
     message_hook_remove();
     akh_bink_close(v->movie);
+    if (v->fd >= 0) {
+        platform_file_close(v->fd);
+    }
     v->magic = 0;
     free(v);
 }

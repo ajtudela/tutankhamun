@@ -1,8 +1,9 @@
 // The platform functions on Linux and the other POSIX systems, on SDL. The clocks, the keyboard and cursor state, the
 // message pump and the message box call the function the front end bound to them (platform_bind), or else an answer of
 // their own: there is no system message queue, so an unbound peek finds no message. The game's window is the SDL window
-// (platform_main_window); a document or a web address opens with xdg-open (open on macOS), a web address of the main
-// menu's links only when the play mode allowed the links. The desktop text of the loading screen is not drawn.
+// (platform_main_window); a document or a web address opens with xdg-open (open on macOS, SDL_OpenURL on Android), a
+// web address of the main menu's links only when the play mode allowed the links. The desktop text of the loading
+// screen is not drawn.
 
 #include "platform/platform_win32.h"
 
@@ -300,7 +301,9 @@ static void run_detached(const char *program, const char *argument)
 
 void platform_shell_open(void *window, const char *operation, const char *file)
 {
-#if defined(__APPLE__)
+#if defined(__ANDROID__)
+    SDL_OpenURL(file);
+#elif defined(__APPLE__)
     run_detached("open", file);
 #else
     run_detached("xdg-open", file);

@@ -1,7 +1,7 @@
 // The program's own files. On Windows: GetModuleFileName for the program, the config folder and the ini beside it,
 // the ini read and written by the Windows profile functions. Elsewhere: /proc/self/exe for the program, the configs
 // in the user's configuration folder when there, else beside the program or in ../share/tutankhamun/config, the ini
-// in the user's configuration folder, read and written here
+// in the user's configuration folder (on Android both in the app's internal storage), read and written here
 // ([section] lines and key=value lines; a write keeps the other lines as they are).
 
 #include "app/app_files.h"
@@ -81,6 +81,10 @@ bool app_ini_write(const char *ini, const char *section, const char *key, const 
 
 #else
 
+#if defined(__ANDROID__)
+#include "platform/platform_android.h"
+#endif
+
 #include <ctype.h>
 #include <errno.h>
 #include <strings.h>
@@ -138,6 +142,10 @@ static bool user_config_dir(char *dir, size_t size)
 
 bool app_config_dir(char *dir, size_t size)
 {
+#if defined(__ANDROID__)
+    snprintf(dir, size, "%s/config", android_storage_path());
+    return is_dir(dir);
+#endif
     if (user_config_dir(dir, size)) {
         return true;
     }
@@ -174,6 +182,10 @@ static bool make_dirs(char *path)
 
 bool app_ini_path(char *path, size_t size)
 {
+#if defined(__ANDROID__)
+    snprintf(path, size, "%s/tutankhamun.ini", android_storage_path());
+    return true;
+#endif
     const char *config_home = getenv("XDG_CONFIG_HOME");
     const char *home = getenv("HOME");
     char dir[1024];
