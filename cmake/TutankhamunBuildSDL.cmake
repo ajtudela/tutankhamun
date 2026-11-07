@@ -30,16 +30,20 @@ set(TUTANKHAMUN_SDL_GENERATOR "${CMAKE_GENERATOR}")
 if(MSVC AND CMAKE_GENERATOR STREQUAL "Ninja")
     set(TUTANKHAMUN_SDL_GENERATOR "Ninja Multi-Config")
 endif()
-# macOS: the nested SDL builds get the program's architectures (arm64;x86_64 for the universal app) and oldest system
-# through the environment, which CMake reads into CMAKE_OSX_ARCHITECTURES / CMAKE_OSX_DEPLOYMENT_TARGET; the list's
-# semicolon would not survive the command line of execute_process.
-if(APPLE)
-    if(CMAKE_OSX_ARCHITECTURES)
-        set(ENV{CMAKE_OSX_ARCHITECTURES} "${CMAKE_OSX_ARCHITECTURES}")
+# macOS, as in Akhenaten (CMakeLists.txt, "Prepare additional CMake args for macOS architecture settings"): the nested
+# SDL builds get the program's architecture on their command line; one architecture per build (arm64 or x86_64), a
+# list would be split by execute_process. The oldest system also goes through the environment, which CMake reads into
+# CMAKE_OSX_DEPLOYMENT_TARGET.
+if(APPLE AND CMAKE_OSX_ARCHITECTURES)
+    if(CMAKE_OSX_ARCHITECTURES MATCHES ";")
+        message(FATAL_ERROR "macOS: build one architecture at a time (CMAKE_OSX_ARCHITECTURES=arm64 or x86_64), "
+            "not ${CMAKE_OSX_ARCHITECTURES}")
     endif()
-    if(CMAKE_OSX_DEPLOYMENT_TARGET)
-        set(ENV{MACOSX_DEPLOYMENT_TARGET} "${CMAKE_OSX_DEPLOYMENT_TARGET}")
-    endif()
+    list(APPEND BUILD_ADDITIONAL_CMAKE_ARGS -DCMAKE_OSX_ARCHITECTURES=${CMAKE_OSX_ARCHITECTURES})
+endif()
+if(APPLE AND DEFINED CMAKE_OSX_DEPLOYMENT_TARGET)
+    list(APPEND BUILD_ADDITIONAL_CMAKE_ARGS -DCMAKE_OSX_DEPLOYMENT_TARGET=${CMAKE_OSX_DEPLOYMENT_TARGET})
+    set(ENV{MACOSX_DEPLOYMENT_TARGET} "${CMAKE_OSX_DEPLOYMENT_TARGET}")
 endif()
 
 set(LOCAL_DEPS_ROOT "${CMAKE_SOURCE_DIR}/_deps")

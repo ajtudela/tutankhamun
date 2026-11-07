@@ -143,7 +143,7 @@
     {
       "name": "base-macos",
       "hidden": true,
-      "generator": "Ninja",
+      "generator": "Unix Makefiles",
       "binaryDir": "${sourceDir}/out/build/${presetName}",
       "installDir": "${sourceDir}/out/install/${presetName}",
       "condition": {
@@ -157,15 +157,25 @@
     },
     {
       "name": "macos-dev",
-      "displayName": "macOS dev: Debug, this Mac's architecture, static SDL2 + mixer, Bink (Ninja)",
+      "displayName": "macOS dev: Debug, this Mac's architecture, static SDL2 + mixer, Bink (Make)",
       "inherits": ["base-macos", "base-buildtype-debug"]
     },
     {
-      "name": "macos-release",
-      "displayName": "macOS release: Release, universal arm64 + x86_64 app, static SDL2 + mixer, Bink (Ninja)",
+      "name": "macos-release-arm64",
+      "displayName": "macOS release: Release, Apple silicon (arm64, macOS 11.7+), static SDL2 + mixer, Bink (Make)",
       "inherits": ["base-macos", "base-buildtype-release"],
       "cacheVariables": {
-        "CMAKE_OSX_ARCHITECTURES": "arm64;x86_64"
+        "CMAKE_OSX_ARCHITECTURES": "arm64",
+        "CMAKE_OSX_DEPLOYMENT_TARGET": "11.7"
+      }
+    },
+    {
+      "name": "macos-release-x86_64",
+      "displayName": "macOS release: Release, Intel (x86_64, macOS 10.15+), static SDL2 + mixer, Bink (Make)",
+      "inherits": ["base-macos", "base-buildtype-release"],
+      "cacheVariables": {
+        "CMAKE_OSX_ARCHITECTURES": "x86_64",
+        "CMAKE_OSX_DEPLOYMENT_TARGET": "10.15"
       }
     }
   ],
@@ -230,8 +240,13 @@
       "targets": ["tutankhamun"]
     },
     {
-      "name": "macos-release",
-      "configurePreset": "macos-release",
+      "name": "macos-release-arm64",
+      "configurePreset": "macos-release-arm64",
+      "targets": ["tutankhamun"]
+    },
+    {
+      "name": "macos-release-x86_64",
+      "configurePreset": "macos-release-x86_64",
       "targets": ["tutankhamun"]
     }
   ]

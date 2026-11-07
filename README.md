@@ -5,7 +5,8 @@
 [![Windows x64](res/badges/windows_x64.svg)](https://nightly.link/dalerank/tutankhamun/workflows/tutankhamun_windows/main/windows_build_x64.zip)
 [![Linux](res/badges/linux.svg)](https://nightly.link/dalerank/tutankhamun/workflows/tutankhamun_linux/main/linux_appimage.zip)
 [![Android](res/badges/android.svg)](https://nightly.link/dalerank/tutankhamun/workflows/tutankhamun_android/main/android_apk.zip)
-[![macOS](res/badges/macos.svg)](https://nightly.link/dalerank/tutankhamun/workflows/tutankhamun_macos/main/macos_dmg.zip)
+[![macOS arm64](res/badges/macos.svg)](https://nightly.link/dalerank/tutankhamun/workflows/tutankhamun_macos/main/macos_arm_build.zip)
+[![macOS x64](res/badges/macos_x64.svg)](https://nightly.link/dalerank/tutankhamun/workflows/tutankhamun_macos/main/macos_x64_build.zip)
 
 Tutankhamun is an open-source re-implementation of **Pharaoh + Cleopatra 2.1** (Impressions Games, 2000) in C: the
 game written again as a program of its own, `tutankhamun`, that plays on the files of your own copy of the game
@@ -31,11 +32,12 @@ are also present in Tutankhamun. No game assets are part of this repository.
 | Windows x64 | -           | [![Github Actions](https://github.com/dalerank/tutankhamun/actions/workflows/tutankhamun_windows.yml/badge.svg)](https://nightly.link/dalerank/tutankhamun/workflows/tutankhamun_windows/main/windows_build_x64.zip) |
 | Linux    | -              | [![Github Actions](https://github.com/dalerank/tutankhamun/actions/workflows/tutankhamun_linux.yml/badge.svg)](https://nightly.link/dalerank/tutankhamun/workflows/tutankhamun_linux/main/linux_appimage.zip) |
 | Android  | -              | [![Github Actions](https://github.com/dalerank/tutankhamun/actions/workflows/tutankhamun_android.yml/badge.svg)](https://nightly.link/dalerank/tutankhamun/workflows/tutankhamun_android/main/android_apk.zip) |
-| macOS    | -              | [![Github Actions](https://github.com/dalerank/tutankhamun/actions/workflows/tutankhamun_macos.yml/badge.svg)](https://nightly.link/dalerank/tutankhamun/workflows/tutankhamun_macos/main/macos_dmg.zip) |
+| macOS arm64 | -           | [![Github Actions](https://github.com/dalerank/tutankhamun/actions/workflows/tutankhamun_macos.yml/badge.svg)](https://nightly.link/dalerank/tutankhamun/workflows/tutankhamun_macos/main/macos_arm_build.zip) |
+| macOS x64 | -             | [![Github Actions](https://github.com/dalerank/tutankhamun/actions/workflows/tutankhamun_macos.yml/badge.svg)](https://nightly.link/dalerank/tutankhamun/workflows/tutankhamun_macos/main/macos_x64_build.zip) |
 
 The unstable build is the latest build of `main`: on Windows a zip with `tutankhamun.exe` and its `config` folder
 (unpack it anywhere), on Linux a zip with `Tutankhamun-x86_64.AppImage` (see [Linux](#linux)), on Android a zip with
-`app-release.apk` (see [Android](#android)), on macOS a zip with `Tutankhamun.dmg` (see [macOS](#macos)). The game
+`app-release.apk` (see [Android](#android)), on macOS a zip with `Tutankhamun-arm64.dmg` or `Tutankhamun-x86_64.dmg` (see [macOS](#macos)). The game
 finds your Pharaoh + Cleopatra installation as described below.
 
 On Windows `windows_build.zip` holds the 32-bit program and `windows_build_x64.zip` the 64-bit one: they play the
@@ -119,8 +121,9 @@ building. The release APK is signed with a debug key: uninstall an APK signed wi
 
 ### macOS
 
-`Tutankhamun.app` is one universal program for Apple silicon and Intel Macs, macOS 10.13 or newer. Open
-`Tutankhamun.dmg` and drag the app to Applications. The app is signed ad hoc, not by a registered developer, so
+`macos_arm_build.zip` holds `Tutankhamun-arm64.dmg` for Apple silicon Macs (macOS 11.7 or newer),
+`macos_x64_build.zip` holds `Tutankhamun-x86_64.dmg` for Intel Macs (macOS 10.15 or newer). Open the disk image and
+drag `Tutankhamun.app` to Applications. The app is signed ad hoc, not by a registered developer, so
 macOS refuses it at the first start: open it with right click (Control-click) > Open > Open, or allow it in System
 Settings > Privacy & Security, or run `xattr -cr /Applications/Tutankhamun.app`.
 
@@ -180,20 +183,18 @@ so build it on the oldest distribution it should run on: the CI builds on Ubuntu
 
 ### macOS
 
-The Xcode command line tools (`xcode-select --install`), CMake 3.22 or newer, Ninja and git, for example from
-Homebrew:
-
-    brew install cmake ninja
+The Xcode command line tools (`xcode-select --install`), CMake 3.22 or newer and git, for example from Homebrew
+(`brew install cmake`). The build is the one of Akhenaten: Unix Makefiles and one architecture per build, arm64
+(macOS 11.7+) or x86_64 (macOS 10.15+).
 
 | command | builds | result |
 |---|---|---|
-| `./update-workspace-mac.sh [Debug\|Release]`, then `cmake --build --preset macos-dev` (or `macos-release`) | the `macos-dev` (Debug, this Mac's architecture, the default) or `macos-release` (universal arm64 + x86_64) preset, with `compile_commands.json` | `out/build/<preset>/bin/Tutankhamun.app` |
-| `packaging/macos/build_dmg.sh [build dir]` | Release, universal, signed ad hoc and put into a disk image | `build/macos/Tutankhamun.dmg` (or in the given folder) |
+| `./update-workspace-mac.sh [Debug\|Release]`, then `cmake --build --preset macos-dev` (or `macos-release-arm64`, `macos-release-x86_64`) | the `macos-dev` (Debug, the default) or the Release preset of this Mac's architecture, with `compile_commands.json` | `out/build/<preset>/bin/Tutankhamun.app` |
+| `packaging/macos/build_dmg.sh [arm64\|x86_64\|universal] [build dir]` | Release for the architecture (default: this Mac's), signed ad hoc and put into a disk image; `universal` builds both and joins them with lipo | `build/macos/Tutankhamun-<architecture>.dmg` (or in the given folder) |
 
-As on the other systems the first configure fetches SDL2 and SDL2_mixer and builds them as static libraries (for both
-architectures in a universal build), so the app needs nothing but the system. The configs are copied into the app's
-`Contents/Resources/config` at every build. `ARCHS=arm64 packaging/macos/build_dmg.sh` builds a disk image for Apple
-silicon only, which is faster.
+As on the other systems the first configure fetches SDL2 and SDL2_mixer and builds them as static libraries for the
+build's architecture, so the app needs nothing but the system. The configs are copied into the app's
+`Contents/Resources/config` at every build.
 
 ### Android
 
@@ -220,8 +221,7 @@ storage; of the debug build it can be read with
 
     adb shell run-as com.github.dalerank.tutankhamun.debug cat files/tutankhamun_play.log
 
-[BUILD.md](BUILD.md) has the details and the other ways to build. macOS is not supported yet:
-`update-workspace-mac.sh` only says so.
+[BUILD.md](BUILD.md) has the details and the other ways to build.
 
 ## Command line
 

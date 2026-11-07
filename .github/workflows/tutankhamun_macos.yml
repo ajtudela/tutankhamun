@@ -1,5 +1,8 @@
 name: Tutankhamun Build macOS
 
+# As Akhenaten (akhenaten_mac_arm.yml, akhenaten_mac_x64.yml): one build per architecture on the arm64 macos-latest
+# runner, Unix Makefiles, the oldest macOS 11.7 for arm64 and 10.15 for x86_64 (packaging/macos/build_dmg.sh).
+
 on:
   push:
     branches: [ "main" ]
@@ -9,17 +12,25 @@ on:
 
 jobs:
   dmg:
-    name: build the disk image
-    runs-on: macos-14
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - arch: arm64
+            artifact: macos_arm_build
+          - arch: x86_64
+            artifact: macos_x64_build
+    name: build the disk image (${{ matrix.arch }})
+    runs-on: macos-latest
     steps:
     - uses: actions/checkout@v4
-    - name: install the build tools
-      run: brew install ninja
     - name: build
-      run: bash packaging/macos/build_dmg.sh build/macos
+      run: bash packaging/macos/build_dmg.sh ${{ matrix.arch }} build/macos
     - name: check the configs
-      run: build/macos/bin/Tutankhamun.app/Contents/MacOS/Tutankhamun --check-configs config
+      # the runner is arm64: the x86_64 program is not started there
+      if: matrix.arch == 'arm64'
+      run: build/macos/arm64/bin/Tutankhamun.app/Contents/MacOS/Tutankhamun --check-configs config
     - uses: actions/upload-artifact@v4
       with:
-        name: macos_dmg
-        path: build/macos/Tutankhamun.dmg
+        name: ${{ matrix.artifact }}
+        path: build/macos/Tutankhamun-${{ matrix.arch }}.dmg

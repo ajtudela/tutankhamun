@@ -1,14 +1,15 @@
 cmake_minimum_required(VERSION 3.22)
-# macOS: the oldest system the app runs on (clock_gettime needs 10.12); set before project() as CMake asks
-set(CMAKE_OSX_DEPLOYMENT_TARGET "10.13" CACHE STRING "The oldest macOS the program runs on")
+# macOS: the oldest system the app runs on, Akhenaten's default (its CI: 10.15 for x86_64, 11.7 for arm64); set
+# before project() as CMake asks
+set(CMAKE_OSX_DEPLOYMENT_TARGET "10.15" CACHE STRING "The oldest macOS the program runs on")
 project(tutankhamun C CXX)
 
 # Tutankhamun: tutankhamun, the game of Pharaoh + Cleopatra in C. The game (src/game), the platform layer
 # (src/platform) and the program around them, SDL2 and SDL2_mixer fetched and linked statically, Akhenaten's Bink
 # decoder for the videos and parson for the JSON configs. Windows (MSVC, Win32 or x64), Linux (GCC or Clang, 64-bit;
-# the AppImage: packaging/linux), macOS (Apple Clang; the app bundle Tutankhamun.app, arm64 + x86_64 with
-# -DCMAKE_OSX_ARCHITECTURES="arm64;x86_64", the disk image: packaging/macos) and Android (the NDK through the Gradle
-# project in android/: the game is libmain.so beside a shared SDL2 and SDL2_mixer).
+# the AppImage: packaging/linux), macOS (Apple Clang; the app bundle Tutankhamun.app for one architecture,
+# -DCMAKE_OSX_ARCHITECTURES=arm64 or x86_64, as Akhenaten builds; the disk image: packaging/macos) and Android (the
+# NDK through the Gradle project in android/: the game is libmain.so beside a shared SDL2 and SDL2_mixer).
 if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
     set(CMAKE_BUILD_TYPE Release)
 endif()
@@ -71,12 +72,13 @@ else()
     if(WIN32)
         target_link_libraries(tutankhamun_platform PUBLIC winmm version imm32 setupapi)
     elseif(APPLE)
-        # the frameworks of the static SDL2 (its sdl2.pc, Libs.private); the newer ones weak, for the older systems
-        target_link_libraries(tutankhamun_platform PUBLIC iconv m
-            "-framework CoreVideo" "-framework Cocoa" "-framework IOKit" "-framework ForceFeedback" "-framework Carbon"
-            "-framework CoreAudio" "-framework AudioToolbox" "-framework AVFoundation" "-framework Foundation"
-            "-weak_framework GameController" "-weak_framework Metal" "-weak_framework QuartzCore"
-            "-weak_framework CoreHaptics")
+        # the frameworks of the static SDL2: Akhenaten's list (CMakeLists.txt, "Apple specific"), with the others of
+        # SDL2's sdl2.pc (AVFoundation, Foundation, QuartzCore, iconv)
+        target_link_libraries(tutankhamun_platform PUBLIC
+            "-framework Cocoa" "-framework Carbon" "-framework IOKit" "-framework CoreFoundation"
+            "-framework ForceFeedback" "-framework Metal" "-framework MetalKit" "-framework CoreVideo"
+            "-framework CoreAudio" "-framework AudioToolbox" "-framework CoreHaptics" "-framework GameController"
+            "-framework AVFoundation" "-framework Foundation" "-framework QuartzCore" iconv m)
     else()
         find_package(Threads REQUIRED)
         target_link_libraries(tutankhamun_platform PUBLIC Threads::Threads ${CMAKE_DL_LIBS} m)
