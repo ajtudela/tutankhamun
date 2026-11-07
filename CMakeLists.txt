@@ -3,10 +3,7 @@ project(tutankhamun C CXX)
 
 # Tutankhamun: tutankhamun, the game of Pharaoh + Cleopatra in C. The game (src/game), the platform layer
 # (src/platform) and the program around them, SDL2 and SDL2_mixer fetched and linked statically, Akhenaten's Bink
-# decoder for the videos and parson for the JSON configs.
-if(NOT CMAKE_SIZEOF_VOID_P EQUAL 4)
-    message(FATAL_ERROR "tutankhamun is a 32-bit program: configure with -A Win32")
-endif()
+# decoder for the videos and parson for the JSON configs. A 32-bit (Win32) or a 64-bit (x64) program.
 
 set(CMAKE_C_STANDARD 99)
 set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")

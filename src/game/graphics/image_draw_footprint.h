@@ -15,11 +15,11 @@ enum isometric_tile {
 };
 
 uint32_t image_draw_footprint_tile_masked(const uint32_t *data, int32_t clip_y);
-uint32_t image_draw_footprint_tile_left_masked(int32_t data, int32_t clip_y);
-uint32_t image_draw_footprint_tile_right_masked(int32_t data, int32_t clip_y);
+uint32_t image_draw_footprint_tile_left_masked(intptr_t data, int32_t clip_y);
+uint32_t image_draw_footprint_tile_right_masked(intptr_t data, int32_t clip_y);
 uint32_t image_draw_footprint_tile(const uint32_t *data, int32_t clip_y);
-uint32_t image_draw_footprint_tile_left(int32_t data, int32_t clip_y);
-uint32_t image_draw_footprint_tile_right(int32_t data, int32_t clip_y);
+uint32_t image_draw_footprint_tile_left(intptr_t data, int32_t clip_y);
+uint32_t image_draw_footprint_tile_right(intptr_t data, int32_t clip_y);
 int32_t image_draw_footprint_size1(void);
 int32_t image_draw_footprint_size2(void);
 int32_t image_draw_footprint_size3(void);

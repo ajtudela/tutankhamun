@@ -53,7 +53,7 @@ int32_t video_open(const char *file, int32_t x, int32_t y)
 {
     video_smk_playing = 0;
     if (video_sound_set == 0) {
-        platform_clip_use_sound((uint32_t) sound_lib_manager->driver);
+        platform_clip_use_sound((uint32_t) (uintptr_t) sound_lib_manager->driver);
         video_sound_set = 1;
     }
     log_info_text("OK :SMK starting smack ", file);

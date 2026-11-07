@@ -109,7 +109,7 @@ void file_list_destroy(file_list *self)
 void empire_route_construct(empire_route *route)
 {
     route->path_length = 0;
-    route->path = NULL;
+    empire_route_path_set(route, NULL);
     route->num_points = 0;
     route->path_capacity = 0;
     route->in_use = 0;
@@ -235,7 +235,7 @@ void key_text_table_load(key_text_table *self, const char *filename, const text_
     if (!self->count) {
         return;
     }
-    self->values = malloc((size_t) self->count * 4);
+    self->values = malloc((size_t) self->count * sizeof(*self->values));
     if (!self->values) {
         self->count = 0;
         return;

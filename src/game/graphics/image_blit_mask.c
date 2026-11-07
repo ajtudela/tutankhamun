@@ -218,7 +218,7 @@ int32_t image_draw_masked(int32_t image_id, int32_t x, int32_t y, int32_t mask)
         image_id = 0;
     }
     const image_header *header = &collection->headers[image_id];
-    g_data_ptr = header->data;
+    g_data_ptr = image_pixels_address(header);
     if (g_data_ptr <= 0) {
         return 0;
     }

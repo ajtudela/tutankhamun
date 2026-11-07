@@ -89,7 +89,7 @@ extern int32_t image_draw_last_id;
 
 extern uint8_t g_img_type;
 
-extern int32_t g_data_ptr;
+extern intptr_t g_data_ptr;
 
 extern int16_t g_img_height;
 

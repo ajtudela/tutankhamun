@@ -83,9 +83,9 @@ char empire_route_find_objects(empire_route *r)
 void empire_route_free_paths(void)
 {
     for (empire_route *r = empire_map_routes.routes; r < empire_map_routes.routes + EMPIRE_ROUTES; r++) {
-        if (r->path) {
-            free(r->path);
-            r->path = 0;
+        if (empire_route_path(r)) {
+            free(empire_route_path(r));
+            empire_route_path_set(r, NULL);
             r->path_capacity = 0;
         }
     }
@@ -94,7 +94,7 @@ void empire_route_free_paths(void)
 void empire_route_reset(empire_route *r)
 {
     r->path_length = 0;
-    r->path = 0;
+    empire_route_path_set(r, NULL);
     r->num_points = 0;
     r->path_capacity = 0;
     r->step = ROUTE_STEP_RESET;
@@ -106,7 +106,7 @@ void empire_route_reset(empire_route *r)
 
 int32_t empire_route_is_valid(const empire_route *r)
 {
-    return !r->path && !r->path_capacity && (r->num_points <= EMPIRE_ROUTE_POINTS) && (r->kind <= ROUTE_KIND_MAX) && (r->step >= ROUTE_STEP_MIN) &&
+    return !r->path_slot && !r->path_capacity && (r->num_points <= EMPIRE_ROUTE_POINTS) && (r->kind <= ROUTE_KIND_MAX) && (r->step >= ROUTE_STEP_MIN) &&
         (r->step <= ROUTE_STEP_MAX);
 }
 
@@ -126,11 +126,9 @@ static void reserve_route_path(empire_route *r, int32_t points)
     if ((points <= r->path_capacity) || (r->path_capacity >= points + ROUTE_PATH_SPARE_POINTS)) {
         return;
     }
-    if (r->path) {
-        free(r->path);
-        r->path = 0;
-    }
-    r->path = malloc((size_t) (points + ROUTE_PATH_SPARE_POINTS) * sizeof(empire_route_point));
+    free(empire_route_path(r));
+    empire_route_path_set(r, NULL);
+    empire_route_path_set(r, malloc((size_t) (points + ROUTE_PATH_SPARE_POINTS) * sizeof(empire_route_point)));
     r->path_capacity = points + ROUTE_PATH_SPARE_POINTS;
 }
 
@@ -281,7 +279,7 @@ int32_t empire_route_draw_segment(empire_route *r, int32_t from, int32_t to, int
     float y0f = (float) y0;
     int32_t count = 0;
     int32_t t = 0;
-    empire_route_point *p = &r->path[at];
+    empire_route_point *p = &empire_route_path(r)[at];
     do {
         p->x = (int16_t) (int32_t) (((double) t * step_x) + (double) x0);
         p->y = (int16_t) (int32_t) (((double) t * step_y) + (double) y0f);

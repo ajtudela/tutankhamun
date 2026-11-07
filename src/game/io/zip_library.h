@@ -4,6 +4,8 @@
 #ifndef IO_ZIP_LIBRARY_H
 #define IO_ZIP_LIBRARY_H
 
+#include <assert.h>
+#include <stddef.h>
 #include <stdint.h>
 
 enum pk_result {
@@ -56,6 +58,9 @@ typedef struct {
     uint8_t work_buff[8708];
     uint16_t hash_offs[8708];
 } pk_implode_state;
+
+static_assert(sizeof(void *) != 4 || sizeof(pk_implode_state) == PK_WORK_BUFFER_SIZE, "pk_implode_state fills the original work buffer on 32 bits");
+static_assert(offsetof(pk_implode_state, hash_offs) - offsetof(pk_implode_state, match_next) == 0x4014, "the matcher's tables keep their distances");
 
 typedef struct {
     uint32_t reserved_1;

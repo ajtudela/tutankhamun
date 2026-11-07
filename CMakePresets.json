@@ -28,6 +28,16 @@
       }
     },
     {
+      "name": "base-win-vs2022-x64",
+      "hidden": true,
+      "inherits": "base",
+      "generator": "Visual Studio 17 2022",
+      "architecture": {
+        "value": "x64",
+        "strategy": "set"
+      }
+    },
+    {
       "name": "base-win-ninja",
       "hidden": true,
       "inherits": "base",
@@ -75,6 +85,16 @@
       "name": "win-msvc-release-ninja",
       "displayName": "Windows MSVC Win32 release: Release, static SDL2 + mixer, Bink (Ninja, vcvars32)",
       "inherits": ["base-win-ninja", "base-buildtype-release"]
+    },
+    {
+      "name": "win-msvc-dev-x64-vs2022",
+      "displayName": "Windows MSVC x64 dev: Debug, static SDL2 + mixer, Bink (VS 2022)",
+      "inherits": ["base-win-vs2022-x64", "base-buildtype-debug"]
+    },
+    {
+      "name": "win-msvc-release-x64-vs2022",
+      "displayName": "Windows MSVC x64 release: Release, static SDL2 + mixer, Bink (VS 2022)",
+      "inherits": ["base-win-vs2022-x64", "base-buildtype-release"]
     }
   ],
   "buildPresets": [
@@ -98,6 +118,18 @@
     {
       "name": "win-msvc-release-ninja",
       "configurePreset": "win-msvc-release-ninja",
+      "targets": ["tutankhamun"]
+    },
+    {
+      "name": "win-msvc-dev-x64-vs2022",
+      "configurePreset": "win-msvc-dev-x64-vs2022",
+      "configuration": "Debug",
+      "targets": ["tutankhamun"]
+    },
+    {
+      "name": "win-msvc-release-x64-vs2022",
+      "configurePreset": "win-msvc-release-x64-vs2022",
+      "configuration": "Release",
       "targets": ["tutankhamun"]
     }
   ]

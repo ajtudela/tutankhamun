@@ -140,7 +140,7 @@ static int32_t draw_route_segment(empire_route *r, int32_t to, int32_t at)
     int32_t added = 0;
     int32_t t = 0;
     do {
-        empire_route_point *p = &r->path[at + added];
+        empire_route_point *p = &empire_route_path(r)[at + added];
         p->x = (int16_t) (int32_t) (((double) t * step_x) + (double) x0);
         p->y = (int16_t) (int32_t) (((double) t * step_y) + (double) y0f);
         p->segment = (uint8_t) (to - 1);

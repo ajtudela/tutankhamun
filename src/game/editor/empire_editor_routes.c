@@ -73,10 +73,10 @@ int32_t empire_route_point_at(empire_route *self, int32_t x, int32_t y, uint8_t 
     }
     *on_point = 0;
     int32_t path_length = self->path_length;
-    const empire_route_point *p = self->path;
+    const empire_route_point *p = empire_route_path(self);
     for (int32_t i = 0; i < path_length; i++, p++) {
         if (p->x >= x0 && p->x <= x1 && p->y >= y0 && p->y <= y1) {
-            return self->path[i].segment;
+            return p->segment;
         }
     }
     return -1;
@@ -108,11 +108,9 @@ bool empire_route_rebuild(empire_route *route)
     if (total > route->path_capacity) {
         int32_t capacity = total + ROUTE_PATH_SPARE_POINTS;
         if (route->path_capacity < capacity) {
-            if (route->path != 0) {
-                free(route->path);
-                route->path = 0;
-            }
-            route->path = (empire_route_point *) malloc((uint32_t) (capacity * 6));
+            free(empire_route_path(route));
+            empire_route_path_set(route, NULL);
+            empire_route_path_set(route, (empire_route_point *) malloc((uint32_t) (capacity * 6)));
             route->path_capacity = capacity;
         }
     }
@@ -137,7 +135,7 @@ bool empire_route_rebuild(empire_route *route)
                     float yf = (float) y0;
                     int32_t d = 0;
                     do {
-                        empire_route_point *p = &route->path[running + n];
+                        empire_route_point *p = &empire_route_path(route)[running + n];
                         p->x = (int16_t) crt_ftol_double(((double) d * (double) ux) + (double) x0);
                         p->y = (int16_t) crt_ftol_double(((double) d * (double) uy) + (double) yf);
                         p->segment = (uint8_t) (i - 1);

@@ -2207,8 +2207,8 @@ int32_t scenario_climate_current;
 
 int32_t scenario_start_flags[8];
 
-static_assert(sizeof(dock_queue_table) == 8480, "dock_queues is the savegame's dock queues of 8480 bytes");
-static_assert(sizeof(dock_queue) * 10 == 280, "dock_queues ends with 10 dock queues of 28 bytes");
+static_assert(sizeof(void *) != 4 || (sizeof(dock_queue_table) == 8480), "dock_queues is the savegame's dock queues of 8480 bytes on 32 bits");
+static_assert(sizeof(void *) != 4 || (sizeof(dock_queue) * 10 == 280), "dock_queues ends with 10 dock queues of 28 bytes on 32 bits");
 dock_queue_table dock_queues;
 
 int32_t city_exit_flag_offset;

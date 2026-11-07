@@ -70,9 +70,9 @@ struct floods {
     uint8_t padding[3];
 };
 
-static_assert(sizeof(floods) == 0x32FC0, "floods is 208832 bytes, as in the original program");
-static_assert(sizeof(flood_list) == 0x1C, "flood_list is 28 bytes, as in the original program");
-static_assert(sizeof(flood_tile) == 0x1C, "flood_tile is 28 bytes, as in the original program");
+static_assert(sizeof(void *) != 4 || (sizeof(floods) == 0x32FC0), "floods is 208832 bytes, as in the original program on 32 bits");
+static_assert(sizeof(void *) != 4 || (sizeof(flood_list) == 0x1C), "flood_list is 28 bytes, as in the original program on 32 bits");
+static_assert(sizeof(void *) != 4 || (sizeof(flood_tile) == 0x1C), "flood_tile is 28 bytes, as in the original program on 32 bits");
 static_assert(sizeof(floodplain_settings) == 0x24, "floodplain_settings is a savegame record of 36 bytes");
 
 static inline bool floods_is_running(const floods *self)

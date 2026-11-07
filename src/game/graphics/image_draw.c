@@ -48,7 +48,7 @@ enum fullscreen_picture {
     EXTERNAL_PATH_CLEARED = 0x100,
 };
 
-static const uint8_t *pixels(int32_t address)
+static const uint8_t *pixels(intptr_t address)
 {
     return (const uint8_t *) (uintptr_t) address;
 }
@@ -171,7 +171,7 @@ static void draw_compressed(const uint8_t *data, int32_t mirrored)
     }
 }
 
-static void draw_compressed_masked(int32_t data)
+static void draw_compressed_masked(intptr_t data)
 {
     uint16_t mask = city_view.color_mask;
     if (!mask) {
@@ -203,7 +203,7 @@ static void draw_raw(const uint8_t *data, int32_t mirrored)
     }
 }
 
-static void draw_raw_masked(int32_t data)
+static void draw_raw_masked(intptr_t data)
 {
     uint16_t mask = city_view.color_mask;
     if (!mask) {
@@ -503,7 +503,7 @@ int32_t image_draw_isometric_top(int32_t image_id, int32_t x, int32_t y)
     if (header->has_isometric_top == 0) {
         return 0;
     }
-    int32_t data = header->data;
+    intptr_t data = image_pixels_address(header);
     if (data < 1) {
         return 0;
     }
@@ -543,7 +543,7 @@ static int32_t draw_empire_map_view_of_screen_layout(void)
     g_visible_w = width;
     g_dst_skip = (display_width - width) * 2;
     g_src_skip = ((int32_t) g_img_width - width) * 2;
-    int32_t view = g_data_ptr + ((((int32_t) g_img_width * (image_view_y + skip_y)) + image_view_x + skip_x) * 2);
+    intptr_t view = g_data_ptr + ((((int32_t) g_img_width * (image_view_y + skip_y)) + image_view_x + skip_x) * 2);
     image_blit_copy(pixels(view));
     fill_around(area_x + skip_x, area_y + skip_y, width, height, area_x, area_y, image_view_width, image_view_height);
     return width;
@@ -558,7 +558,7 @@ static int32_t draw_empire_map_view(void)
     g_dst_skip = (display_width - image_view_width) * 2;
     g_src_skip = ((int32_t) g_img_width - image_view_width) * 2;
     g_visible_w = image_view_width;
-    int32_t view = g_data_ptr + ((((int32_t) g_img_width * image_view_y) + image_view_x) * 2);
+    intptr_t view = g_data_ptr + ((((int32_t) g_img_width * image_view_y) + image_view_x) * 2);
     image_blit_copy(pixels(view));
     return g_visible_w;
 }
@@ -600,7 +600,7 @@ int32_t image_draw(int32_t image_id, int32_t x, int32_t y)
         header = image_entry(collection, header->mirror_source_offset + image_id);
         mirrored = 1;
     }
-    int32_t data = header->data;
+    intptr_t data = image_pixels_address(header);
     if (data < 1) {
         return 0;
     }
@@ -622,7 +622,7 @@ int32_t image_draw_mirrored(int32_t image_id, int32_t x, int32_t y)
     if (image_id < 1 || image_id >= IMAGE_HEADERS) {
         return 0;
     }
-    int32_t data = header->data;
+    intptr_t data = image_pixels_address(header);
     g_data_ptr = data;
     if (data < 1) {
         return 0;

@@ -89,7 +89,7 @@ int32_t image_draw_last_id;
 
 uint8_t g_img_type;
 
-int32_t g_data_ptr;
+intptr_t g_data_ptr;
 
 int16_t g_img_height;
 

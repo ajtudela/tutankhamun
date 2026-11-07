@@ -402,7 +402,7 @@ static void route_path_point(const empire_route *route, int32_t percent, int32_t
     if (index >= length) {
         index = length - 1;
     }
-    const empire_route_point *point = &route->path[index];
+    const empire_route_point *point = &empire_route_path(route)[index];
     *x = point->x - empire_scroll_x + empire_border_x;
     *y = point->y - empire_scroll_y + empire_border_y;
 }
@@ -416,7 +416,7 @@ static void route_draw_points(const empire_route_point *points, int32_t count, i
 
 static int32_t route_has_path(const empire_route *route)
 {
-    return route->path_length > 0 && route->path != 0;
+    return route->path_length > 0 && empire_route_path(route) != NULL;
 }
 
 static int32_t route_is_shown(empire_route *route)
@@ -590,7 +590,7 @@ void window_empire_draw_map(void)
             int32_t editing = empire_ui_mode == EMPIRE_EDITOR_MODE_ADD_ROUTE || empire_ui_mode == EMPIRE_EDITOR_MODE_EDIT_ROUTE;
             if (i == route_current && editing) {
                 if (route_has_path(route)) {
-                    route_draw_points(route->path, route->path_length, image_group(IMAGE_GROUP_COLUMN) + 1);
+                    route_draw_points(empire_route_path(route), route->path_length, image_group(IMAGE_GROUP_COLUMN) + 1);
                     route_draw_points(route->points, route->num_points, image_group(IMAGE_GROUP_COLUMN) + 2);
                 }
                 ew_route_anim_counter++;
@@ -602,14 +602,14 @@ void window_empire_draw_map(void)
                 route_path_point(route, ew_route_anim_counter, 0, &mx, &my);
                 image_draw(route->kind == EMPIRE_ROUTE_KIND_SEA ? image_group(IMAGE_GROUP_EMPIRE_MARKER_SEA) : image_group(IMAGE_GROUP_EMPIRE_MARKER_LAND), mx, my);
             } else if (route_has_path(route)) {
-                route_draw_points(route->path, route->path_length, image_group(IMAGE_GROUP_COLUMN) + 1);
+                route_draw_points(empire_route_path(route), route->path_length, image_group(IMAGE_GROUP_COLUMN) + 1);
             }
         }
     } else {
         for (int32_t i = 0; i < EMPIRE_ROUTES; i++) {
             empire_route *route = &empire_map_routes.routes[i];
             if (route_is_shown(route) && empire_city_is_trade_route_open(i) != 0 && route_has_path(route)) {
-                route_draw_points(route->path, route->path_length, image_group(IMAGE_GROUP_COLUMN) + 1);
+                route_draw_points(empire_route_path(route), route->path_length, image_group(IMAGE_GROUP_COLUMN) + 1);
             }
         }
     }

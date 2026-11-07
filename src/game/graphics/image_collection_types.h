@@ -13,6 +13,7 @@ enum image_collection_limit {
     IMAGE_SG_SLOTS = 30,
     IMAGE_SG_BITMAPS = 200,
     IMAGE_SG_NAME_SIZE = 260,
+    IMAGE_SG_PIXELS_START = 4,
 };
 
 typedef struct image_header {

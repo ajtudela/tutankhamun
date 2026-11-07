@@ -98,7 +98,7 @@ void zip_output_func(uint8_t *buffer, uint32_t *size, void *param)
 
 int32_t zip_compress(uint32_t *crc, uint32_t *compressed_size, const void *data, void *out, int32_t size)
 {
-    pk_implode_state *buf = calloc(1, PK_WORK_BUFFER_SIZE);
+    pk_implode_state *buf = calloc(1, sizeof(*buf));
     if (!buf) {
         return 0;
     }
@@ -125,7 +125,7 @@ int32_t zip_compress(uint32_t *crc, uint32_t *compressed_size, const void *data,
 
 int32_t zip_decompress(uint32_t *crc, const void *data, int32_t size, void *out, int32_t out_size)
 {
-    pk_explode_state *buf = calloc(1, PK_WORK_BUFFER_SIZE);
+    pk_explode_state *buf = calloc(1, sizeof(*buf));
     if (!buf) {
         return 0;
     }

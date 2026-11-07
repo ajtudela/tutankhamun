@@ -96,11 +96,10 @@ static int32_t mixer_open(void)
 
 static sample *sample_of(int32_t handle)
 {
-    sample *s = (sample *) (intptr_t) handle;
-    if (s < miles.samples || s >= miles.samples + MAX_SAMPLES) {
+    if (handle < 1 || handle > MAX_SAMPLES) {
         return 0;
     }
-    return s;
+    return &miles.samples[handle - 1];
 }
 
 static int32_t channel_of(const sample *s)
@@ -110,11 +109,10 @@ static int32_t channel_of(const sample *s)
 
 static stream *stream_of(int32_t handle)
 {
-    stream *s = (stream *) (intptr_t) handle;
-    if (s < miles.streams || s >= miles.streams + MAX_STREAMS || !s->used) {
+    if (handle < 1 || handle > MAX_STREAMS || !miles.streams[handle - 1].used) {
         return 0;
     }
-    return s;
+    return &miles.streams[handle - 1];
 }
 
 static int32_t stream_channel(const stream *s)
@@ -275,7 +273,7 @@ static int32_t __stdcall ail_allocate_sample_handle(void *driver)
             miles.samples[i].volume = 127;
             miles.samples[i].pan = 64;
             miles.samples[i].loops = 1;
-            return (int32_t) (intptr_t) &miles.samples[i];
+            return i + 1;
         }
     }
     play_log("miles: out of sample handles");
@@ -453,7 +451,7 @@ static int32_t __stdcall ail_open_stream(void *driver, const char *filename, int
             s->is_music = is_music_path(filename);
             s->volume = 127;
             s->loops = 1;
-            return (int32_t) (intptr_t) s;
+            return i + 1;
         }
     }
     play_log("miles: out of streams");

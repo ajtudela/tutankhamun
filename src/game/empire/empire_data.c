@@ -47,6 +47,28 @@ trade_route_amounts trade_route_limits;
 static_assert(sizeof(empire_routes_and_traders) == 25008, "empire_map_routes is the savegame's routes and traders of 25008 bytes");
 empire_routes_and_traders empire_map_routes;
 
+static empire_route_point *empire_route_paths[EMPIRE_ROUTES];
+
+empire_route_point *empire_route_path(const empire_route *route)
+{
+    if (route->path_slot <= 0 || route->path_slot > EMPIRE_ROUTES) {
+        return NULL;
+    }
+    return empire_route_paths[route->path_slot - 1];
+}
+
+void empire_route_path_set(empire_route *route, empire_route_point *path)
+{
+    if (!path) {
+        route->path_slot = 0;
+        return;
+    }
+    int32_t index = (int32_t) (route - empire_map_routes.routes);
+    assert(index >= 0 && index < EMPIRE_ROUTES);
+    empire_route_paths[index] = path;
+    route->path_slot = index + 1;
+}
+
 static_assert(sizeof(empire_city_records) == 6466, "empire_cities is the savegame's empire cities of 6466 bytes");
 empire_city_records empire_cities;
 

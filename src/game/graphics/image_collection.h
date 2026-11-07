@@ -11,6 +11,7 @@
 #include <stddef.h>
 #include <stdint.h>
 
+intptr_t image_pixels_address(const image_header *header);
 int32_t image_get_size(int32_t image_id, int32_t *out_w, int32_t *out_h);
 
 enum image_draw_type {

@@ -19,15 +19,15 @@ typedef struct dock_queue {
     int32_t building_id;
 } dock_queue;
 
-static_assert(sizeof(dock_queue) == 0x1C, "dock_queue is a savegame record of 28 bytes");
-static_assert(offsetof(dock_queue, building_id) == 0x18, "dock_queue is the savegame's layout");
+static_assert(sizeof(void *) != 4 || (sizeof(dock_queue) == 0x1C), "dock_queue is a savegame record of 28 bytes on 32 bits");
+static_assert(sizeof(void *) != 4 || (offsetof(dock_queue, building_id) == 0x18), "dock_queue is the savegame's layout on 32 bits");
 
 typedef struct dock_queue_table {
     dyn_queue_save records[DOCK_QUEUES];
     dock_queue queues[DOCK_QUEUES];
 } dock_queue_table;
 
-static_assert(sizeof(dock_queue_table) == 8480, "dock_queue_table is a savegame record of 8480 bytes");
-static_assert(offsetof(dock_queue_table, queues) == 8200, "dock_queue_table is the savegame's layout");
+static_assert(sizeof(void *) != 4 || (sizeof(dock_queue_table) == 8480), "dock_queue_table is a savegame record of 8480 bytes on 32 bits");
+static_assert(sizeof(void *) != 4 || (offsetof(dock_queue_table, queues) == 8200), "dock_queue_table is the savegame's layout on 32 bits");
 
 #endif

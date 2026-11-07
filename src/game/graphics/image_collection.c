@@ -155,7 +155,7 @@ static void fill_group_table(
 static void convert_image(image_header *image)
 {
     int32_t data_length = image->data_length;
-    uint8_t *data = (uint8_t *) (uintptr_t) image->data;
+    uint8_t *data = (uint8_t *) image_pixels_address(image);
     if (image->draw_type == IMAGE_DRAW_ISOMETRIC) {
         if (image->has_isometric_top == 0) {
             image_convert_raw_555(data, data_length);
@@ -176,7 +176,7 @@ static void convert_image(image_header *image)
 
 static void place_image_data(image_sg_slot *slot, image_header *images, int32_t slot_index)
 {
-    g_pixel_cursor = (int32_t) (uintptr_t) (slot->pixels + 4);
+    g_pixel_cursor = IMAGE_SG_PIXELS_START;
     for (int32_t i = 0; i < slot->image_count; i++) {
         image_header *image = &images[i];
         image->file_slot = slot_index;
@@ -347,6 +347,17 @@ void image_collection_load_all(const char **names)
             break;
         }
     }
+}
+
+intptr_t image_pixels_address(const image_header *header)
+{
+    if (header->data < 1) {
+        return 0;
+    }
+    if (header->is_external != 0) {
+        return header->data;
+    }
+    return (intptr_t) (image_collection.slots[header->file_slot].pixels + header->data);
 }
 
 int32_t image_get_size(int32_t image_id, int32_t *out_w, int32_t *out_h)

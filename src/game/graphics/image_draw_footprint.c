@@ -94,7 +94,7 @@ static uint32_t color_mask_pairs(void)
     return (uint32_t) city_view.color_mask | ((uint32_t) city_view.color_mask << PIXEL_PAIR_SHIFT);
 }
 
-static const uint32_t *tile_data(int32_t data)
+static const uint32_t *tile_data(intptr_t data)
 {
     return (const uint32_t *) (uintptr_t) data;
 }
@@ -104,12 +104,12 @@ uint32_t image_draw_footprint_tile_masked(const uint32_t *data, int32_t clip_y)
     return draw_tile(data, clip_y, TILE_WHOLE, color_mask_pairs());
 }
 
-uint32_t image_draw_footprint_tile_left_masked(int32_t data, int32_t clip_y)
+uint32_t image_draw_footprint_tile_left_masked(intptr_t data, int32_t clip_y)
 {
     return draw_tile(tile_data(data), clip_y, TILE_CUT_LEFT, color_mask_pairs());
 }
 
-uint32_t image_draw_footprint_tile_right_masked(int32_t data, int32_t clip_y)
+uint32_t image_draw_footprint_tile_right_masked(intptr_t data, int32_t clip_y)
 {
     return draw_tile(tile_data(data), clip_y, TILE_CUT_RIGHT, color_mask_pairs());
 }
@@ -122,7 +122,7 @@ uint32_t image_draw_footprint_tile(const uint32_t *data, int32_t clip_y)
     return draw_tile(data, clip_y, TILE_WHOLE, ~0u);
 }
 
-uint32_t image_draw_footprint_tile_left(int32_t data, int32_t clip_y)
+uint32_t image_draw_footprint_tile_left(intptr_t data, int32_t clip_y)
 {
     if (city_view.color_mask != 0) {
         return image_draw_footprint_tile_left_masked(data, clip_y);
@@ -130,7 +130,7 @@ uint32_t image_draw_footprint_tile_left(int32_t data, int32_t clip_y)
     return draw_tile(tile_data(data), clip_y, TILE_CUT_LEFT, ~0u);
 }
 
-uint32_t image_draw_footprint_tile_right(int32_t data, int32_t clip_y)
+uint32_t image_draw_footprint_tile_right(intptr_t data, int32_t clip_y)
 {
     if (city_view.color_mask != 0) {
         return image_draw_footprint_tile_right_masked(data, clip_y);
@@ -138,7 +138,7 @@ uint32_t image_draw_footprint_tile_right(int32_t data, int32_t clip_y)
     return draw_tile(tile_data(data), clip_y, TILE_CUT_RIGHT, ~0u);
 }
 
-static void draw_clipped_tile(int32_t data)
+static void draw_clipped_tile(intptr_t data)
 {
     graphics_clip_horizontal();
     graphics_clip_vertical();
