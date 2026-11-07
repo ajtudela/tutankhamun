@@ -78,11 +78,23 @@ status. `config\discord.json` turns it off with `"enabled": 0`.
 Windows 10/11 with Visual Studio 2022 ("Desktop development with C++"), CMake 3.22 or newer and git. The game builds
 as a 32-bit (Win32, the default) or a 64-bit (x64) program. In short:
 
-    build.bat
-    build.bat release vs x64
+    build.bat [release|debug] [vs|ninja] [x86|x64]
 
-builds the Release preset and writes the game folder (tutankhamun.exe and config\) into
-`out\install\win-msvc-release-vs2022` (the 64-bit one into `out\install\win-msvc-release-x64-vs2022`). [BUILD.md](BUILD.md) has the details and the other ways to build.
+| option | values | meaning | default |
+|---|---|---|---|
+| configuration | `release`, `debug` | the Release or the Debug build | `release` |
+| generator | `vs`, `ninja` | Visual Studio 2022, or Ninja (on PATH) in the vcvars32 / vcvars64 environment that build.bat sets up | `vs` |
+| architecture | `x86`, `x64` | a 32-bit (Win32) or a 64-bit (x64) program | `x86` |
+
+The options go in this order, so an architecture needs the two before it: `build.bat` builds the 32-bit Release with
+Visual Studio, `build.bat release vs x64` the 64-bit one, `build.bat debug ninja x64` the 64-bit Debug with Ninja.
+The build is in `out\build\<preset>` and the game folder (tutankhamun.exe and config\, copy both) in
+`out\install\<preset>`, the preset being `win-msvc-<release|dev>[-x64]-<vs2022|ninja>`: `build.bat` writes
+`out\install\win-msvc-release-vs2022`, `build.bat release vs x64` writes `out\install\win-msvc-release-x64-vs2022`.
+`TUTANKHAMUN_JOBS` limits the parallel build jobs. The exit code is 0 when the game folder is complete, 1 when the
+build failed and 2 for an unknown option.
+
+[BUILD.md](BUILD.md) has the details and the other ways to build.
 
 Linux and macOS are not supported yet: `update-workspace-linux.sh` and `update-workspace-mac.sh` only say so.
 
