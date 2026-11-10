@@ -5,7 +5,8 @@
 //
 // Widths are not the same everywhere:
 // - measuring and drawing use different space widths and letter spacing for the large fonts;
-// - tall letters are raised except the c cedilla;
+// - accented glyphs are raised so their lowest ink row ends on the plain letter's lowest ink row of the same case
+//   (the c cedilla hangs below the line and stays put); the rows are scanned from the loaded pixels once per glyph;
 // - after a text the width grows by one more space.
 
 #include "graphics/text_draw.h"
@@ -15,6 +16,8 @@
 #include "graphics/graphics_primitives.h"
 #include "graphics/image_collection.h"
 #include "graphics/image_draw.h"
+#include "graphics/image_blit.h"
+#include "graphics/screen_pixels.h"
 #include "text/lang.h"
 #include "widget/widget_data.h"
 #include "window/window_data.h"
@@ -73,7 +76,20 @@ enum text_limit {
 enum text_letter {
     TEXT_LETTER_TALL_FIRST = 0x60,
     TEXT_LETTER_C_CEDILLA = 199,
-    TEXT_CHAR_C_CEDILLA = 0xE7,
+    TEXT_LETTER_PLAIN_GLYPH_LAST = 52,
+    TEXT_LETTER_LOWER_A_GLYPH = 1,
+    TEXT_LETTER_UPPER_A_GLYPH = 27,
+};
+
+enum text_accented_char {
+    TEXT_CHAR_ACCENTED_UPPERCASE_FIRST = 0xC0,
+    TEXT_CHAR_ACCENTED_UPPERCASE_LAST = 0xDD,
+};
+
+enum glyph_ink_memo {
+    TEXT_GLYPH_INK_UNSCANNED = 0,
+    TEXT_GLYPH_INK_EMPTY = 1,
+    TEXT_GLYPH_INK_BOTTOM_OFFSET = 2,
 };
 
 enum text_era_text {
@@ -117,23 +133,103 @@ uint8_t text_letter_image_id(int32_t letter_index)
     return letter_image_ids[letter_index];
 }
 
+// The last row of a glyph's bitmap that has ink, memoized per image id: stored as the row plus the offset, so zero
+// still means "not scanned yet" and one means "no ink at all".
+static int16_t glyph_ink_rows[IMAGE_HEADERS];
+
+static int16_t bitmap_ink_bottom(const image_header *header, const uint8_t *pixels)
+{
+    int32_t width = header->width;
+    int32_t height = header->height;
+    if (width < 1 || height < 1) {
+        return -1;
+    }
+    if (header->is_compressed == 0) {
+        const uint8_t *row = pixels + (height - 1) * width * 2;
+        for (int32_t y = height - 1; y >= 0; y--) {
+            for (int32_t x = 0; x < width; x++) {
+                if (pixel_read(row + x * 2) != PIXEL_TRANSPARENT_KEY) {
+                    return (int16_t) y;
+                }
+            }
+            row -= width * 2;
+        }
+        return -1;
+    }
+    int16_t bottom = -1;
+    const uint8_t *end = pixels + header->data_length;
+    const uint8_t *p = pixels;
+    for (int32_t y = 0; y < height; y++) {
+        int32_t left = width;
+        while (left > 0 && p + 1 < end) {
+            uint8_t b = p[0];
+            if (b == RLE_SKIP) {
+                left -= p[1];
+                p += 2;
+            } else {
+                bottom = (int16_t) y;
+                int32_t n = rle_unrolled_run_length(b);
+                left -= n;
+                p += n * 2 + 1;
+            }
+        }
+    }
+    return bottom;
+}
+
+static int32_t glyph_ink_bottom(int32_t image_id)
+{
+    if (image_id <= 0 || image_id >= IMAGE_HEADERS) {
+        return -1;
+    }
+    int16_t stored = glyph_ink_rows[image_id];
+    if (stored == TEXT_GLYPH_INK_UNSCANNED) {
+        const image_header *header = image_header_get(image_id);
+        intptr_t data = image_pixels_address(header);
+        int32_t bottom = data == 0 ? -1 : bitmap_ink_bottom(header, (const uint8_t *) data);
+        stored = (int16_t) (bottom + TEXT_GLYPH_INK_BOTTOM_OFFSET);
+        if (stored < TEXT_GLYPH_INK_EMPTY) {
+            stored = TEXT_GLYPH_INK_EMPTY;
+        }
+        glyph_ink_rows[image_id] = stored;
+    }
+    return stored - TEXT_GLYPH_INK_BOTTOM_OFFSET;
+}
+
+static int32_t text_character_raise(int32_t font, uint8_t letter_index, uint8_t glyph_id)
+{
+    if (letter_index < TEXT_LETTER_TALL_FIRST) {
+        return 0;
+    }
+    if (letter_index == TEXT_LETTER_C_CEDILLA) {
+        return 0;
+    }
+    if (glyph_id <= TEXT_LETTER_PLAIN_GLYPH_LAST) {
+        return 0;
+    }
+    uint8_t letter = (uint8_t) (letter_index + ' ');
+    int32_t reference_glyph = TEXT_LETTER_LOWER_A_GLYPH;
+    if (letter >= TEXT_CHAR_ACCENTED_UPPERCASE_FIRST && letter <= TEXT_CHAR_ACCENTED_UPPERCASE_LAST) {
+        reference_glyph = TEXT_LETTER_UPPER_A_GLYPH;
+    }
+    int32_t glyph_bottom = glyph_ink_bottom((glyph_id - 1) + font);
+    int32_t reference_bottom = glyph_ink_bottom((reference_glyph - 1) + font);
+    if (glyph_bottom < 0 || reference_bottom < 0) {
+        return 0;
+    }
+    int32_t raise = glyph_bottom - reference_bottom;
+    return raise > 0 ? raise : 0;
+}
+
 int32_t text_draw_character(int32_t font, uint8_t letter_index, int32_t x, int32_t y)
 {
     g_last_image_id = text_letter_image_id(letter_index);
     if (g_last_image_id == 0) {
         return 0;
     }
-    int32_t image_id = (g_last_image_id - 1) + font;
-    int32_t raise = image_header_get(image_id)->height - g_line_height;
-    if (raise < 0) {
-        raise = 0;
-    }
-    if (letter_index < TEXT_LETTER_TALL_FIRST) {
-        raise = 0;
-    }
-    if (letter_index == TEXT_LETTER_C_CEDILLA || letter_index == TEXT_CHAR_C_CEDILLA) {
-        raise = 0;
-    }
+    uint8_t glyph_id = g_last_image_id;
+    int32_t image_id = (glyph_id - 1) + font;
+    int32_t raise = text_character_raise(font, letter_index, glyph_id);
     image_draw(image_id, x, (y - TEXT_GLYPH_RAISE) - raise);
     return image_header_get(image_id)->width;
 }
