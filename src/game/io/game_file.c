@@ -892,6 +892,7 @@ void game_file_write_mission_saved_game(void)
     strcpy(path, dir_save_path());
     strcat(path, "\\");
     strcat(path, name);
+    platform_dir_create(dir_save_path());
     game_file_io_write_saved_game(path);
     if (game_is_replay == 1) {
         strcpy(campaign_object.campaign.saved_game_path, path);

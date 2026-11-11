@@ -96,6 +96,10 @@ void file_menu_delete_game(void)
     file_dialog_open(FILE_DIALOG_DELETE);
 }
 
+// The game's texts have no message for a save that cannot be written.
+static const char save_failed_title[] = "Cannot save the game";
+static const char save_failed_text[] = "The saved game could not be written to the family's folder.";
+
 static int32_t file_dialog_confirm_overwrite(const char *path)
 {
     FILE *file = platform_fopen(path, file_mode_read);
@@ -114,7 +118,13 @@ static int32_t file_dialog_save(const char *path)
         file_remove_extension(file_dialog_name);
         return 0;
     }
-    game_file_io_write_saved_game(path);
+    // The family's folder may be missing (a player record without its folder): create it rather than fail.
+    platform_dir_create(dir_save_path());
+    if (game_file_io_write_saved_game(path) != 0) {
+        window_message_box_show(save_failed_title, save_failed_text, PLATFORM_BOX_OK);
+        file_remove_extension(file_dialog_name);
+        return 0;
+    }
     if (game_is_replay == GAME_PLAY_CAMPAIGN) {
         strcpy(campaign_object.campaign.saved_game_path, path);
         player_data_write_file(&campaign_object, player_record_path());
