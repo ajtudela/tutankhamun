@@ -24,6 +24,8 @@ jobs:
     runs-on: macos-latest
     steps:
     - uses: actions/checkout@v4
+      with:
+        fetch-depth: 0 # the commit count is the build number (CMakeLists.txt)
     - name: build
       run: bash packaging/macos/build_dmg.sh ${{ matrix.arch }} build/macos
     - name: check the configs
