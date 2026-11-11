@@ -20,6 +20,7 @@
 #include "scenario/campaign.h"
 #include "scenario/campaign_load.h"
 #include "sound/music.h"
+#include "sound/sound_lib.h"
 #include "sound/sound_play.h"
 #include "text/lang.h"
 #include "video/video_data.h"
@@ -50,7 +51,6 @@ enum intermezzo_layout {
     MARKER_CHOSEN = 2,
     BRIEFING_TOOLTIP_SCROLL_UP = 12,
     BRIEFING_TOOLTIP_SCROLL_DOWN = 13,
-    SOUND_STREAM_MUSIC_FADE = 1,
 };
 
 static campaign_link *current_link(void)
@@ -165,7 +165,7 @@ static void mission_start_city(void)
         player->mission_saved_game_state = 0;
     }
     window_current_id = WINDOW_CITY;
-    sound_stream_fade_out(SOUND_STREAM_MUSIC_FADE);
+    sound_stream_fade_out(SOUND_STREAM_SPEECH);
     int32_t *difficulty = &player->difficulty;
     sound_music_playing_special = 0;
     if (settings_data.difficulty < *difficulty) {
