@@ -12,6 +12,7 @@
 #include "platform/discord_rpc.h"
 #include "platform/log.h"
 #include "platform/platform_file.h"
+#include "platform/updater.h"
 #include "platform/version.h"
 
 #include <stdint.h>
@@ -148,6 +149,7 @@ static void print_usage(void)
 {
     fprintf(stderr,
         "usage: tutankhamun [game dir] [save.sav] [--log file] [--size WxH] [--window | --fullscreen] [--cursor-scale N] [--discord-log]\n"
+        "                   [--no-update]\n"
         "       tutankhamun --export-configs <dir> | --check-configs <dir>\n"
         "       tutankhamun --find-game-dir [--system] [--ini file] [--here dir] [--steam root] [--gog dir]... [...]\n"
         "(the game directory holds the game's Data folder; a path ending in .exe stands for its folder)\n");
@@ -181,6 +183,8 @@ static int32_t play_main(int32_t argc, char **argv, int32_t first)
             log = argv[++i];
         } else if (strcmp(argv[i], "--discord-log") == 0) {
             discord_rpc_set_verbose(true);
+        } else if (strcmp(argv[i], "--no-update") == 0) {
+            updater_disable();
         } else if (strncmp(argv[i], "-psn_", 5) == 0) {
             // the process serial number that older macOS Finders pass to an app they start
         } else if (strncmp(argv[i], "--", 2) == 0) {
@@ -209,6 +213,7 @@ static int32_t play_main(int32_t argc, char **argv, int32_t first)
     }
     platform_log_open(log_path);
     platform_log("port: %s", version_text());
+    updater_start();
     static const play_host host = { platform_log, game_run_tick, game_run_frame };
     play_bind(&host);
     play_cursors_set_scale(cursor_scale_percent);
@@ -229,7 +234,9 @@ static int32_t play_main(int32_t argc, char **argv, int32_t first)
     if (found.remember) {
         game_dir_remember(sources.ini, found.dir);
     }
-    return play_run(save);
+    int32_t result = play_run(save);
+    updater_finish();
+    return result;
 }
 
 static int32_t configs_main(int32_t argc, char **argv)

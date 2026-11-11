@@ -54,6 +54,7 @@
 #include "window/intermezzo.h"
 #include "window/main_menu.h"
 #include "window/main_menu_links.h"
+#include "window/main_menu_version.h"
 #include "window/map_selection.h"
 #include "window/message_dialog.h"
 #include "window/message_list.h"
@@ -137,6 +138,9 @@ static void input_front_menu(void)
         return;
     }
     if (main_menu_links_handle_mouse()) {
+        return;
+    }
+    if (main_menu_version_handle_mouse()) {
         return;
     }
     generic_buttons(ui_origin_x, ui_origin_y, main_menu_buttons, 5, &focus_button_id);

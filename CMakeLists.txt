@@ -127,6 +127,7 @@ set(TUTANKHAMUN_SOURCES
     src/platform/platform_display.c
     src/platform/platform_file.c
     src/platform/platform_screen.c
+    src/platform/updater.c
     src/platform/version.c
     ${GAME_SOURCES}
 )
@@ -151,7 +152,20 @@ endif()
 string(TIMESTAMP TUTANKHAMUN_BUILD_DATE "%Y-%m-%d" UTC)
 message(STATUS "Tutankhamun 0.1.${TUTANKHAMUN_BUILD_NUMBER} (${TUTANKHAMUN_COMMIT}) ${TUTANKHAMUN_BUILD_DATE}")
 set_source_files_properties(src/platform/version.c PROPERTIES COMPILE_DEFINITIONS
-    "TUTANKHAMUN_BUILD_NUMBER=${TUTANKHAMUN_BUILD_NUMBER};TUTANKHAMUN_COMMIT=\"${TUTANKHAMUN_COMMIT}\";TUTANKHAMUN_BUILD_DATE=\"${TUTANKHAMUN_BUILD_DATE}\"")if(ANDROID)
+    "TUTANKHAMUN_BUILD_NUMBER=${TUTANKHAMUN_BUILD_NUMBER};TUTANKHAMUN_COMMIT=\"${TUTANKHAMUN_COMMIT}\";TUTANKHAMUN_BUILD_DATE=\"${TUTANKHAMUN_BUILD_DATE}\"")
+
+# The program's own update (src/platform/updater.c): on by default in the CI's builds only, whose files the release
+# "nightly" holds, so a build of one's own is never replaced by them.
+if(DEFINED ENV{GITHUB_ACTIONS})
+    set(updater_default ON)
+else()
+    set(updater_default OFF)
+endif()
+option(TUTANKHAMUN_UPDATER "The program updates itself from the release nightly (Windows)" ${updater_default})
+if(TUTANKHAMUN_UPDATER AND WIN32)
+    set_source_files_properties(src/platform/updater.c PROPERTIES COMPILE_DEFINITIONS TUTANKHAMUN_UPDATER)
+endif()
+if(ANDROID)
     # SDLActivity loads the game as libmain.so and calls its main (TutankhamunActivity.getMainFunction)
     add_library(tutankhamun SHARED ${TUTANKHAMUN_SOURCES})
     set_target_properties(tutankhamun PROPERTIES OUTPUT_NAME main)
@@ -197,7 +211,7 @@ target_include_directories(tutankhamun PRIVATE src src/game)
 if(MSVC)
     target_compile_options(tutankhamun PRIVATE /we4113 /we4028 /we4047 /we4024 /we4133 /we4020 /we4029 /we4021 /we4013)
     target_link_options(tutankhamun PRIVATE /DYNAMICBASE /INCREMENTAL:NO)
-    target_link_libraries(tutankhamun PRIVATE winmm)
+    target_link_libraries(tutankhamun PRIVATE winmm winhttp)
 else()
     target_compile_options(tutankhamun PRIVATE -Werror=implicit-function-declaration -Werror=int-conversion -Werror=incompatible-pointer-types
         -Werror=return-type -Werror=pointer-to-int-cast -Werror=int-to-pointer-cast)

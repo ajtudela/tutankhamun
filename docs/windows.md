@@ -44,6 +44,21 @@ installation as it is. Saves are in the original format; `.svx` files from Akhen
 **Discord**: while Discord runs on the same computer, the game shows the mission's title and date in your Discord
 status. `config\discord.json` turns it off with `"enabled": 0`.
 
+**Updates**: the front menu shows the version at the bottom left (`Tutankhamun 0.1.<build> (<commit>) <date>`, the
+build being the number of commits). The downloaded builds update themselves: at every start the game asks GitHub
+for the newest build of main (the release [nightly](https://github.com/dalerank/tutankhamun/releases/tag/nightly)),
+downloads a newer one into `update\` beside the program and checks its size and sha256, and the front menu says it
+is ready. When the game closes the new program takes the old one's place (the old one is kept as
+`tutankhamun.exe.old` until the next start), so the next start is the new build; "Restart now" in the front menu
+does it at once. The saved games and the game directory are not touched. The check sends nothing but the request for
+the file; `tutankhamun.ini` turns it off with
+
+    [update]
+    check=0
+
+or `--no-update` for one start. A program built by yourself never updates itself (CMake option
+`TUTANKHAMUN_UPDATER`, on only in the CI).
+
 ## Building
 
 Windows 10/11 with Visual Studio 2022 ("Desktop development with C++"), CMake 3.22 or newer and git. The game builds

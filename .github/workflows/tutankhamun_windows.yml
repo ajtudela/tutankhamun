@@ -7,6 +7,14 @@ on:
     branches: [ "main" ]
   workflow_dispatch:
 
+# the release nightly is written by the push builds of main
+permissions:
+  contents: write
+
+# two pushes in a row: the second one's files are uploaded after the first one's
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+
 jobs:
   windows:
     name: build on windows (${{ matrix.arch }})
@@ -23,6 +31,8 @@ jobs:
             artifact: windows_build_x64
     steps:
     - uses: actions/checkout@v4
+      with:
+        fetch-depth: 0 # the commit count is the build number (CMakeLists.txt)
     - name: configure
       run: cmake --preset ${{ matrix.preset }}
     - name: build
@@ -33,3 +43,21 @@ jobs:
       with:
         name: ${{ matrix.artifact }}
         path: ${{ matrix.artifact }}
+    # The program's own update (src/platform/updater.c) reads the release "nightly": the game folder as a tar and its
+    # .version (the build and commit; the tar's size and sha256). The tar goes first, so a .version never names a
+    # tar that is not there yet.
+    - name: publish to the release nightly
+      if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+      shell: bash
+      env:
+        GH_TOKEN: ${{ github.token }}
+      run: |
+        asset=${{ matrix.artifact }}
+        tar --format=ustar -cf $asset.tar -C $asset .
+        printf '%s %s\n%s %s\n' "$(git rev-list --count HEAD)" "$GITHUB_SHA" \
+          "$(stat -c%s $asset.tar)" "$(sha256sum $asset.tar | cut -d' ' -f1)" > $asset.version
+        cat $asset.version
+        gh release view nightly >/dev/null 2>&1 || gh release create nightly --prerelease --target main \
+          --title "Nightly" --notes "The newest build of main, read by the program's own update." || true
+        gh release upload nightly $asset.tar --clobber
+        gh release upload nightly $asset.version --clobber
