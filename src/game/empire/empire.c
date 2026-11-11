@@ -175,9 +175,9 @@ static int32_t our_city_sells(int32_t resource)
     return 0;
 }
 
-static int32_t clay_can_be_had(void)
+static int32_t raw_can_be_had(int32_t raw)
 {
-    return empire_can_produce_resource(RESOURCE_CLAY) || empire_can_produce_resource_potentially(RESOURCE_CLAY);
+    return empire_can_produce_resource(raw) || empire_can_produce_resource_potentially(raw);
 }
 
 int32_t empire_can_produce_resource(int32_t resource)
@@ -185,13 +185,13 @@ int32_t empire_can_produce_resource(int32_t resource)
     int32_t result;
     switch (resource) {
         case RESOURCE_BEER:
-            result = empire_can_import_resource_potentially(RESOURCE_BARLEY);
+            result = raw_can_be_had(RESOURCE_BARLEY);
             break;
         case RESOURCE_LINEN:
-            result = empire_can_import_resource_potentially(RESOURCE_FLAX);
+            result = raw_can_be_had(RESOURCE_FLAX);
             break;
         case RESOURCE_PAINT:
-            result = empire_can_import_resource_potentially(RESOURCE_HENNA);
+            result = raw_can_be_had(RESOURCE_HENNA);
             break;
         case RESOURCE_LAMPS:
             if ((empire_can_produce_resource(RESOURCE_POTTERY) || empire_can_produce_resource_potentially(RESOURCE_POTTERY)) &&
@@ -204,28 +204,28 @@ int32_t empire_can_produce_resource(int32_t resource)
             result = empire_can_import_resource(RESOURCE_OIL);
             break;
         case RESOURCE_LUXURY_GOODS:
-            result = empire_can_import_resource_potentially(RESOURCE_GEMS);
+            result = raw_can_be_had(RESOURCE_GEMS);
             break;
         case RESOURCE_POTTERY:
-            result = empire_can_import_resource_potentially(RESOURCE_CLAY);
+            result = raw_can_be_had(RESOURCE_CLAY);
             break;
         case RESOURCE_WEAPONS:
             if (!scenario_data.allowed_buildings[ALLOWED_WEAPONSMITH]) {
                 return 0;
             }
-            result = empire_can_import_resource_potentially(RESOURCE_COPPER);
+            result = raw_can_be_had(RESOURCE_COPPER);
             break;
         case RESOURCE_CHARIOTS:
             if (!scenario_data.allowed_buildings[ALLOWED_CHARIOT_MAKER]) {
                 return 0;
             }
-            result = empire_can_import_resource_potentially(RESOURCE_TIMBER);
+            result = raw_can_be_had(RESOURCE_TIMBER);
             break;
         case RESOURCE_BRICKS:
-            if (clay_can_be_had() && empire_can_produce_resource(RESOURCE_GRAIN)) {
+            if (raw_can_be_had(RESOURCE_CLAY) && empire_can_produce_resource(RESOURCE_GRAIN)) {
                 return 1;
             }
-            if (clay_can_be_had() && empire_can_import_resource_potentially(RESOURCE_STRAW)) {
+            if (raw_can_be_had(RESOURCE_CLAY) && empire_can_import_resource_potentially(RESOURCE_STRAW)) {
                 return 1;
             }
             if (empire_can_produce_resource(RESOURCE_GRAIN) && empire_can_import_resource_potentially(RESOURCE_CLAY)) {
@@ -237,7 +237,7 @@ int32_t empire_can_produce_resource(int32_t resource)
             result = empire_can_import_resource_potentially(RESOURCE_CLAY);
             break;
         case RESOURCE_PAPYRUS:
-            result = empire_can_import_resource_potentially(RESOURCE_REEDS);
+            result = raw_can_be_had(RESOURCE_REEDS);
             break;
         case RESOURCE_STRAW:
             result = empire_can_produce_resource(RESOURCE_GRAIN);
