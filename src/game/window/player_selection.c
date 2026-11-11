@@ -22,6 +22,7 @@
 #include "platform/platform_file.h"
 #include "scenario/campaign_load.h"
 #include "window/file_list.h"
+#include "window/free_play.h"
 #include "window/intermezzo.h"
 #include "window/main_menu.h"
 #include "window/mission_flow.h"
@@ -36,6 +37,9 @@
 #include <string.h>
 
 char dir_save_path_buffer[FILE_PATH_SIZE];
+
+// Set when the family is chosen for free play: "proceed" then opens the free play missions instead of the main menu.
+static int32_t proceed_to_free_play;
 
 enum player_selection_text {
     PLAYER_SELECTION_TEXT_GROUP = 292,
@@ -181,10 +185,22 @@ int32_t player_selection_handle_scrollbar(void)
     return 1;
 }
 
+void player_selection_proceed_to_free_play(int32_t free_play)
+{
+    proceed_to_free_play = free_play;
+}
+
 void player_selection_button_proceed(void)
 {
     if (settings_data.player_name[0] == 0) {
         window_popup_dialog_show(POPUP_NO_PLAYER, button_none, POPUP_OK);
+        return;
+    }
+    if (proceed_to_free_play) {
+        proceed_to_free_play = 0;
+        window_current_id = WINDOW_FRONT_MENU;
+        window_free_play_show();
+        window_redraw_request = WINDOW_REDRAW_ALL;
         return;
     }
     window_main_menu_show();

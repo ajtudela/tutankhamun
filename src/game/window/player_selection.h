@@ -11,6 +11,7 @@ void window_player_selection_show(void);
 void player_selection_draw_background(void);
 void window_player_selection_draw_foreground(void);
 void player_selection_button_new_player(void);
+void player_selection_proceed_to_free_play(int32_t free_play);
 void player_selection_button_proceed(void);
 void player_selection_button_select(void);
 void player_selection_confirm_delete(void);

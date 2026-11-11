@@ -464,6 +464,7 @@ void main_menu_button_click(void)
     uint32_t button = (uint32_t) button_parameter;
     settings_data.mission_id = 0;
     empire_editor_route_dragging = 1;
+    player_selection_proceed_to_free_play(0);
     switch (button) {
         case FRONT_MENU_NEW_GAME:
             window_player_selection_show();
@@ -471,7 +472,10 @@ void main_menu_button_click(void)
             return;
         case FRONT_MENU_WEB_SITE:
             if (free_play_allowed()) {
-                window_free_play_show();
+                // Free play saves in a family's folder like the campaign, so the family is chosen first.
+                player_selection_proceed_to_free_play(1);
+                window_player_selection_show();
+                g_sidebar_collapsed = 0;
                 return;
             }
             platform_window_minimize(platform_main_window);

@@ -47,8 +47,9 @@ Steam and GOG folders, the folder it remembers, then a folder picker) or takes i
 [the command line](docs/command-line.md). Like the original it writes the players and the saved games into the game
 folder, in the original format.
 
-**Free play**: the main menu's second button lists every Pharaoh and Cleopatra mission; its end returns to the main
-menu without changing the campaign progress, records or high scores.
+**Free play**: the main menu's second button asks for the family, whose folder keeps the saved games, then lists
+every Pharaoh and Cleopatra mission; its end returns to the main menu without changing the campaign progress, records
+or high scores.
 
 **Resolutions**: any size from 640x480 up to the display's; F7 / F8 / F9 and F6 (full screen) work as in the
 original.
