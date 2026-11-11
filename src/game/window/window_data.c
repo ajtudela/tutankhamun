@@ -301,11 +301,11 @@ generic_button main_menu_buttons[5] = { { 192, 100, 448, 125, main_menu_button_c
     { 192, 220, 448, 245, main_menu_button_click, button_none, 0, 0, 0, 1, 3, 0 },
     { 192, 260, 448, 285, main_menu_button_click, button_none, 0, 0, 0, 1, 4, 0 } };
 
-generic_button game_menu_buttons[5] = { { 208, 128, 433, 153, main_menu_button_continue, button_none, 0, 0, 0, 1, 0, 0 },
-      { 208, 176, 433, 201, main_menu_button_campaign, button_none, 0, 0, 0, 1, 0, 0 },
-      { 208, 224, 433, 249, main_menu_button_load, button_none, 0, 0, 0, 1, 0, 0 },
-      { 208, 272, 433, 297, main_menu_button_custom, button_none, 0, 0, 0, 1, 0, 0 },
-      { 208, 320, 433, 345, main_menu_button_back, button_none, 0, 0, 0, 1, 0, 0 } };
+generic_button game_menu_buttons[5] = { { 160, 128, 480, 153, main_menu_button_continue, button_none, 0, 0, 0, 1, 0, 0 },
+      { 160, 176, 480, 201, main_menu_button_campaign, button_none, 0, 0, 0, 1, 0, 0 },
+      { 160, 224, 480, 249, main_menu_button_load, button_none, 0, 0, 0, 1, 0, 0 },
+      { 160, 272, 480, 297, main_menu_button_custom, button_none, 0, 0, 0, 1, 0, 0 },
+      { 160, 320, 480, 345, main_menu_button_back, button_none, 0, 0, 0, 1, 0, 0 } };
 
 uint32_t main_menu_button_labels[5] = { 0, 2, 3, 5, 4 };
 
