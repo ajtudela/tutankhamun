@@ -563,19 +563,27 @@ static void draw_mission_records(int32_t x, int32_t y, int32_t font)
     draw_record(MISSION_RECORD_TEXT_SCORE, record->score, x, y + 377, image_group(IMAGE_GROUP_FONT_WHITE));
 }
 
+// The start-mission arrow sits at x + 280: end the hint 8 px before it.
+static void draw_start_hint_right(int32_t text, int32_t x, int32_t y)
+{
+    int32_t font = image_group(IMAGE_GROUP_FONT_BLACK);
+    int32_t width = lang_text_get_width(LANG_GROUP_EDITOR, text, font);
+    lang_text_draw(LANG_GROUP_EDITOR, text, x + 272 - width, y, font, 0);
+}
+
 static void draw_start_hint(int32_t x, int32_t y)
 {
     if (list_kind(map_file_list.selected) == MAP_ENTRY_LOCKED) {
         lang_text_draw(LANG_GROUP_EDITOR, MAP_TEXT_LOCKED, x + 32, y + 426, image_group(IMAGE_GROUP_FONT_GREEN), 0);
     } else if (editor_active != 0) {
-        lang_text_draw(LANG_GROUP_EDITOR, MAP_TEXT_EDITOR_OPEN, x + 170, y + 426, image_group(IMAGE_GROUP_FONT_BLACK), 0);
+        draw_start_hint_right(MAP_TEXT_EDITOR_OPEN, x, y + 426);
     } else if (showing_campaign()) {
         lang_text_draw(LANG_GROUP_EDITOR, MAP_TEXT_CAMPAIGN_HINT_1, x + 60, y + 426, image_group(IMAGE_GROUP_FONT_BLACK), 0);
-        lang_text_draw(LANG_GROUP_EDITOR, MAP_TEXT_CAMPAIGN_HINT_2, x + 140, y + 426, image_group(IMAGE_GROUP_FONT_BLACK), 0);
+        draw_start_hint_right(MAP_TEXT_CAMPAIGN_HINT_2, x, y + 426);
         int32_t toggle_text = map_file_list.selection_kind != MAP_SELECTION_CUSTOM ? MAP_TEXT_TOGGLE_WHILE_RECORDS : MAP_TEXT_TOGGLE_WHILE_INFORMATION;
         lang_text_draw_centered(LANG_GROUP_EDITOR, toggle_text, ui_origin_x + 354, ui_origin_y + 414, 250, image_group(IMAGE_GROUP_FONT_GREEN), 0);
     } else {
-        lang_text_draw(LANG_GROUP_EDITOR, MAP_TEXT_START, x + 185, y + 426, image_group(IMAGE_GROUP_FONT_BLACK), 0);
+        draw_start_hint_right(MAP_TEXT_START, x, y + 426);
     }
 }
 
