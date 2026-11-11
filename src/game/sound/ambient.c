@@ -10,6 +10,7 @@
 #include "sound/effect.h"
 #include "sound/sound_data.h"
 #include "sound/sound_lib.h"
+#include "sound/sound_play.h"
 #include "widget/widget_data.h"
 #include "window/window_data.h"
 
@@ -68,6 +69,9 @@ void sound_ambient_fade_up(int32_t channel)
         return;
     }
     if (!sound_lib_stream_is_playing(&sound_manager, channel)) {
+        return;
+    }
+    if (!sound_stream_fade_step_due(channel)) {
         return;
     }
     int32_t volume = sound_lib_get_stream_volume(&sound_manager, channel) + AMBIENT_FADE_STEP;

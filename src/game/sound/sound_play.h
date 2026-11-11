@@ -47,6 +47,7 @@ enum figure_sound_variant {
 
 void sound_effect_play(int32_t effect);
 void sound_figure_play(int32_t figure_id, int32_t sound, int32_t variant);
+int32_t sound_stream_fade_step_due(int32_t stream);
 void sound_stream_fade_down(int32_t stream);
 void sound_stream_fade_out(int32_t stream);
 

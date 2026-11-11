@@ -6,7 +6,10 @@
 // Where Miles and SDL_mixer differ, Miles' behaviour wins:
 // - Miles plays MP3 data in a RIFF WAV file (format tag 0x55), which SDL's WAV loader refuses: such a file goes to
 //   SDL_mixer as the MP3 frames of its "data" chunk, from the first frame sync on;
-// - a pan of 0 is left, 64 the middle and 127 right, with both sides at full volume in the middle.
+// - a pan of 0 is left, 64 the middle and 127 right, with both sides at full volume in the middle;
+// - Miles read a stream as it played, so closing and opening one cost nothing; here a stream is a whole decoded
+//   chunk, so the last closed one is kept and taken again by its path, which spares the city stream, closed and
+//   opened again on every scroll, a file read and an MP3 decode under the mixer's lock.
 
 #include "app/media_lib.h"
 #include "app/play.h"
@@ -60,6 +63,8 @@ static struct {
     stream streams[MAX_STREAMS];
     file_image *files;
     stream *music_owner;
+    char kept_path[PLATFORM_PATH_MAX];
+    Mix_Chunk *kept_chunk;
 } miles;
 
 static int32_t driver_dummy;
@@ -169,11 +174,35 @@ static int32_t MEDIA_API ail_startup(void)
     return 1;
 }
 
+static void keep_stream_chunk(const char *path, Mix_Chunk *chunk)
+{
+    if (miles.kept_chunk) {
+        Mix_FreeChunk(miles.kept_chunk);
+    }
+    miles.kept_chunk = chunk;
+    snprintf(miles.kept_path, sizeof(miles.kept_path), "%s", path);
+}
+
+static Mix_Chunk *take_stream_chunk(const char *path)
+{
+    if (!miles.kept_chunk || strcmp(miles.kept_path, path) != 0) {
+        return 0;
+    }
+    Mix_Chunk *chunk = miles.kept_chunk;
+    miles.kept_chunk = 0;
+    miles.kept_path[0] = 0;
+    return chunk;
+}
+
 static void MEDIA_API ail_shutdown(void)
 {
     if (miles.open) {
         Mix_HaltChannel(-1);
         Mix_HaltMusic();
+        if (miles.kept_chunk) {
+            Mix_FreeChunk(miles.kept_chunk);
+            miles.kept_chunk = 0;
+        }
     }
 }
 
@@ -474,7 +503,7 @@ static void MEDIA_API ail_close_stream(int32_t handle)
     }
     free(s->file);
     if (s->chunk) {
-        Mix_FreeChunk(s->chunk);
+        keep_stream_chunk(s->path, s->chunk);
     }
     memset(s, 0, sizeof(*s));
 }
@@ -533,6 +562,9 @@ static void MEDIA_API ail_start_stream(int32_t handle)
         Mix_PlayMusic(s->music, s->loops == 0 ? -1 : s->loops);
         miles.music_owner = s;
     } else {
+        if (!s->chunk) {
+            s->chunk = take_stream_chunk(s->path);
+        }
         if (!s->chunk) {
             uint32_t size = 0;
             uint8_t *file = read_whole_file(s->path, &size);

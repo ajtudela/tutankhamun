@@ -1,5 +1,9 @@
 // Playing sounds: a sound effect at the effects volume, a figure's sound panned by its x in the view (quieter out of
 // view, for soldiers, enemies and natives only), and the fade-out and fade-down of the streams.
+//
+// The game asks for a fade step once a drawn frame, so a step waits out SOUND_FADE_STEP_MS and the fade takes the
+// same time whatever the frame rate: without the wait a fast display runs a fade to its end in a fraction of the
+// time, and the city stream, which the scrolling fades down, is closed and loaded again after a touch of the edge.
 
 #include "sound/sound_play.h"
 
@@ -8,6 +12,7 @@
 #include "figure/figure_type.h"
 #include "game/game_data.h"
 #include "graphics/graphics_data.h"
+#include "platform/platform_time.h"
 #include "sound/effect.h"
 #include "sound/sound_data.h"
 #include "sound/sound_lib.h"
@@ -17,7 +22,21 @@
 enum sound_play_limits {
     FIGURE_SOUND_QUIET_DIVISOR = 4,
     SOUND_FADE_STEP = 5,
+    SOUND_FADE_STEP_MS = 20,
 };
+
+static uint32_t stream_fade_step_time[SOUND_LIB_STREAMS];
+
+int32_t sound_stream_fade_step_due(int32_t stream)
+{
+    uint32_t now = platform_time_ms();
+    int32_t elapsed = (int32_t) (now - stream_fade_step_time[stream]);
+    if (elapsed >= 0 && elapsed < SOUND_FADE_STEP_MS) {
+        return 0;
+    }
+    stream_fade_step_time[stream] = now;
+    return 1;
+}
 
 void sound_effect_play(int32_t effect)
 {
@@ -110,6 +129,9 @@ void sound_stream_fade_out(int32_t stream)
 void sound_stream_fade_down(int32_t stream)
 {
     if (sound_digital_ok && sound_manager.streams[stream] && sound_lib_stream_is_playing(&sound_manager, stream)) {
+        if (!sound_stream_fade_step_due(stream)) {
+            return;
+        }
         int32_t volume = sound_lib_get_stream_volume(&sound_manager, stream) - SOUND_FADE_STEP;
         if (volume >= 0) {
             sound_lib_set_stream_volume(&sound_manager, stream, volume);
