@@ -443,7 +443,10 @@ static void draw_selected_mission(void)
     text_draw_centered((const uint8_t *) scenario_data.name, label_x, y + 65, 260, image_group(IMAGE_GROUP_FONT_WHITE), 0);
     lang_text_draw_year(1, scenario_data.start.year, x + 90, y + 85, image_group(IMAGE_GROUP_FONT_GREEN), 0);
     map_selection_draw_map_information(x, y, label_x, image_group(IMAGE_GROUP_FONT_GREEN));
-    lang_text_draw(LANG_GROUP_EDITOR, FREE_PLAY_MAP_TEXT_START, x + 185, y + 426, image_group(IMAGE_GROUP_FONT_BLACK), 0);
+    // The start-mission arrow sits at x + 280: end the hint 8 px before it.
+    int32_t font = image_group(IMAGE_GROUP_FONT_BLACK);
+    int32_t width = lang_text_get_width(LANG_GROUP_EDITOR, FREE_PLAY_MAP_TEXT_START, font);
+    lang_text_draw(LANG_GROUP_EDITOR, FREE_PLAY_MAP_TEXT_START, x + 272 - width, y + 426, font, 0);
 }
 
 void window_free_play_draw(void)

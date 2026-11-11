@@ -64,8 +64,8 @@ map_selection_button_layout map_selection_button_data = {
         { 24, 412, 280, 428, map_selection_select, button_none, 0, 0, 0, 1, 10, 0 },
         { 24, 428, 280, 444, map_selection_select, button_none, 0, 0, 0, 1, 11, 0 },
         { 24, 444, 280, 460, map_selection_select, button_none, 0, 0, 0, 1, 12, 0 },
-        { 32, 208, 192, 233, mission_selection_proceed, button_none, 0, 0, 0, 1, 0, 0 },
-        { 195, 208, 288, 233, window_mission_selection_show_all, button_none, 0, 0, 0, 1, 0, 0 },
+        { 26, 208, 206, 233, mission_selection_proceed, button_none, 0, 0, 0, 1, 0, 0 },
+        { 210, 208, 296, 233, window_mission_selection_show_all, button_none, 0, 0, 0, 1, 0, 0 },
     },
 };
 

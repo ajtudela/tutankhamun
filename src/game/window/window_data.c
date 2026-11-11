@@ -1884,8 +1884,8 @@ mission_selection_table_group mission_selection_tables = {
         { 20, 421, 164, 446, mission_selection_select, button_none, 0, 0, 0, 1, 6, 0 },
         { 172, 391, 316, 416, mission_selection_select, button_none, 0, 0, 0, 1, 7, 0 },
         { 172, 421, 316, 446, mission_selection_select, button_none, 0, 0, 0, 1, 8, 0 },
-        { 32, 208, 192, 233, mission_selection_proceed, button_none, 0, 0, 0, 1, 0, 0 },
-        { 195, 208, 288, 233, window_mission_selection_show_all, button_none, 0, 0, 0, 1, 0, 0 } }
+        { 26, 208, 206, 233, mission_selection_proceed, button_none, 0, 0, 0, 1, 0, 0 },
+        { 210, 208, 296, 233, window_mission_selection_show_all, button_none, 0, 0, 0, 1, 0, 0 } }
 };
 
 player_selection_table_group player_selection_tables = {
