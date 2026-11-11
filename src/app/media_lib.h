@@ -92,5 +92,7 @@ extern const media_sound_lib miles_sdl_library;
 extern const media_video_lib play_video_library;
 
 void video_play_intro(void);
+// --no-video: no video is played, as with TUTANKHAMUN_VIDEO=none
+void video_disable(void);
 
 #endif

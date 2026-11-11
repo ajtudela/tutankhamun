@@ -5,6 +5,7 @@
 #include "app/app_files.h"
 #include "app/game_dir.h"
 #include "app/image.h"
+#include "app/media_lib.h"
 #include "app/play.h"
 #include "app/play_cursors.h"
 #include "core/config.h"
@@ -149,7 +150,7 @@ static void print_usage(void)
 {
     fprintf(stderr,
         "usage: tutankhamun [game dir] [save.sav] [--log file] [--size WxH] [--window | --fullscreen] [--cursor-scale N] [--discord-log]\n"
-        "                   [--no-update]\n"
+        "                   [--no-update] [--no-video]\n"
         "       tutankhamun --export-configs <dir> | --check-configs <dir>\n"
         "       tutankhamun --find-game-dir [--system] [--ini file] [--here dir] [--steam root] [--gog dir]... [...]\n"
         "(the game directory holds the game's Data folder; a path ending in .exe stands for its folder)\n");
@@ -185,6 +186,8 @@ static int32_t play_main(int32_t argc, char **argv, int32_t first)
             discord_rpc_set_verbose(true);
         } else if (strcmp(argv[i], "--no-update") == 0) {
             updater_disable();
+        } else if (strcmp(argv[i], "--no-video") == 0) {
+            video_disable();
         } else if (strncmp(argv[i], "-psn_", 5) == 0) {
             // the process serial number that older macOS Finders pass to an app they start
         } else if (strncmp(argv[i], "--", 2) == 0) {

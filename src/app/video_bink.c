@@ -4,7 +4,7 @@
 // and the audio is played through SDL_mixer. While a video is open the display surfaces are a small stand-in over the
 // game's frame buffer. The game's own player (src/game/video/bink.c) stays as it is.
 //
-// TUTANKHAMUN_VIDEO=none: no video is played (BinkOpen fails, the game skips the video).
+// TUTANKHAMUN_VIDEO=none or --no-video: no video is played (BinkOpen fails, the game skips the video).
 //
 // The game relies on two details of the Bink library:
 // - frame_num is 1-based, the frame BinkDoFrame decodes next, as in the BINK struct the game reads;
@@ -77,6 +77,13 @@ static struct {
     int32_t mixer_channels;
 } vb;
 
+static int32_t disabled;
+
+void video_disable(void)
+{
+    disabled = 1;
+}
+
 static void settings(void)
 {
     if (vb.checked) {
@@ -84,7 +91,7 @@ static void settings(void)
     }
     vb.checked = 1;
     const char *v = getenv("TUTANKHAMUN_VIDEO");
-    vb.none = v && platform_text_compare_nocase(v, "none") == 0;
+    vb.none = disabled || (v && platform_text_compare_nocase(v, "none") == 0);
     vb.frequency = SDL_GetPerformanceFrequency();
     akh_bink_set_log(play_log);
 }
