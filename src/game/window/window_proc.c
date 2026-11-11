@@ -61,6 +61,7 @@
 #include "window/player_selection.h"
 #include "window/popup_dialog.h"
 #include "window/text_input.h"
+#include "window/report_bug.h"
 #include "window/window_id.h"
 #include "window/window_input.h"
 #include <stdint.h>
@@ -227,7 +228,7 @@ static int32_t key_down_ends_message(void *hwnd, uintptr_t key)
         case PLATFORM_KEY_RETURN:
             if (window_current_id == WINDOW_NUMERIC_INPUT) {
                 numeric_input_ok();
-            } else {
+            } else if (window_current_id != WINDOW_REPORT_BUG) {
                 keyboard_delete();
             }
             keyboard_return();
@@ -236,6 +237,10 @@ static int32_t key_down_ends_message(void *hwnd, uintptr_t key)
             key_ctrl = 1;
             break;
         case PLATFORM_KEY_ESCAPE: {
+            if (window_current_id == WINDOW_REPORT_BUG) {
+                report_bug_close();
+                return 1;
+            }
             video_stop();
             const char *text = lang_get_string(LANG_GROUP_POPUP, POPUP_QUIT_GAME);
             const char *title = lang_get_string(LANG_GROUP_POPUP, POPUP_QUIT_GAME + 1);
@@ -660,6 +665,10 @@ static void char_message(uintptr_t c)
     uint8_t window;
 
     keyboard_character((uint8_t) c);
+    if (window_current_id == WINDOW_REPORT_BUG) {
+        // typing into the report form, not the game's keys
+        return;
+    }
     if (c == '[') {
         hotkey_change_game_speed(1);
         window = window_current_id;

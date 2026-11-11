@@ -29,6 +29,7 @@
 #include "widget/widget_image_group.h"
 #include "window/window_data.h"
 #include "window/window_draw.h"
+#include "window/report_bug.h"
 #include "window/window_id.h"
 #include "window/window_image_group.h"
 #include <stdint.h>
@@ -200,6 +201,7 @@ static void draw_city_sidebar(void)
     widget_sidebar_draw_build_image(0, city_view_width_expanded + SIDEBAR_TEXT_X);
     widget_sidebar_draw_minimap(1);
     draw_city_sidebar_bottom();
+    report_bug_sidebar_button_draw();
 }
 
 static void draw_editor_sidebar(void)

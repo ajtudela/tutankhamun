@@ -81,6 +81,7 @@
 #include "window/player_selection.h"
 #include "window/popup_dialog.h"
 #include "window/resource_settings.h"
+#include "window/report_bug.h"
 #include "window/victory_dialog.h"
 #include "window/window_id.h"
 #include <stdint.h>
@@ -916,6 +917,11 @@ void window_draw_foreground_dispatch(void)
     }
     if (window_current_id == WINDOW_CHEAT_INPUT) {
         window_cheat_input_draw();
+        foreground_finish();
+        return;
+    }
+    if (window_current_id == WINDOW_REPORT_BUG) {
+        report_bug_draw();
         foreground_finish();
         return;
     }

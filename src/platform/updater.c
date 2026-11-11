@@ -7,6 +7,7 @@
 // tutankhamun.exe.old first), the other staged files are moved over theirs and update\ is removed.
 
 #include "platform/updater.h"
+#include "platform/http.h"
 #include "platform/log.h"
 #include "platform/version.h"
 
@@ -19,7 +20,6 @@
 #if defined(_WIN32) && defined(TUTANKHAMUN_UPDATER)
 #define UPDATER_SUPPORTED 1
 #include <windows.h>
-#include <winhttp.h>
 #include "app/app_files.h"
 #endif
 
@@ -66,14 +66,10 @@ void updater_finish(void)
 
 #else
 
-#ifndef WINHTTP_ACCESS_TYPE_AUTOMATIC_PROXY
-#define WINHTTP_ACCESS_TYPE_AUTOMATIC_PROXY 4
-#endif
-
 #if defined(_WIN64)
-#define UPDATER_ASSET L"windows_build_x64"
+#define UPDATER_ASSET "windows_build_x64"
 #else
-#define UPDATER_ASSET L"windows_build"
+#define UPDATER_ASSET "windows_build"
 #endif
 
 enum updater_limits {
@@ -85,10 +81,10 @@ enum updater_limits {
     UPDATER_MAX_SIZE = 256 * 1024 * 1024,
 };
 
-static const wchar_t release_url[] = L"https://github.com/dalerank/tutankhamun/releases/download/nightly/";
+static const char release_url[] = "https://github.com/dalerank/tutankhamun/releases/download/nightly/";
 static const wchar_t program_name[] = L"tutankhamun.exe";
 
-static wchar_t base_url[UPDATER_URL];
+static char base_url[UPDATER_URL];
 static wchar_t program_path[UPDATER_PATH];
 static wchar_t program_dir[UPDATER_PATH];
 static wchar_t update_dir[UPDATER_PATH];
@@ -206,89 +202,12 @@ static void sha256_hex(sha256 *s, char *hex)
     }
 }
 
-// ---- HTTP (WinHTTP: HTTPS through the system, redirects followed, as the release's files are served elsewhere) ----
-
-typedef int32_t (*http_sink)(void *context, const uint8_t *data, DWORD size);
-
-static HINTERNET open_session(void)
-{
-    const wchar_t *agent = L"tutankhamun-updater";
-    HINTERNET session = WinHttpOpen(agent, WINHTTP_ACCESS_TYPE_AUTOMATIC_PROXY, WINHTTP_NO_PROXY_NAME, WINHTTP_NO_PROXY_BYPASS, 0);
-    if (!session) {
-        // before Windows 8.1
-        session = WinHttpOpen(agent, WINHTTP_ACCESS_TYPE_DEFAULT_PROXY, WINHTTP_NO_PROXY_NAME, WINHTTP_NO_PROXY_BYPASS, 0);
-    }
-    if (session) {
-        WinHttpSetTimeouts(session, 15000, 15000, 30000, 60000);
-    }
-    return session;
-}
-
-static int32_t http_get(const wchar_t *url, http_sink sink, void *context)
-{
-    wchar_t host[256], path[UPDATER_URL];
-    URL_COMPONENTS parts;
-    memset(&parts, 0, sizeof(parts));
-    parts.dwStructSize = sizeof(parts);
-    parts.lpszHostName = host;
-    parts.dwHostNameLength = sizeof(host) / sizeof(host[0]);
-    parts.lpszUrlPath = path;
-    parts.dwUrlPathLength = sizeof(path) / sizeof(path[0]);
-    if (!WinHttpCrackUrl(url, 0, 0, &parts)) {
-        platform_log("updater: a bad address %ls", url);
-        return 0;
-    }
-    int32_t ok = 0;
-    HINTERNET session = open_session();
-    HINTERNET connection = session ? WinHttpConnect(session, host, parts.nPort, 0) : 0;
-    DWORD flags = parts.nScheme == INTERNET_SCHEME_HTTPS ? WINHTTP_FLAG_SECURE : 0;
-    HINTERNET request = connection ? WinHttpOpenRequest(connection, L"GET", path, 0, WINHTTP_NO_REFERER, WINHTTP_DEFAULT_ACCEPT_TYPES, flags) : 0;
-    if (request && WinHttpSendRequest(request, WINHTTP_NO_ADDITIONAL_HEADERS, 0, WINHTTP_NO_REQUEST_DATA, 0, 0, 0)
-        && WinHttpReceiveResponse(request, 0)) {
-        DWORD status = 0, status_size = sizeof(status);
-        WinHttpQueryHeaders(request, WINHTTP_QUERY_STATUS_CODE | WINHTTP_QUERY_FLAG_NUMBER, WINHTTP_HEADER_NAME_BY_INDEX, &status,
-            &status_size, WINHTTP_NO_HEADER_INDEX);
-        if (status == 200) {
-            static uint8_t buffer[UPDATER_COPY_CHUNK];
-            ok = 1;
-            for (;;) {
-                DWORD got = 0;
-                if (!WinHttpReadData(request, buffer, sizeof(buffer), &got)) {
-                    ok = 0;
-                    break;
-                }
-                if (got == 0) {
-                    break;
-                }
-                if (!sink(context, buffer, got)) {
-                    ok = 0;
-                    break;
-                }
-            }
-        } else {
-            platform_log("updater: %ls answered %lu", url, (unsigned long) status);
-        }
-    } else {
-        platform_log("updater: no answer from %ls (error %lu)", url, (unsigned long) GetLastError());
-    }
-    if (request) {
-        WinHttpCloseHandle(request);
-    }
-    if (connection) {
-        WinHttpCloseHandle(connection);
-    }
-    if (session) {
-        WinHttpCloseHandle(session);
-    }
-    return ok;
-}
-
 typedef struct text_sink {
     char text[UPDATER_VERSION_TEXT];
     size_t used;
 } text_sink;
 
-static int32_t sink_text(void *context, const uint8_t *data, DWORD size)
+static int32_t sink_text(void *context, const uint8_t *data, uint32_t size)
 {
     text_sink *sink = (text_sink *) context;
     if (sink->used + size >= sizeof(sink->text)) {
@@ -307,7 +226,7 @@ typedef struct file_sink {
     uint64_t expected;
 } file_sink;
 
-static int32_t sink_file(void *context, const uint8_t *data, DWORD size)
+static int32_t sink_file(void *context, const uint8_t *data, uint32_t size)
 {
     file_sink *sink = (file_sink *) context;
     if (sink->written + size > sink->expected || fwrite(data, 1, size, sink->file) != size) {
@@ -510,10 +429,10 @@ static int32_t untar(const wchar_t *tar, const wchar_t *into)
 
 static int32_t read_remote_version(int32_t *build, uint64_t *size, char *hash)
 {
-    wchar_t url[UPDATER_URL];
+    char url[UPDATER_URL];
     text_sink sink;
     memset(&sink, 0, sizeof(sink));
-    _snwprintf(url, UPDATER_URL, L"%ls%ls.version", base_url, UPDATER_ASSET);
+    snprintf(url, sizeof(url), "%s%s.version", base_url, UPDATER_ASSET);
     if (!http_get(url, sink_text, &sink)) {
         return 0;
     }
@@ -531,8 +450,9 @@ static int32_t read_remote_version(int32_t *build, uint64_t *size, char *hash)
 
 static int32_t download(uint64_t size, const char *hash)
 {
-    wchar_t url[UPDATER_URL], tar[UPDATER_PATH], staged[UPDATER_PATH];
-    _snwprintf(url, UPDATER_URL, L"%ls%ls.tar", base_url, UPDATER_ASSET);
+    char url[UPDATER_URL];
+    wchar_t tar[UPDATER_PATH], staged[UPDATER_PATH];
+    snprintf(url, sizeof(url), "%s%s.tar", base_url, UPDATER_ASSET);
     remove_tree(update_dir);
     CreateDirectoryW(update_dir, 0);
     join(tar, update_dir, L"download.tar");
@@ -627,8 +547,8 @@ void updater_start(void)
         platform_log("updater: the check is off");
         return;
     }
-    const wchar_t *test_url = _wgetenv(L"TUTANKHAMUN_UPDATE_URL");
-    wcsncpy(base_url, test_url && test_url[0] ? test_url : release_url, UPDATER_URL - 1);
+    const char *test_url = getenv("TUTANKHAMUN_UPDATE_URL");
+    snprintf(base_url, sizeof(base_url), "%s", test_url && test_url[0] ? test_url : release_url);
     set_state(UPDATER_CHECKING);
     HANDLE thread = CreateThread(0, 0, update_thread, 0, 0, 0);
     if (!thread) {

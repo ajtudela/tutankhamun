@@ -59,6 +59,11 @@ the file; `tutankhamun.ini` turns it off with
 or `--no-update` for one start. A program built by yourself never updates itself (CMake option
 `TUTANKHAMUN_UPDATER`, on only in the CI).
 
+**Bug reports**: the locust button under the mission briefing's button in the city's sidebar (not at 640x480, where
+the sidebar has no room for it) opens a form for a bug or an idea, as in Akhenaten. "Send" posts its title and description with the version, the last 500 KB of `tutankhamun_play.log` and
+a screenshot of the city taken when the form opened to `https://playshhhit.com/tutankhamun`, which opens an issue
+in this repository. Nothing is sent without "Send".
+
 ## Building
 
 Windows 10/11 with Visual Studio 2022 ("Desktop development with C++"), CMake 3.22 or newer and git. The game builds

@@ -7,10 +7,17 @@
 #include <stdio.h>
 
 static FILE *log_file;
+static char log_path[1024];
 
 void platform_log_open(const char *path)
 {
     log_file = fopen(path, "w");
+    snprintf(log_path, sizeof(log_path), "%s", path);
+}
+
+const char *platform_log_path(void)
+{
+    return log_file ? log_path : 0;
 }
 
 void platform_log(const char *format, ...)

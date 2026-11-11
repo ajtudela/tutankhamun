@@ -88,6 +88,8 @@ enum window_id {
     WINDOW_CHEAT_INPUT = 85,
     WINDOW_GAME_OPTIONS = 86,
     WINDOW_LOADING = 87,
+    // not in the original: the bug report form (report_bug.c)
+    WINDOW_REPORT_BUG = 88,
 };
 
 enum window_redraw {

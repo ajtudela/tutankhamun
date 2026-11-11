@@ -55,6 +55,7 @@
 #include "window/main_menu.h"
 #include "window/main_menu_links.h"
 #include "window/main_menu_version.h"
+#include "window/report_bug.h"
 #include "window/map_selection.h"
 #include "window/message_dialog.h"
 #include "window/message_list.h"
@@ -297,6 +298,10 @@ static void input_city(void)
             return;
         }
         if (image_buttons(city_view_width_expanded, 30, buttons_expanded_extra, 2, 10) != 0) {
+            window_ui_redraw = 1;
+            return;
+        }
+        if (report_bug_sidebar_button_handle() != 0) {
             window_ui_redraw = 1;
             return;
         }
@@ -1175,6 +1180,9 @@ void window_handle_input_dispatch(void)
             return;
         case WINDOW_CHEAT_INPUT:
             window_cheat_input_handle();
+            return;
+        case WINDOW_REPORT_BUG:
+            report_bug_handle_input();
             return;
         default:
             return;
