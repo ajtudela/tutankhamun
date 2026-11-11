@@ -12,6 +12,7 @@
 #include "platform/discord_rpc.h"
 #include "platform/log.h"
 #include "platform/platform_file.h"
+#include "platform/version.h"
 
 #include <stdint.h>
 #include <stdio.h>
@@ -207,6 +208,7 @@ static int32_t play_main(int32_t argc, char **argv, int32_t first)
         platform_path_absolute(log, log_path, sizeof(log_path));
     }
     platform_log_open(log_path);
+    platform_log("port: %s", version_text());
     static const play_host host = { platform_log, game_run_tick, game_run_frame };
     play_bind(&host);
     play_cursors_set_scale(cursor_scale_percent);

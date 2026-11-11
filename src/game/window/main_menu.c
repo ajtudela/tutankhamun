@@ -40,6 +40,7 @@
 #include "window/high_scores.h"
 #include "window/intermezzo.h"
 #include "window/main_menu_links.h"
+#include "window/main_menu_version.h"
 #include "window/map_selection.h"
 #include "window/message_box.h"
 #include "window/player_selection.h"
@@ -539,4 +540,5 @@ void front_menu_draw(void)
         draw_front_menu_label(i, entry);
     }
     main_menu_links_draw();
+    main_menu_version_draw();
 }

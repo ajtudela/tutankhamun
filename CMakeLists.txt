@@ -127,9 +127,31 @@ set(TUTANKHAMUN_SOURCES
     src/platform/platform_display.c
     src/platform/platform_file.c
     src/platform/platform_screen.c
+    src/platform/version.c
     ${GAME_SOURCES}
 )
-if(ANDROID)
+
+# The build's version (src/platform/version.c, the front menu): 0.1.<the number of commits>, the commit and the day,
+# read at configure time as in Akhenaten; the CI checks out the whole history for the count.
+find_package(Git QUIET)
+set(TUTANKHAMUN_BUILD_NUMBER 0)
+set(TUTANKHAMUN_COMMIT unknown)
+if(GIT_FOUND)
+    execute_process(COMMAND ${GIT_EXECUTABLE} rev-list --count HEAD WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}"
+        OUTPUT_VARIABLE git_count OUTPUT_STRIP_TRAILING_WHITESPACE ERROR_QUIET RESULT_VARIABLE git_result)
+    if(git_result EQUAL 0 AND git_count MATCHES "^[0-9]+$")
+        set(TUTANKHAMUN_BUILD_NUMBER ${git_count})
+    endif()
+    execute_process(COMMAND ${GIT_EXECUTABLE} rev-parse --short=7 HEAD WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}"
+        OUTPUT_VARIABLE git_commit OUTPUT_STRIP_TRAILING_WHITESPACE ERROR_QUIET RESULT_VARIABLE git_result)
+    if(git_result EQUAL 0 AND git_commit)
+        set(TUTANKHAMUN_COMMIT ${git_commit})
+    endif()
+endif()
+string(TIMESTAMP TUTANKHAMUN_BUILD_DATE "%Y-%m-%d" UTC)
+message(STATUS "Tutankhamun 0.1.${TUTANKHAMUN_BUILD_NUMBER} (${TUTANKHAMUN_COMMIT}) ${TUTANKHAMUN_BUILD_DATE}")
+set_source_files_properties(src/platform/version.c PROPERTIES COMPILE_DEFINITIONS
+    "TUTANKHAMUN_BUILD_NUMBER=${TUTANKHAMUN_BUILD_NUMBER};TUTANKHAMUN_COMMIT=\"${TUTANKHAMUN_COMMIT}\";TUTANKHAMUN_BUILD_DATE=\"${TUTANKHAMUN_BUILD_DATE}\"")if(ANDROID)
     # SDLActivity loads the game as libmain.so and calls its main (TutankhamunActivity.getMainFunction)
     add_library(tutankhamun SHARED ${TUTANKHAMUN_SOURCES})
     set_target_properties(tutankhamun PROPERTIES OUTPUT_NAME main)
