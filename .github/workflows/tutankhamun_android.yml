@@ -13,6 +13,8 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
     - uses: actions/checkout@v4
+      with:
+        fetch-depth: 0 # the commit count is the build number (CMakeLists.txt)
     - uses: actions/setup-java@v4
       with:
         distribution: temurin
