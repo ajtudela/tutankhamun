@@ -1,7 +1,9 @@
 // The sound wrapper's samples and streams: sample handles, loaded sample files, playing a sample, stream volumes and
 // the shutdown.
 //
-// A reset slot of -1 counts on the integer before the slot table.
+// A sample whose slot is the reset -1 is left out of the slot users: the original counted it on the integer before
+// its slot table, a field of the sound manager, where the write did nothing; here the table is an allocation of its
+// own and the same write lands in the allocator's record of it.
 
 #include "sound/sound_lib_samples.h"
 
@@ -168,8 +170,12 @@ void sound_lib_count_slot_users(sound_lib_state *self)
         self->slots[i].users = 0;
     }
     for (int32_t i = 0; i < self->sample_count; i++) {
-        if (platform_audio_sample_playing(self->handles[i])) {
-            self->slots[self->states[i].slot].users += 1;
+        if (!platform_audio_sample_playing(self->handles[i])) {
+            continue;
+        }
+        int32_t slot = self->states[i].slot;
+        if (slot >= 0 && slot < self->sample_count) {
+            self->slots[slot].users += 1;
         }
     }
 }
