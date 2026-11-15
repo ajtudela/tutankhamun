@@ -229,7 +229,7 @@ static void wild_predator_action(int32_t kind)
     const wild_predator *p = &wild_predators[kind];
     int32_t figure_id = figure_current_id_get();
     figure *f = figure_get(figure_id);
-    int32_t speed = figure_properties[f->type].speed;
+    int32_t speed = figure_properties_of(f->type)->speed;
     int32_t step_advanced = 0;
     if (++f->animal.frame >= f->animal.frame_count) {
         f->animal.frame = 0;
@@ -402,7 +402,7 @@ void figure_frog_action(void)
     figure *f = figure_get(figure_id);
     f->terrain_usage = TERRAIN_USAGE_AMPHIBIA;
     f->cart_image_id = 0;
-    int32_t speed = figure_properties[f->type].speed;
+    int32_t speed = figure_properties_of(f->type)->speed;
     int32_t house_id = f->immigrant_building_id;
     building *b = building_get(house_id);
     if (b->state != BUILDING_STATE_IN_USE || b->immigrant_figure_id != figure_id || !b->house_size) {

@@ -125,7 +125,7 @@ void figure_roamer_action(void)
 {
     int32_t figure_id = figure_current_id_get();
     figure *f = figure_get(figure_id);
-    int32_t speed = figure_properties[f->type].speed;
+    int32_t speed = figure_properties_of(f->type)->speed;
     const building *home = building_get(f->building_id);
     switch (f->action_state) {
         case FIGURE_ACTION_ATTACK:
@@ -340,7 +340,7 @@ static figure *building_walker_begin(const building_walker *type, int32_t *speed
 {
     int32_t figure_id = figure_current_id_get();
     figure *f = roamer_begin(walker_rules[type->max_roam_rule]);
-    *speed = figure_properties[f->type].speed;
+    *speed = figure_properties_of(f->type)->speed;
     const building *home = building_get(f->building_id);
     if (home->state != BUILDING_STATE_IN_USE || home->figure_id != figure_id) {
         f->state = FIGURE_STATE_DEAD;
@@ -492,7 +492,7 @@ int32_t figure_entertainer_determine_destination(int32_t figure_id)
     if ((uint32_t) (figure_type - FIGURE_JUGGLER) > (FIGURE_ZOOKEEPER - FIGURE_JUGGLER) || !entertainer_venue(figure_type, &first, &second, &third)) {
         return 0;
     }
-    route_candidates.count = 0;
+    route_candidates_get()->count = 0;
     if (building_highest_id >= 1) {
         for (int32_t id = 1; id <= building_highest_id; id++) {
             if (building_get(id)->state != BUILDING_STATE_IN_USE || building_get(id)->num_workers <= 0) {
@@ -512,18 +512,18 @@ int32_t figure_entertainer_determine_destination(int32_t figure_id)
             if (figure_type == FIGURE_DANCER && building_get(id)->data.entertainment.show_days_left[2] != 0) {
                 continue;
             }
-            int32_t count = route_candidates.count;
-            route_candidates.buildings[count] = id;
-            route_candidates.tiles[count] = venue_grid(id);
-            route_candidates.count = count + 1;
+            int32_t count = route_candidates_get()->count;
+            route_candidates_get()->buildings[count] = id;
+            route_candidates_get()->tiles[count] = venue_grid(id);
+            route_candidates_get()->count = count + 1;
         }
     }
-    if (route_candidates.count > 0) {
-        int32_t chosen = figure_route_add_to_closest_of(figure_id, route_candidates.tiles, route_candidates.count);
+    if (route_candidates_get()->count > 0) {
+        int32_t chosen = figure_route_add_to_closest_of(figure_id, route_candidates_get()->tiles, route_candidates_get()->count);
         if (chosen <= 0) {
             return 0;
         }
-        return route_candidates.buildings[chosen - 1];
+        return route_candidates_get()->buildings[chosen - 1];
     }
     int32_t best = ENTERTAINER_NO_VENUE_DISTANCE;
     int32_t best_id = 0;
@@ -623,7 +623,7 @@ void figure_entertainer_action(void)
     figure *f = figure_get(figure_id);
     f->cart_image_id = image_group(IMAGE_GROUP_FIGURE_PLAGUE_SHADOW);
     f->terrain_usage = TERRAIN_USAGE_ROADS;
-    int32_t speed = figure_properties[f->type].speed;
+    int32_t speed = figure_properties_of(f->type)->speed;
     f->use_cross_country = 0;
     f->max_roam_length = (int16_t) walker_rules[WALKER_RULE_ENTERTAINER_ROAM_TICKS];
     advance_animation(f);
@@ -869,7 +869,7 @@ int32_t fireman_fight_fire(int32_t figure_id)
 
 int32_t constable_fight_enemy(int32_t figure_id)
 {
-    if (city_player_current()->security_breach_duration <= 0 && enemy_army_totals.enemy_formations <= 0) {
+    if (city_player_current()->security_breach_duration <= 0 && enemy_army_totals_get()->enemy_formations <= 0) {
         return 0;
     }
     figure *f = figure_get(figure_id);
@@ -1093,7 +1093,7 @@ void figure_festival_priest_action(void)
     f->max_roam_length = (int16_t) walker_rules[WALKER_RULE_ROAMER_ROAM_TICKS];
     int32_t home_id = f->building_id;
     const city_player *player = city_player_current();
-    int32_t speed = figure_properties[f->type].speed;
+    int32_t speed = figure_properties_of(f->type)->speed;
     advance_animation(f);
     switch (f->action_state) {
         case FIGURE_ACTION_FESTIVAL_PRIEST_CREATED:

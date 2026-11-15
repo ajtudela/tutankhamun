@@ -134,9 +134,9 @@ void figure_arrow_action(void)
     figure *target = figure_get(target_id);
     int32_t formation_id = target->formation_id;
     int32_t bonus = (target->faction_id == city_current_player) ? experience_bonus(formation_id) : 0;
-    int32_t max_damage = figure_properties[target->type].max_damage;
-    int32_t defense = missile_defense(target, formation_id, figure_properties[target->type].missile_defense + bonus);
-    int32_t attack = figure_properties[arrow->type].missile_attack;
+    int32_t max_damage = figure_properties_of(target->type)->max_damage;
+    int32_t defense = missile_defense(target, formation_id, figure_properties_of(target->type)->missile_defense + bonus);
+    int32_t attack = figure_properties_of(arrow->type)->missile_attack;
     missile_damage_figure(target_id, target, formation_id, max_damage, missile_damage(attack, defense));
     arrow->state = FIGURE_STATE_DEAD;
     if (formation_id != 0) {
@@ -162,9 +162,9 @@ void figure_bolt_action(void)
     figure *target = figure_get(target_id);
     int32_t formation_id = target->formation_id;
     int32_t bonus = (target->faction_id == city_current_player) ? experience_bonus(formation_id) : 0;
-    int32_t max_damage = figure_properties[target->type].max_damage;
-    int32_t defense = missile_defense(target, formation_id, figure_properties[target->type].missile_defense + bonus);
-    int32_t attack = figure_properties[bolt->type].missile_attack;
+    int32_t max_damage = figure_properties_of(target->type)->max_damage;
+    int32_t defense = missile_defense(target, formation_id, figure_properties_of(target->type)->missile_defense + bonus);
+    int32_t attack = figure_properties_of(bolt->type)->missile_attack;
     missile_damage_figure(target_id, target, formation_id, max_damage, missile_damage(attack, defense));
     bolt->state = FIGURE_STATE_DEAD;
     missile_set_image(MISSILE_IMAGE_BOLT);
@@ -188,9 +188,9 @@ static void spear_hit(figure *spear, int32_t target_id, int32_t shooter_id, int3
         if (target->faction_id == city_current_player && type >= FIGURE_ARCHER && type <= FIGURE_CHARIOTEER) {
             bonus = experience_bonus(formation_id);
         }
-        max_damage = figure_properties[type].max_damage;
+        max_damage = figure_properties_of(type)->max_damage;
     }
-    int32_t defense = bonus + figure_properties[type].missile_defense;
+    int32_t defense = bonus + figure_properties_of(type)->missile_defense;
     if (defense >= MISSILE_MAX_DEFENSE) {
         defense = MISSILE_MAX_DEFENSE;
     }
@@ -206,7 +206,7 @@ static void spear_hit(figure *spear, int32_t target_id, int32_t shooter_id, int3
     } else {
         attack_type = spear->type;
     }
-    int32_t attack = figure_properties[attack_type].missile_attack;
+    int32_t attack = figure_properties_of(attack_type)->missile_attack;
     defense = missile_defense(target, formation_id, defense);
     int32_t damage = missile_damage(attack, defense);
     if (is_ship) {

@@ -20,6 +20,6 @@ void figure_route_clear_all(void);
 void figure_route_clean(void);
 void figure_route_remove(int32_t figure_id);
 
-extern int16_t figure_route_figure_ids[1000];
+int16_t *figure_route_figure_ids_get(void);
 
 #endif

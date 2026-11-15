@@ -125,7 +125,7 @@ int32_t figure_model_load(void)
         return 0;
     }
     section = screen + string_find(screen, str_all_figures, limit);
-    read_rows(section, limit, (int32_t *) figure_properties, (int32_t *) (figure_properties + FIGURE_PROPERTIES_TYPES), FIGURE_MODEL_FIELDS);
+    read_rows(section, limit, (int32_t *) figure_properties_get(), (int32_t *) (figure_properties_get() + FIGURE_PROPERTIES_TYPES), FIGURE_MODEL_FIELDS);
     section = screen + string_find(screen, str_all_enemies, limit);
     read_rows(section, limit, (int32_t *) enemy_model, (int32_t *) enemy_model + ENEMY_MODEL_INTS, ENEMY_MODEL_FIELDS);
     log_info_text(str_figure_model_loaded, NULL);

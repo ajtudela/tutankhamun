@@ -39,6 +39,27 @@
 #include <stdbool.h>
 #include <stdint.h>
 
+static animal_offset hippo_water_steps[8] = {
+    { 0, -1 },
+    { 1, -1 },
+    { 1, 0 },
+    { 1, 1 },
+    { 0, 1 },
+    { -1, 1 },
+    { -1, 0 },
+    { -1, -1 },
+};
+static animal_offset crocodile_water_steps[8] = {
+    { 0, -1 },
+    { 1, -1 },
+    { 1, 0 },
+    { 1, 1 },
+    { 0, 1 },
+    { -1, 1 },
+    { -1, 0 },
+    { -1, -1 },
+};
+
 static int32_t animal_threat_types[8] = { 73, 82, 83, 84, 102, 103, 104 };
 static int32_t animal_prey_types[7] = { 70, 68, 69, -228, -1, 228, 1 };
 static int32_t hippo_water_grid_offsets[9] = { -228, -227, 1, 229, 228, 227, -1, -229 };
@@ -190,7 +211,7 @@ int32_t predator_prey_on_tile_at(int32_t grid_offset, int32_t predator_id)
         figure *f = figure_get(id);
         if (predator_id != id && f->state && f->action_state != FIGURE_ACTION_CORPSE) {
             int32_t type = f->type;
-            if (figure_properties[type].category && figure_get(predator_id)->type != type && !figure_is_boat(type)) {
+            if (figure_properties_of(type)->category && figure_get(predator_id)->type != type && !figure_is_boat(type)) {
                 return id;
             }
         }
@@ -708,7 +729,7 @@ void figure_hunter_action(void)
     f->terrain_usage = TERRAIN_USAGE_PREFER_ROADS;
     f->use_cross_country = 0;
     f->is_ghost = 0;
-    int32_t speed = figure_properties[f->type].speed;
+    int32_t speed = figure_properties_of(f->type)->speed;
     if (building_get(f->building_id)->state != BUILDING_STATE_IN_USE) {
         f->state = FIGURE_STATE_DEAD;
         return;
@@ -978,7 +999,7 @@ void figure_lumberjack_action(void)
     f->terrain_usage = TERRAIN_USAGE_PREFER_ROADS;
     f->is_ghost = 0;
     int32_t home_id = f->building_id;
-    int32_t speed = figure_properties[f->type].speed;
+    int32_t speed = figure_properties_of(f->type)->speed;
     if (building_get(home_id)->state != BUILDING_STATE_IN_USE) {
         f->state = FIGURE_STATE_DEAD;
         return;
@@ -1125,7 +1146,7 @@ void figure_reed_gatherer_action(void)
             f->animation_frame = 0;
             break;
         case FIGURE_ACTION_REED_GATHERER_GO_TO_REEDS:
-            figure_movement_move_ticks(figure_id, figure_properties[f->type].speed);
+            figure_movement_move_ticks(figure_id, figure_properties_of(f->type)->speed);
             if (f->direction == DIRECTION_AT_DESTINATION) {
                 if (gatherer_can_cut_here(f)) {
                     f->action_state = FIGURE_ACTION_REED_GATHERER_CUT_REEDS;
@@ -1152,7 +1173,7 @@ void figure_reed_gatherer_action(void)
             }
             break;
         case FIGURE_ACTION_REED_GATHERER_RETURN_HOME:
-            figure_movement_move_ticks(figure_id, figure_properties[f->type].speed);
+            figure_movement_move_ticks(figure_id, figure_properties_of(f->type)->speed);
             if (f->direction == DIRECTION_AT_DESTINATION) {
                 f->state = FIGURE_STATE_DEAD;
                 building_get(f->building_id)->loads_stored += animal_rules[ANIMAL_RULE_REED_GATHERER_REEDS_LOAD];
@@ -1221,7 +1242,7 @@ void figure_birds_action(void)
     int32_t figure_id = figure_current_id_get();
     figure *f = figure_get(figure_id);
     f->animal.frame++;
-    int32_t speed = figure_properties[f->type].speed;
+    int32_t speed = figure_properties_of(f->type)->speed;
     herd_animal_check_hunter(f);
     if (f->animal.frame_count <= f->animal.frame) {
         f->animal.frame = 0;
@@ -1358,7 +1379,7 @@ void figure_ostrich_action(void)
 {
     int32_t figure_id = figure_current_id_get();
     figure *f = figure_get(figure_id);
-    int32_t speed = figure_properties[f->type].speed;
+    int32_t speed = figure_properties_of(f->type)->speed;
     const formation *herd = formation_get(f->formation_id);
     int32_t frame_advanced = herd_animal_begin(f);
     switch (f->action_state) {
@@ -1525,7 +1546,7 @@ void figure_antelope_action(void)
 {
     int32_t figure_id = figure_current_id_get();
     figure *f = figure_get(figure_id);
-    int32_t speed = figure_properties[f->type].speed;
+    int32_t speed = figure_properties_of(f->type)->speed;
     const formation *herd = formation_get(f->formation_id);
     int32_t frame_advanced = herd_animal_begin(f);
     switch (f->action_state) {
@@ -1722,7 +1743,7 @@ void figure_crocodile_action(void)
 {
     int32_t figure_id = figure_current_id_get();
     figure *f = figure_get(figure_id);
-    int32_t speed = figure_properties[f->type].speed;
+    int32_t speed = figure_properties_of(f->type)->speed;
     f->animal.frame++;
     int32_t in_water = animal_in_deep_water(f);
     if (in_water) {
@@ -1895,7 +1916,7 @@ void figure_hippo_action(void)
 {
     int32_t figure_id = figure_current_id_get();
     figure *f = figure_get(figure_id);
-    int32_t speed = figure_properties[f->type].speed;
+    int32_t speed = figure_properties_of(f->type)->speed;
     int32_t frame_advanced = 0;
     if (++f->animal.frame >= f->animal.frame_count) {
         f->animal.frame = 0;
@@ -2066,7 +2087,7 @@ void figure_hippo_action(void)
             f->action_state = FIGURE_ACTION_PREDATOR_CHOOSE;
             break;
     }
-    if (cheat_side_show_enabled) {
+    if (cheat_side_show_enabled_get()) {
         if (f->action_state != FIGURE_ACTION_CORPSE && f->action_state != FIGURE_ACTION_PREDATOR_DYING) {
             f->animal.frame_count = 14;
             f->image_id = f->animal.frame + image_group(IMAGE_GROUP_FIGURE_HIPPO_SIDE_SHOW) + 5;
@@ -2138,7 +2159,7 @@ void figure_asp_action(void)
 {
     int32_t figure_id = figure_current_id_get();
     figure *f = figure_get(figure_id);
-    int32_t speed = figure_properties[f->type].speed;
+    int32_t speed = figure_properties_of(f->type)->speed;
     int32_t frame_advanced = 0;
     if (++f->animal.frame >= f->animal.frame_count) {
         f->animal.frame = 0;

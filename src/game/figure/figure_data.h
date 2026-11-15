@@ -14,32 +14,20 @@
 #include "figure/formation_types.h"
 #include <stdint.h>
 
-extern formation_layout_spot enemy_formation_layout_offsets[FORMATION_LAYOUTS][FORMATION_LAYOUT_SPOTS];
+formation_layout_spot *enemy_formation_layout(int32_t index);
 
 static inline const formation_layout_spot *herd_roaming_offsets(void)
 {
-    return enemy_formation_layout_offsets[FORMATION_LAYOUT_HERD];
+    return enemy_formation_layout(FORMATION_LAYOUT_HERD);
 }
 
 static inline const formation_layout_spot *herd_spawn_offsets(void)
 {
-    return enemy_formation_layout_offsets[FORMATION_LAYOUT_HERD_SPAWN];
+    return enemy_formation_layout(FORMATION_LAYOUT_HERD_SPAWN);
 }
 
 extern const char *figure_type_debug_names[110];
 
-extern const char str_enemy_persian[8];
-extern const char str_enemy_phoenician[12];
-extern const char str_enemy_roman[8];
-extern const char str_enemy_assyrian[12];
-extern const char str_enemy_canaanite[12];
-extern const char str_enemy_nubian[8];
-extern const char str_enemy_libian[8];
-extern const char str_enemy_kushite[8];
-extern const char str_enemy_mitani[8];
-extern const char str_enemy_hittite[8];
-extern const char str_enemy_seapeople[12];
-extern const char str_enemy_hyksos[8];
 extern const char str_fig_mummy[12];
 extern const char str_fig_artisan[12];
 extern const char str_fig_locust[12];
@@ -157,7 +145,7 @@ extern const char str_horn2_wav[16];
 
 extern const char str_drums_wav[132];
 
-extern route_candidate_lists route_candidates;
+route_candidate_lists *route_candidates_get(void);
 
 extern uint8_t formation_globals_block[16];
 

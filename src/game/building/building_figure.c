@@ -789,8 +789,8 @@ static void spawn_shipwright(int32_t id, building *b)
     if (type == FIGURE_FISHING_BOAT) {
         f->action_state = FIGURE_ACTION_FISHING_BOAT_CREATED;
         f->reserved_9 = 0;
-        f->ship_hit_points = figure_properties[FIGURE_FISHING_BOAT].max_damage;
-        f->ship_max_hit_points = figure_properties[FIGURE_FISHING_BOAT].max_damage;
+        f->ship_hit_points = figure_properties_of(FIGURE_FISHING_BOAT)->max_damage;
+        f->ship_max_hit_points = figure_properties_of(FIGURE_FISHING_BOAT)->max_damage;
     } else if (type == FIGURE_TRANSPORT_SHIP) {
         b->loads_stored -= 100;
         f->action_state = FIGURE_ACTION_TRANSPORT_SHIP_WAITING;

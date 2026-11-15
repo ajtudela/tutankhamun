@@ -54,7 +54,7 @@ static const int32_t enemy_types[INVASION_GROUPS] = { FIGURE_ENEMY_INFANTRY, FIG
 void figure_enemy_ship_init(int32_t figure_id)
 {
     figure *f = figure_get(figure_id);
-    const figure_type_properties *properties = &figure_properties[f->type];
+    const figure_type_properties *properties = figure_properties_of(f->type);
     f->reserved_9 = 0;
     f->ship_hit_points = properties->max_damage;
     f->ship_max_hit_points = properties->max_damage;
@@ -252,7 +252,7 @@ static const int32_t *invasion_land_types(int32_t nation)
 
 static int32_t invasion_group_soldiers(int32_t nation, int32_t total, int32_t type)
 {
-    int32_t percentage = (nation == ENEMY_BEDOUIN) ? 0 : figure_properties[type].invasion_percentage;
+    int32_t percentage = (nation == ENEMY_BEDOUIN) ? 0 : figure_properties_of(type)->invasion_percentage;
     return calc_adjust_with_percentage(total, percentage);
 }
 

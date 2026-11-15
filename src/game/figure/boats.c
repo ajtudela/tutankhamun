@@ -252,7 +252,7 @@ void figure_fishing_boat_action(void)
 {
     int32_t figure_id = figure_current_id_get();
     figure *f = figure_get(figure_id);
-    int32_t speed = figure_properties[f->type].speed;
+    int32_t speed = figure_properties_of(f->type)->speed;
     int32_t home_id = f->building_id;
     building *home = building_get(home_id);
     if (home->state != BUILDING_STATE_IN_USE) {

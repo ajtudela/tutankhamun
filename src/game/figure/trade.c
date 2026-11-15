@@ -583,7 +583,7 @@ void figure_trade_caravan_action(void)
     f->terrain_usage = TERRAIN_USAGE_PREFER_ROADS;
     uint8_t frame = (uint8_t) (f->animation_frame + 1);
     f->animation_frame = frame;
-    int32_t speed = figure_properties[f->type].speed;
+    int32_t speed = figure_properties_of(f->type)->speed;
     if (frame >= TRADE_FIGURE_FRAMES) {
         f->animation_frame = 0;
     }
@@ -880,7 +880,7 @@ void figure_docker_action(void)
     figure *f = figure_get(figure_id);
     uint8_t frame = (uint8_t) (f->animation_frame + 1);
     f->animation_frame = frame;
-    int32_t speed = figure_properties[f->type].speed;
+    int32_t speed = figure_properties_of(f->type)->speed;
     if (frame >= TRADE_FIGURE_FRAMES) {
         f->animation_frame = 0;
     }
@@ -1125,7 +1125,7 @@ void figure_trade_ship_action(void)
 {
     int32_t figure_id = figure_current_id_get();
     figure *f = figure_get(figure_id);
-    int32_t speed = figure_properties[f->type].speed;
+    int32_t speed = figure_properties_of(f->type)->speed;
     int32_t moving = 1;
     int32_t dock_id = f->destination_building_id;
     if (dock_id != 0) {

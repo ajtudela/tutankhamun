@@ -202,7 +202,7 @@ void figure_carpenter_action(void)
     if (!worker_begin(f, BUILDING_CARPENTERS_GUILD)) {
         return;
     }
-    int32_t speed = figure_properties[f->type].speed;
+    int32_t speed = figure_properties_of(f->type)->speed;
     const building *home = building_get(f->building_id);
     switch (f->action_state) {
         case FIGURE_ACTION_CORPSE:
@@ -371,7 +371,7 @@ void figure_bricklayer_action(void)
     int32_t figure_id = figure_current_id_get();
     figure *f = figure_get(figure_id);
     int32_t carries_block = 0;
-    int32_t speed = figure_properties[f->type].speed;
+    int32_t speed = figure_properties_of(f->type)->speed;
     if (f->wait_ticks < 0) {
         f->wait_ticks = 0;
     }
@@ -539,7 +539,7 @@ void figure_stonemason_action(void)
     f->use_cross_country = 0;
     f->is_ghost = 0;
     f->max_roam_length = (int16_t) guild_worker_rules[GUILD_WORKER_RULE_MAX_ROAM_TICKS];
-    int32_t speed = figure_properties[f->type].speed;
+    int32_t speed = figure_properties_of(f->type)->speed;
     const building *home = building_get(f->building_id);
     if (home->state != BUILDING_STATE_IN_USE || home->type != BUILDING_STONEMASONS_GUILD) {
         f->state = FIGURE_STATE_DEAD;
@@ -806,7 +806,7 @@ void figure_tomb_artisan_action(void)
     if (!worker_begin(f, BUILDING_ARTISANS_GUILD)) {
         return;
     }
-    int32_t speed = figure_properties[f->type].speed;
+    int32_t speed = figure_properties_of(f->type)->speed;
     building *home = building_get(f->building_id);
     switch (f->action_state) {
         case FIGURE_ACTION_CORPSE:

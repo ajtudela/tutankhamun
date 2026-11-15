@@ -203,7 +203,7 @@ void cheat_mummys_revenge(void)
 
 void cheat_side_show(void)
 {
-    cheat_side_show_enabled = cheat_side_show_enabled == 0;
+    cheat_side_show_enabled_set(cheat_side_show_enabled_get() == 0);
 }
 
 void cheat_pharaohs_tomb(void)

@@ -68,7 +68,8 @@ void figure_phrase_play(void);
 void figure_phrase_determine(int32_t figure_id);
 void window_figure_info_button_city_problem(void);
 
-extern int32_t figure_phrase_id;
-extern phrase_weight_record phrase_weight_block;
+int32_t figure_phrase_id_get(void);
+void figure_phrase_id_set(int32_t value);
+phrase_weight_record *phrase_weight_block_get(void);
 
 #endif

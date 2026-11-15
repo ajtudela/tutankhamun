@@ -46,6 +46,7 @@
 #include "figure/enemy_ships.h"
 #include "figure/figure.h"
 #include "figure/figure_core.h"
+#include "figure/formation.h"
 #include "figure/route.h"
 #include "flood/flood_internal.h"
 #include "game/discord_presence.h"
@@ -107,6 +108,8 @@ enum game_file_chunk {
     SAVEGAME_CHUNK_ROUTE_PATHS = 23,
     SAVEGAME_CHUNK_BUILDINGS = 32,
     SAVEGAME_CHUNK_FIGURE_SEQUENCE = 86,
+    SAVEGAME_CHUNK_FIGURE_ROUTE_IDS = 22,
+    SAVEGAME_CHUNK_ENEMY_ARMY_TOTALS = 108,
 };
 
 enum game_file_limit {
@@ -192,6 +195,13 @@ void game_file_init_save_chunk_table_ext(void)
     savegame_chunk_table[SAVEGAME_CHUNK_ROUTE_PATHS].data = figure_table_get()->route_paths;
     savegame_chunk_table[SAVEGAME_CHUNK_BUILDINGS].data = building_table_get()->records;
     savegame_chunk_table[SAVEGAME_CHUNK_FIGURE_SEQUENCE].data = figure_created_sequence_ptr();
+    savegame_chunk_table[SAVEGAME_CHUNK_FIGURE_ROUTE_IDS].data = figure_route_figure_ids_get();
+    enemy_army_totals_record *army = enemy_army_totals_get();
+    savegame_chunk_table[SAVEGAME_CHUNK_ENEMY_ARMY_TOTALS].data = &army->enemy_formations;
+    savegame_chunk_table[SAVEGAME_CHUNK_ENEMY_ARMY_TOTALS + 1].data = &army->enemy_strength;
+    savegame_chunk_table[SAVEGAME_CHUNK_ENEMY_ARMY_TOTALS + 2].data = &army->legion_formations;
+    savegame_chunk_table[SAVEGAME_CHUNK_ENEMY_ARMY_TOTALS + 3].data = &army->legion_strength;
+    savegame_chunk_table[SAVEGAME_CHUNK_ENEMY_ARMY_TOTALS + 4].data = &army->update_counter;
     init_table_ext(savegame_chunk_table, SAVEGAME_CHUNKS_STATIC, savegame_chunks_ext, SAVEGAME_CHUNKS - SAVEGAME_CHUNKS_STATIC);
 }
 

@@ -289,7 +289,7 @@ static void ship_arrived_at_dock(int32_t figure_id, figure *f, int32_t *moving)
 void transport_sail_to_dock(int32_t figure_id, int32_t *moving)
 {
     figure *f = figure_get(figure_id);
-    figure_movement_move_ticks(figure_id, figure_properties[f->type].speed);
+    figure_movement_move_ticks(figure_id, figure_properties_of(f->type)->speed);
     int32_t direction = f->direction;
     if (direction == DIRECTION_AT_DESTINATION) {
         ship_arrived_at_dock(figure_id, f, moving);
@@ -315,7 +315,7 @@ void warship_sail_to_dock(int32_t figure_id, int32_t *moving)
 void transport_sail_to_legion(int32_t figure_id, int32_t *moving)
 {
     figure *f = figure_get(figure_id);
-    figure_movement_move_ticks(figure_id, figure_properties[f->type].speed);
+    figure_movement_move_ticks(figure_id, figure_properties_of(f->type)->speed);
     int32_t direction = f->direction;
     if (direction == DIRECTION_AT_DESTINATION) {
         *moving = 0;
@@ -350,7 +350,7 @@ void transport_sail_to_legion(int32_t figure_id, int32_t *moving)
 void transport_sail_to_landing(int32_t figure_id, int32_t *moving)
 {
     figure *f = figure_get(figure_id);
-    figure_movement_move_ticks(figure_id, figure_properties[f->type].speed);
+    figure_movement_move_ticks(figure_id, figure_properties_of(f->type)->speed);
     int32_t formation_id = f->ship_formation_id;
     int32_t direction = f->direction;
     if (direction == DIRECTION_AT_DESTINATION) {
@@ -478,8 +478,8 @@ void warship_move_attack(int32_t figure_id, int32_t *moving)
             if (target_direction >= DIRECTION_COUNT) {
                 target_direction = target->previous_tile_direction;
             }
-            int32_t divisor = figure_ship_direction_table[(target_direction * DIRECTION_COUNT) + f->direction];
-            int32_t damage = (f->ship.steps < figure_properties[f->type].ship_steps) ? f->ram_damage_fast : f->ram_damage_slow;
+            int32_t divisor = figure_ship_direction_table_get()[(target_direction * DIRECTION_COUNT) + f->direction];
+            int32_t damage = (f->ship.steps < figure_properties_of(f->type)->ship_steps) ? f->ram_damage_fast : f->ram_damage_slow;
             damage /= divisor;
             ship_play_ram_sound(divisor);
             target->ship_hit_points -= damage;
@@ -594,9 +594,9 @@ void warship_shoot(int32_t figure_id)
 {
     figure *f = figure_get(figure_id);
     uint8_t wait = ++f->wait_ticks_missile;
-    if (wait > figure_properties[f->type].missile_delay) {
+    if (wait > figure_properties_of(f->type)->missile_delay) {
         f->wait_ticks_missile = 0;
-        f->attack_image_offset = figure_warship_find_enemy(figure_id, figure_properties[f->type].missile_range) ? 1 : 0;
+        f->attack_image_offset = figure_warship_find_enemy(figure_id, figure_properties_of(f->type)->missile_range) ? 1 : 0;
     }
     warship_shoot_at(figure_id, f, map_result_x, map_result_y);
 }
@@ -614,9 +614,9 @@ void warship_attack_ship(int32_t figure_id, int32_t *moving)
         figure *target = figure_get(target_id);
         int32_t distance = calc_maximum_distance(f->x, f->y, target->x, target->y);
         int32_t shoot = 0;
-        if (distance < figure_properties[f->type].missile_range) {
+        if (distance < figure_properties_of(f->type)->missile_range) {
             uint8_t wait = ++f->wait_ticks_missile;
-            if (wait > figure_properties[f->type].missile_delay) {
+            if (wait > figure_properties_of(f->type)->missile_delay) {
                 f->wait_ticks_missile = 0;
                 shoot = target_id != 0;
             }
@@ -723,7 +723,7 @@ int32_t figure_warship_find_enemy_at(int32_t x, int32_t y, int32_t range)
             case FIGURE_ENEMY_EGYPTIAN_CHARIOT:
             case FIGURE_BEDOUIN:
                 distance = chebyshev(x, y, fx, fy);
-                if (distance > figure_properties[figure_current()->type].missile_range) {
+                if (distance > figure_properties_of(figure_current()->type)->missile_range) {
                     continue;
                 }
                 score = WARSHIP_SCORE_LAND_ENEMY;

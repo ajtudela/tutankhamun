@@ -349,10 +349,10 @@ int32_t figure_phrase_city_weights(uint8_t *weights, uint8_t *none)
 int32_t figure_phrase_pick_city_problem(void)
 {
     uint8_t none = 1;
-    int32_t total = figure_phrase_city_weights(phrase_weight_block.phrase_weights, &none);
+    int32_t total = figure_phrase_city_weights(phrase_weight_block_get()->phrase_weights, &none);
     int32_t sum = 0;
     for (int32_t i = 0; i < CITY_PROBLEM_COUNT; i++) {
-        sum += (phrase_weight_block.phrase_weights[i] * 100) / total;
+        sum += (phrase_weight_block_get()->phrase_weights[i] * 100) / total;
     }
     int32_t r = random_generator_state.random1_7bit & sum;
     if (none) {
@@ -361,7 +361,7 @@ int32_t figure_phrase_pick_city_problem(void)
     int32_t acc = 0;
     int32_t i;
     for (i = 0; i < CITY_PROBLEM_COUNT; i++) {
-        acc += (phrase_weight_block.phrase_weights[i] * 100) / total;
+        acc += (phrase_weight_block_get()->phrase_weights[i] * 100) / total;
         if (r <= acc) {
             break;
         }
@@ -369,7 +369,7 @@ int32_t figure_phrase_pick_city_problem(void)
     if (i == CITY_PROBLEM_COUNT && r > acc) {
         i = CITY_PROBLEM_COUNT - 1;
     }
-    return (phrase_weight_block.phrase_weights[i] == 1) ? CITY_PROBLEM_NOTHING_TO_COMPLAIN : i;
+    return (phrase_weight_block_get()->phrase_weights[i] == 1) ? CITY_PROBLEM_NOTHING_TO_COMPLAIN : i;
 }
 
 int32_t figure_trade_ship_dock_activity(int32_t figure_id)
@@ -435,8 +435,8 @@ static const int32_t problem_groups[CITY_PROBLEM_COUNT] = {
 
 static void phrase_say(figure *f, int32_t phrase)
 {
-    figure_phrase_id = phrase;
-    f->phrase_id = (uint8_t) figure_phrase_id;
+    figure_phrase_id_set(phrase);
+    f->phrase_id = (uint8_t) figure_phrase_id_get();
 }
 
 static void phrase_say_in_group(figure *f, int32_t group, int32_t phrase)
@@ -453,14 +453,14 @@ void figure_phrase_determine(int32_t figure_id)
     figure *f = figure_get(figure_id);
     city_player *player = city_player_current();
     f->phrase_id = 0;
-    figure_phrase_id = FIGURE_PHRASE_NONE;
+    figure_phrase_id_set(FIGURE_PHRASE_NONE);
     int32_t event_running = any_event_running();
     f->phrase_group = PHRASE_GROUP_OWN;
     int32_t type = f->type;
     int32_t action = f->action_state;
     switch (type) {
         case FIGURE_IMMIGRANT:
-            figure_phrase_id = phrase_next_sequence(f, 3, 0);
+            figure_phrase_id_set(phrase_next_sequence(f, 3, 0));
             break;
         case FIGURE_EMIGRANT:
             switch (player->sentiment_low_mood_cause) {
@@ -478,7 +478,7 @@ void figure_phrase_determine(int32_t figure_id)
                     return;
             }
         case FIGURE_HOMELESS:
-            figure_phrase_id = phrase_next_sequence(f, 2, 0);
+            figure_phrase_id_set(phrase_next_sequence(f, 2, 0));
             f->phrase_group = PHRASE_GROUP_CITY_LIFE;
             break;
         case FIGURE_CART_PUSHER:
@@ -512,13 +512,13 @@ void figure_phrase_determine(int32_t figure_id)
             int32_t a = player->taxed_nobles + player->taxed_plebs;
             int32_t total = player->untaxed_nobles + player->untaxed_plebs + a;
             if (((a * 100) / total) < 50) {
-                figure_phrase_id = 10;
+                figure_phrase_id_set(10);
                 f->phrase_group = PHRASE_GROUP_TAXES;
             } else if (f->min_max_seen >= 7) {
-                figure_phrase_id = 11;
+                figure_phrase_id_set(11);
                 f->phrase_group = PHRASE_GROUP_TAXES;
             } else if (f->min_max_seen >= 1) {
-                figure_phrase_id = 12;
+                figure_phrase_id_set(12);
                 f->phrase_group = PHRASE_GROUP_TAXES;
             } else {
                 f->phrase_group = PHRASE_GROUP_TAXES;
@@ -544,7 +544,7 @@ void figure_phrase_determine(int32_t figure_id)
         case FIGURE_FIREMAN:
             phrase_next_sequence(f, 13, 0);
             if (action == FIGURE_ACTION_FIREMAN_AT_FIRE) {
-                figure_phrase_id = f->phrase_sequence_exact;
+                figure_phrase_id_set(f->phrase_sequence_exact);
             }
             break;
         case FIGURE_JUGGLER:
@@ -565,17 +565,17 @@ void figure_phrase_determine(int32_t figure_id)
             if (seq > 2) {
                 f->phrase_sequence_exact = 1;
             }
-            figure_phrase_id = f->phrase_sequence_exact + 1;
+            figure_phrase_id_set(f->phrase_sequence_exact + 1);
             if (action == FIGURE_ACTION_TRADE_CARAVAN_LEAVING) {
                 int32_t trader = f->trader_id;
                 if (trader_traded_nothing(trader)) {
-                    figure_phrase_id = 0;
+                    figure_phrase_id_set(0);
                 }
             } else if (action == FIGURE_ACTION_TRADE_CARAVAN_TRADING) {
                 if (figure_trade_caravan_can_buy(figure_id, city_current_player, f->destination_building_id, f->empire_city_id)) {
-                    figure_phrase_id = 4;
+                    figure_phrase_id_set(4);
                 } else if (figure_trade_caravan_can_sell(figure_id, city_current_player, f->destination_building_id, f->empire_city_id)) {
-                    figure_phrase_id = 3;
+                    figure_phrase_id_set(3);
                 }
             }
             f->phrase_group = PHRASE_GROUP_TRADE;
@@ -584,21 +584,21 @@ void figure_phrase_determine(int32_t figure_id)
         case FIGURE_TRADE_SHIP:
             if (action == FIGURE_ACTION_TRADE_SHIP_LEAVING) {
                 int32_t trader = f->trader_id;
-                figure_phrase_id = trader_traded_nothing(trader) ? 2 : 4;
+                figure_phrase_id_set(trader_traded_nothing(trader) ? 2 : 4);
             } else if (action == FIGURE_ACTION_TRADE_SHIP_DOCKED) {
                 int32_t activity = figure_trade_ship_dock_activity(figure_id);
-                figure_phrase_id = (activity == TRADE_SHIP_BUYING) ? 1 : ((activity != TRADE_SHIP_SELLING) ? 2 : 0);
+                figure_phrase_id_set((activity == TRADE_SHIP_BUYING) ? 1 : ((activity != TRADE_SHIP_SELLING) ? 2 : 0));
             } else {
-                figure_phrase_id = 3;
+                figure_phrase_id_set(3);
             }
             f->phrase_group = PHRASE_GROUP_TRADE;
             break;
         case FIGURE_CRIMINAL:
-            figure_phrase_id = phrase_next_sequence(f, 4, 0);
+            figure_phrase_id_set(phrase_next_sequence(f, 4, 0));
             f->phrase_group = PHRASE_GROUP_CITY_LIFE;
             break;
         case FIGURE_TOMB_ROBBER:
-            figure_phrase_id = phrase_next_sequence(f, 2, 0);
+            figure_phrase_id_set(phrase_next_sequence(f, 2, 0));
             f->phrase_group = PHRASE_GROUP_MONUMENTS;
             break;
         case FIGURE_FISHING_BOAT:
@@ -619,7 +619,7 @@ void figure_phrase_determine(int32_t figure_id)
             break;
         case FIGURE_MARKET_TRADER:
             f->phrase_group = PHRASE_GROUP_TRADE;
-            figure_phrase_id = action != FIGURE_ACTION_ROAMER_RETURN;
+            figure_phrase_id_set(action != FIGURE_ACTION_ROAMER_RETURN);
             break;
         case FIGURE_PRIEST:
             switch (building_temple_god(f->building_id)) {
@@ -671,7 +671,7 @@ void figure_phrase_determine(int32_t figure_id)
             break;
         case FIGURE_HERBALIST:
             f->phrase_group = PHRASE_GROUP_HEALTH;
-            figure_phrase_id = ((int32_t) f->min_max_seen > 800) + 1;
+            figure_phrase_id_set(((int32_t) f->min_max_seen > 800) + 1);
             break;
         case FIGURE_EMBALMER:
             if (player->health < 30) {
@@ -682,7 +682,7 @@ void figure_phrase_determine(int32_t figure_id)
         case FIGURE_DOCKER:
             if (action == FIGURE_ACTION_DOCKER_IMPORT_TO_STORAGEYARD || action == FIGURE_ACTION_DOCKER_EXPORT_TO_STORAGEYARD) {
                 if (phrase_max_distance(f) >= FIGURE_PHRASE_FAR_DISTANCE) {
-                    figure_phrase_id = 2;
+                    figure_phrase_id_set(2);
                 }
                 f->phrase_group = PHRASE_GROUP_TRADE;
             }
@@ -718,7 +718,7 @@ void figure_phrase_determine(int32_t figure_id)
             break;
         }
         case FIGURE_DELIVERY_BOY:
-            figure_phrase_id = phrase_next_sequence(f, 3, 0);
+            figure_phrase_id_set(phrase_next_sequence(f, 3, 0));
             f->phrase_group = PHRASE_GROUP_TRADE;
             break;
         case FIGURE_HUNTER:
@@ -727,27 +727,27 @@ void figure_phrase_determine(int32_t figure_id)
         case FIGURE_LUMBERJACK:
         case FIGURE_REED_GATHERER:
             f->phrase_group = PHRASE_GROUP_TRADE;
-            figure_phrase_id = (action == FIGURE_ACTION_LUMBERJACK_RETURN_HOME);
+            figure_phrase_id_set((action == FIGURE_ACTION_LUMBERJACK_RETURN_HOME));
             break;
         case FIGURE_TRANSPORT_SHIP:
             if (player->enemies != 0 && action == FIGURE_ACTION_TRANSPORT_SHIP_EVADING) {
-                figure_phrase_id = 0;
+                figure_phrase_id_set(0);
             } else if (player->enemy_warships != 0) {
-                figure_phrase_id = 1;
+                figure_phrase_id_set(1);
             } else {
-                figure_phrase_id = event_running ? 2 : 3;
+                figure_phrase_id_set(event_running ? 2 : 3);
             }
             f->phrase_group = PHRASE_GROUP_SHIPS;
             break;
         case FIGURE_WARSHIP:
             if (player->enemies != 0 && action == FIGURE_ACTION_WARSHIP_HUNTING) {
-                figure_phrase_id = 0;
+                figure_phrase_id_set(0);
             } else if (player->enemies != 0 && action == FIGURE_ACTION_WARSHIP_EVADING) {
-                figure_phrase_id = 1;
+                figure_phrase_id_set(1);
             } else if (player->enemy_warships != 0 && action != FIGURE_ACTION_WARSHIP_HUNTING && action != FIGURE_ACTION_WARSHIP_EVADING) {
-                figure_phrase_id = 2;
+                figure_phrase_id_set(2);
             } else {
-                figure_phrase_id = event_running ? 3 : 4;
+                figure_phrase_id_set(event_running ? 3 : 4);
             }
             f->phrase_group = PHRASE_GROUP_SHIPS;
             break;
@@ -755,11 +755,11 @@ void figure_phrase_determine(int32_t figure_id)
         case FIGURE_STONEMASON:
         case FIGURE_TOMB_ARTISAN:
             f->phrase_group = PHRASE_GROUP_MONUMENTS;
-            figure_phrase_id = (action != FIGURE_ACTION_CARPENTER_GO_TO_SITE);
+            figure_phrase_id_set((action != FIGURE_ACTION_CARPENTER_GO_TO_SITE));
             break;
         case FIGURE_BRICKLAYER:
             f->phrase_group = PHRASE_GROUP_MONUMENTS;
-            figure_phrase_id = action != FIGURE_ACTION_BRICKLAYER_GO_TO_SITE;
+            figure_phrase_id_set(action != FIGURE_ACTION_BRICKLAYER_GO_TO_SITE);
             break;
         case FIGURE_LABORER: {
             int32_t working = 0;
@@ -797,7 +797,7 @@ void figure_phrase_determine(int32_t figure_id)
                     phrase_say_in_group(f, PHRASE_GROUP_CITY_LIFE, 13);
                     return;
                 }
-                figure_phrase_id = f->phrase_sequence_exact + 14;
+                figure_phrase_id_set(f->phrase_sequence_exact + 14);
                 break;
             }
             if ((int32_t) f->min_max_seen >= 500) {
@@ -836,10 +836,10 @@ void figure_phrase_determine(int32_t figure_id)
             return;
         default:
             f->phrase_id = (uint8_t) FIGURE_PHRASE_NONE;
-            figure_phrase_id = FIGURE_PHRASE_NONE;
+            figure_phrase_id_set(FIGURE_PHRASE_NONE);
             return;
     }
-    if (figure_phrase_id == FIGURE_PHRASE_NONE) {
+    if (figure_phrase_id_get() == FIGURE_PHRASE_NONE) {
         switch (f->type) {
             case FIGURE_LABOR_SEEKER:
             case FIGURE_TAX_COLLECTOR:
@@ -862,7 +862,7 @@ void figure_phrase_determine(int32_t figure_id)
             case FIGURE_MAGISTRATE:
             case FIGURE_ZOOKEEPER: {
                 int32_t problem = figure_phrase_pick_city_problem();
-                figure_phrase_id = problem;
+                figure_phrase_id_set(problem);
                 if (problem == CITY_PROBLEM_NONE || problem == CITY_PROBLEM_NOTHING_TO_COMPLAIN) {
                     phrase_say_in_group(f, 13, problem);
                     return;
@@ -872,7 +872,7 @@ void figure_phrase_determine(int32_t figure_id)
             }
         }
     }
-    f->phrase_id = (uint8_t) figure_phrase_id;
+    f->phrase_id = (uint8_t) figure_phrase_id_get();
 }
 
 static int32_t phrase_god_sound(const figure *f)
@@ -962,8 +962,8 @@ void figure_phrase_play(void)
     id -= FIGURE_SPEECH_FIRST;
     phrase_sound_id = id;
     if (id >= 0) {
-        figure_phrase_id = (int8_t) f->phrase_id;
-        sound_speech_play_phrase(id, figure_phrase_id);
+        figure_phrase_id_set((int8_t) f->phrase_id);
+        sound_speech_play_phrase(id, figure_phrase_id_get());
     }
 }
 
@@ -997,7 +997,7 @@ int32_t figure_phrase_sound_id(int32_t figure_id)
 
 static void phrase_weight_clear(int32_t phrase)
 {
-    uint8_t *block = (uint8_t *) &phrase_weight_block;
+    uint8_t *block = (uint8_t *) phrase_weight_block_get();
     block[offsetof(phrase_weight_record, phrase_weights) + phrase] = 0;
 }
 
@@ -1010,14 +1010,14 @@ void window_figure_info_button_city_problem(void)
         phrase_weight_clear(phrase);
         uint8_t best = 0;
         for (uint8_t i = 0; i < CITY_PROBLEM_COUNT; i++) {
-            if (phrase_weight_block.phrase_weights[i] > best) {
+            if (phrase_weight_block_get()->phrase_weights[i] > best) {
                 best = i;
             }
         }
-        if (phrase_weight_block.phrase_weights[best] > 1) {
-            phrase_weight_block.phrase_weights[best] = 0;
+        if (phrase_weight_block_get()->phrase_weights[best] > 1) {
+            phrase_weight_block_get()->phrase_weights[best] = 0;
             f->phrase_id = best;
-            figure_phrase_id = best;
+            figure_phrase_id_set(best);
             if (best != CITY_PROBLEM_NONE && best != CITY_PROBLEM_NOTHING_TO_COMPLAIN) {
                 window_redraw_request = 1;
                 f->phrase_group = (uint8_t) problem_groups[best];

@@ -70,6 +70,7 @@ void figure_crocodile_action(void);
 void figure_hippo_action(void);
 void figure_asp_action(void);
 
-extern uint8_t cheat_side_show_enabled;
+uint8_t cheat_side_show_enabled_get(void);
+void cheat_side_show_enabled_set(uint8_t value);
 
 #endif

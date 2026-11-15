@@ -6,8 +6,4 @@
 
 #include "figure/animals_internal.h"
 
-extern animal_offset hippo_water_steps[8];
-
-extern animal_offset crocodile_water_steps[8];
-
 #endif

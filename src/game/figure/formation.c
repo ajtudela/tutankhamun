@@ -532,7 +532,7 @@ void formation_calculate_figures(void)
         int32_t id = f->formation_id;
         formation *m = formation_get(id);
         m->num_figures++;
-        m->max_total_damage += (int16_t) figure_properties[f->type].max_damage;
+        m->max_total_damage += (int16_t) figure_properties_of(f->type)->max_damage;
         m->total_damage += f->damage;
         if (f->formation_at_rest != 1) {
             m->is_at_fort = 0;
@@ -545,10 +545,10 @@ void formation_calculate_figures(void)
             }
         }
     }
-    enemy_army_totals.enemy_formations = 0;
-    enemy_army_totals.enemy_strength = 0;
-    enemy_army_totals.legion_formations = 0;
-    enemy_army_totals.legion_strength = 0;
+    enemy_army_totals_get()->enemy_formations = 0;
+    enemy_army_totals_get()->enemy_strength = 0;
+    enemy_army_totals_get()->legion_formations = 0;
+    enemy_army_totals_get()->legion_strength = 0;
     for (int32_t id = 1; id < MAX_FORMATIONS; id++) {
         formation *m = formation_get(id);
         if (m->in_use != 1 || m->herd_kind) {
@@ -566,14 +566,14 @@ void formation_calculate_figures(void)
                     m->is_halted = 0;
                 }
             }
-            enemy_army_totals.legion_formations++;
-            enemy_army_totals.legion_strength += m->num_figures;
+            enemy_army_totals_get()->legion_formations++;
+            enemy_army_totals_get()->legion_strength += m->num_figures;
             if (m->figure_type == FIGURE_CHARIOTEER) {
-                enemy_army_totals.legion_strength += m->num_figures >> 1;
+                enemy_army_totals_get()->legion_strength += m->num_figures >> 1;
             }
         } else if (num) {
-            enemy_army_totals.enemy_formations++;
-            enemy_army_totals.enemy_strength += num;
+            enemy_army_totals_get()->enemy_formations++;
+            enemy_army_totals_get()->enemy_strength += num;
         } else {
             int32_t event_id = m->invasion_event_id;
             int32_t known = 0;
@@ -716,7 +716,7 @@ void formation_legion_update(void)
             if (legion->layout != FORMATION_MOP_UP) {
                 continue;
             }
-            if (player->rioters + player->attacking_natives + enemy_army_totals.enemy_formations < 1) {
+            if (player->rioters + player->attacking_natives + enemy_army_totals_get()->enemy_formations < 1) {
                 legion->layout = legion->prev_layout;
                 continue;
             }
@@ -759,15 +759,15 @@ void formation_enemy_update(void)
 {
     const city_player *player = city_player_current();
     int32_t target_found = ENEMY_TARGET_NONE;
-    if (enemy_army_totals.enemy_formations < 1) {
+    if (enemy_army_totals_get()->enemy_formations < 1) {
         for (scenario_event *inv = scenario_invasion_next(&scenario_events, 0, 1); inv; inv = scenario_invasion_next(&scenario_events, inv, 1)) {
             inv->data.invasion.ignore_soldiers = 0;
         }
         formation_set_enemy_destination(0);
         return;
     }
-    if (++enemy_army_totals.update_counter > 4) {
-        enemy_army_totals.update_counter = 0;
+    if (++enemy_army_totals_get()->update_counter > 4) {
+        enemy_army_totals_get()->update_counter = 0;
         formation_update_soldier_strength();
     }
     for (scenario_event *inv = scenario_invasion_next(&scenario_events, 0, 1); inv; inv = scenario_invasion_next(&scenario_events, inv, 1)) {
@@ -781,7 +781,7 @@ void formation_enemy_update(void)
         }
         int32_t event_id = enemy->invasion_event_id;
         scenario_event *inv = scenario_invasion_event_at(&scenario_events, event_id);
-        if ((enemy_army_totals.enemy_strength > (enemy_army_totals.legion_strength * 2)) && enemy->figure_type != FIGURE_ARCHER) {
+        if ((enemy_army_totals_get()->enemy_strength > (enemy_army_totals_get()->legion_strength * 2)) && enemy->figure_type != FIGURE_ARCHER) {
             inv->data.invasion.ignore_soldiers = 1;
         }
         if (enemy->missile_fired) {
@@ -951,8 +951,8 @@ void formation_enemy_update(void)
             const formation_layout_spot *spots = enemy_formation_spots[inv->data.invasion.layout][enemy->orientation >> 1];
             const formation_layout_spot *spot = &spots[enemy->invasion_formation_index];
             if (formation_enemy_move_formation_to(id, spot->x + inv->data.invasion.home_x, spot->y + inv->data.invasion.home_y)) {
-                enemy->destination_x = (int16_t) formation_move_result_x;
-                enemy->destination_y = (int16_t) formation_move_result_y;
+                enemy->destination_x = (int16_t) formation_move_result_x_get();
+                enemy->destination_y = (int16_t) formation_move_result_y_get();
             }
         }
     }
@@ -997,7 +997,7 @@ int32_t formation_enemy_move_formation_to(int32_t formation_id, int32_t x, int32
 {
     formation *m = formation_get(formation_id);
     int32_t num = m->num_figures;
-    const formation_layout_spot *layout = enemy_formation_layout_offsets[m->layout];
+    const formation_layout_spot *layout = enemy_formation_layout(m->layout);
     int32_t base = layout[0].x + (layout[0].y * GRID_SIZE);
     formation_enemy_move_offsets[0] = 0;
     for (int32_t i = 1; i < num; i++) {
@@ -1036,8 +1036,8 @@ int32_t formation_enemy_move_formation_to(int32_t formation_id, int32_t x, int32
                     }
                 }
                 if (ok) {
-                    formation_move_result_x = xx;
-                    formation_move_result_y = yy;
+                    formation_move_result_x_set(xx);
+                    formation_move_result_y_set(yy);
                     return 1;
                 }
             }

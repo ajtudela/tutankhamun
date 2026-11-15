@@ -155,7 +155,7 @@ int32_t shipwright_boat_destination(int32_t boat_type)
 void boat_init_warship(int32_t figure_id)
 {
     figure *f = figure_get(figure_id);
-    const figure_type_properties *properties = &figure_properties[f->type];
+    const figure_type_properties *properties = figure_properties_of(f->type);
     f->reserved_9 = 0;
     f->ship_hit_points = properties->max_damage;
     f->ship_max_hit_points = properties->max_damage;
@@ -174,7 +174,7 @@ void boat_init_warship(int32_t figure_id)
 void boat_init_transport(int32_t figure_id)
 {
     figure *f = figure_get(figure_id);
-    const figure_type_properties *properties = &figure_properties[f->type];
+    const figure_type_properties *properties = figure_properties_of(f->type);
     f->reserved_9 = 0;
     f->ship_hit_points = properties->max_damage;
     f->ship_max_hit_points = properties->max_damage;

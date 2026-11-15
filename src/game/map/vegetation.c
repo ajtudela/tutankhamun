@@ -43,12 +43,12 @@ static void check_gatherers(int32_t tree_count, int32_t marsh_index)
         }
         int32_t type = b->type;
         if (type == BUILDING_WOOD_CUTTER && !vegetation_growth_state.trees_reachable) {
-            if (map_routing_citizen_find_first_of_prefer_roads(b->road_access_x, b->road_access_y, route_candidates.tiles, tree_count)) {
+            if (map_routing_citizen_find_first_of_prefer_roads(b->road_access_x, b->road_access_y, route_candidates_get()->tiles, tree_count)) {
                 vegetation_growth_state.trees_reachable = 1;
             }
         } else if (type == BUILDING_REED_GATHERER && !vegetation_growth_state.reeds_reachable) {
             if (map_routing_citizen_find_first_of_prefer_roads(
-                    b->road_access_x, b->road_access_y, &route_candidates.tiles[marsh_index], VEGETATION_CANDIDATES_MAX - marsh_index)) {
+                    b->road_access_x, b->road_access_y, &route_candidates_get()->tiles[marsh_index], VEGETATION_CANDIDATES_MAX - marsh_index)) {
                 vegetation_growth_state.reeds_reachable = 1;
             }
         }
@@ -83,14 +83,14 @@ void map_vegetation_growth_update(void)
                 if (map_grids.vegetation_growth[grid_offset] != VEGETATION_FULLY_GROWN) {
                     grow(grid_offset, vegetation_growth_state.tree_growth_a + vegetation_growth_state.tree_growth_b, percentage);
                 } else if (!vegetation_growth_state.trees_reachable) {
-                    route_candidates.tiles[tree_count++] = grid_offset;
+                    route_candidates_get()->tiles[tree_count++] = grid_offset;
                 }
                 vegetation_growth_state.trees_present = 1;
             } else if (terrain & TERRAIN_MARSH) {
                 if (map_grids.vegetation_growth[grid_offset] != VEGETATION_FULLY_GROWN) {
                     grow(grid_offset, vegetation_growth_state.marsh_growth_a + vegetation_growth_state.marsh_growth_b, percentage);
                 } else if (!vegetation_growth_state.reeds_reachable) {
-                    route_candidates.tiles[marsh_index--] = grid_offset;
+                    route_candidates_get()->tiles[marsh_index--] = grid_offset;
                 }
                 vegetation_growth_state.marsh_present = 1;
             }
@@ -108,7 +108,7 @@ void map_vegetation_growth_update(void)
 
 static void set_result_tile(int32_t found)
 {
-    int32_t tile = route_candidates.tiles[found - 1] - map_info.grid_start;
+    int32_t tile = route_candidates_get()->tiles[found - 1] - map_info.grid_start;
     map_result_x = tile % GRID_SIZE;
     map_result_y = tile / GRID_SIZE;
 }
@@ -154,10 +154,10 @@ int32_t map_vegetation_find_reachable(int32_t x, int32_t y, uint32_t mask, int32
                             skip = 1;
                         }
                         if (!skip && map_grids.vegetation_growth[offset] == VEGETATION_FULLY_GROWN) {
-                            route_candidates.tiles[count++] = offset;
+                            route_candidates_get()->tiles[count++] = offset;
                         }
                         if (count == VEGETATION_CANDIDATES_MAX) {
-                            int32_t found = map_routing_citizen_find_first_of_prefer_roads(x, y, route_candidates.tiles, VEGETATION_CANDIDATES_MAX);
+                            int32_t found = map_routing_citizen_find_first_of_prefer_roads(x, y, route_candidates_get()->tiles, VEGETATION_CANDIDATES_MAX);
                             if (found != 0) {
                                 set_result_tile(found);
                                 return 1;
@@ -171,7 +171,7 @@ int32_t map_vegetation_find_reachable(int32_t x, int32_t y, uint32_t mask, int32
             }
         }
         if (count != 0) {
-            int32_t found = map_routing_citizen_find_first_of_prefer_roads(x, y, route_candidates.tiles, count);
+            int32_t found = map_routing_citizen_find_first_of_prefer_roads(x, y, route_candidates_get()->tiles, count);
             if (found != 0) {
                 set_result_tile(found);
                 return 1;

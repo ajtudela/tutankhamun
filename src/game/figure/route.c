@@ -24,11 +24,11 @@ int32_t figure_route_get_first_available(int32_t figure_id, int32_t *path_id)
     figure *f = figure_get(figure_id);
     int16_t own = f->routing_path_id;
     if (own != 0) {
-        if (figure_route_figure_ids[own] == figure_id) {
+        if (figure_route_figure_ids_get()[own] == figure_id) {
             *path_id = own;
             int16_t slot = f->routing_path_id;
             f->routing_path_id = 0;
-            figure_route_figure_ids[slot] = 0;
+            figure_route_figure_ids_get()[slot] = 0;
             return 1;
         }
         f->routing_path_id = 0;
@@ -36,12 +36,12 @@ int32_t figure_route_get_first_available(int32_t figure_id, int32_t *path_id)
     *path_id = 1;
     for (;;) {
         int32_t slot = *path_id;
-        int32_t owner = figure_route_figure_ids[slot];
+        int32_t owner = figure_route_figure_ids_get()[slot];
         if (owner == 0) {
             return 1;
         }
         if (owner < 0 || owner >= MAX_FIGURES) {
-            figure_route_figure_ids[*path_id] = 0;
+            figure_route_figure_ids_get()[*path_id] = 0;
             return 1;
         }
         figure *o = figure_get(owner);
@@ -58,7 +58,7 @@ int32_t figure_route_get_first_available(int32_t figure_id, int32_t *path_id)
             return 0;
         }
     }
-    figure_route_figure_ids[*path_id] = 0;
+    figure_route_figure_ids_get()[*path_id] = 0;
     return 1;
 }
 
@@ -67,8 +67,8 @@ void figure_route_remove(int32_t figure_id)
     figure *f = figure_get(figure_id);
     int16_t slot = f->routing_path_id;
     if (slot > 0) {
-        if (figure_route_figure_ids[slot] == figure_id) {
-            figure_route_figure_ids[slot] = 0;
+        if (figure_route_figure_ids_get()[slot] == figure_id) {
+            figure_route_figure_ids_get()[slot] = 0;
         }
         f->routing_path_id = 0;
     }
@@ -77,20 +77,20 @@ void figure_route_remove(int32_t figure_id)
 void figure_route_clear_all(void)
 {
     memset(figure_route_paths(), 0, MAX_PATHS * MAX_PATH_LENGTH);
-    memset(figure_route_figure_ids, 0, MAX_PATHS * sizeof(int16_t));
+    memset(figure_route_figure_ids_get(), 0, MAX_PATHS * sizeof(int16_t));
 }
 
 void figure_route_clean(void)
 {
     for (int32_t i = 1; i < MAX_PATHS; i++) {
-        int32_t owner = figure_route_figure_ids[i];
+        int32_t owner = figure_route_figure_ids_get()[i];
         if (owner > 0 && owner < MAX_FIGURES) {
             figure *f = figure_get(owner);
             if (f->state != FIGURE_STATE_ALIVE) {
-                figure_route_figure_ids[i] = 0;
+                figure_route_figure_ids_get()[i] = 0;
             }
             if (f->routing_path_id != i) {
-                figure_route_figure_ids[i] = 0;
+                figure_route_figure_ids_get()[i] = 0;
             }
         }
     }
@@ -100,7 +100,7 @@ int32_t figure_route_count_free(void)
 {
     int32_t count = 0;
     for (int32_t i = 1; i < MAX_PATHS; i++) {
-        if (figure_route_figure_ids[i] == 0) {
+        if (figure_route_figure_ids_get()[i] == 0) {
             count++;
         }
     }
@@ -173,7 +173,7 @@ static void set_path(figure *f, int32_t figure_id, int32_t path_id, int32_t leng
 {
     f->routing_path_id = (int16_t) path_id;
     f->routing_path_length = (int16_t) length;
-    figure_route_figure_ids[path_id] = (int16_t) figure_id;
+    figure_route_figure_ids_get()[path_id] = (int16_t) figure_id;
 }
 
 static int32_t route_directions_to_destination(const figure *f)

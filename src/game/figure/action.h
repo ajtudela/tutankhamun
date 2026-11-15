@@ -13,9 +13,11 @@ void figure_action_handle(void);
 void figure_action_profile_begin(int32_t type);
 void figure_action_profile_end(void);
 
-extern figure_profile_clock figure_profile_frequency;
-extern figure_profile_table figure_action_profile;
-extern int32_t figure_count_processed;
-extern uint8_t figure_profile_qpc_available;
+figure_profile_clock *figure_profile_frequency_get(void);
+figure_profile_entry *figure_action_profile_get(void);
+int32_t figure_count_processed_get(void);
+void figure_count_processed_set(int32_t value);
+uint8_t figure_profile_qpc_available_get(void);
+void figure_profile_qpc_available_set(uint8_t value);
 
 #endif

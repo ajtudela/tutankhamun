@@ -92,10 +92,10 @@ enum scenario_start_rule {
 void figure_action_profile_init(void)
 {
     uint64_t frequency;
-    figure_profile_qpc_available = platform_time_frequency(&frequency);
-    figure_profile_frequency.low_part = (uint32_t) frequency;
-    figure_profile_frequency.high_part = (int32_t) (frequency >> 32);
-    memset(figure_action_profile, 0, sizeof(figure_action_profile));
+    figure_profile_qpc_available_set(platform_time_frequency(&frequency));
+    figure_profile_frequency_get()->low_part = (uint32_t) frequency;
+    figure_profile_frequency_get()->high_part = (int32_t) (frequency >> 32);
+    memset(figure_action_profile_get(), 0, sizeof(figure_profile_table));
 }
 
 int32_t scenario_map_exists(char *name)
@@ -372,7 +372,7 @@ void figure_init_scenario(void)
         memset(figure_get(id), 0, sizeof(figure));
     }
     figure_highest_id_set(0);
-    figure_unused_counter = 0;
+    figure_unused_counter_set(0);
 }
 
 void scenario_invasion_amounts_clear(void)
@@ -380,11 +380,11 @@ void scenario_invasion_amounts_clear(void)
     for (scenario_event *e = scenario_invasion_next(&scenario_events, NULL, 1); e; e = scenario_invasion_next(&scenario_events, e, 1)) {
         scenario_event_clear_amounts(e);
     }
-    enemy_army_totals.enemy_formations = 0;
-    enemy_army_totals.enemy_strength = 0;
-    enemy_army_totals.legion_formations = 0;
-    enemy_army_totals.legion_strength = 0;
-    enemy_army_totals.update_counter = 0;
+    enemy_army_totals_get()->enemy_formations = 0;
+    enemy_army_totals_get()->enemy_strength = 0;
+    enemy_army_totals_get()->legion_formations = 0;
+    enemy_army_totals_get()->legion_strength = 0;
+    enemy_army_totals_get()->update_counter = 0;
 }
 
 void figure_name_init(void)

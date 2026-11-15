@@ -252,7 +252,7 @@ void enemy_transport_wait(int32_t figure_id, int32_t *moving)
 void enemy_transport_move(int32_t figure_id, int32_t *moving)
 {
     figure *f = figure_get(figure_id);
-    figure_movement_move_ticks(figure_id, figure_properties[f->type].speed);
+    figure_movement_move_ticks(figure_id, figure_properties_of(f->type)->speed);
     if (f->direction == DIRECTION_REROUTE) {
         figure_route_remove(figure_id);
     } else if (f->direction == DIRECTION_LOST) {
@@ -296,20 +296,20 @@ void enemy_transport_unload(int32_t figure_id, int32_t x, int32_t y)
     int32_t layout = FORMATION_ENEMY_DOUBLE_LINE;
     if (nation == ENEMY_EGYPTIAN) {
         types[0] = FIGURE_ENEMY_EGYPTIAN_INFANTRY, types[1] = FIGURE_ENEMY_EGYPTIAN_ARCHER, types[2] = FIGURE_ENEMY_EGYPTIAN_CHARIOT;
-        percentage[0] = figure_properties[types[0]].invasion_percentage;
-        percentage[1] = figure_properties[types[1]].invasion_percentage;
-        percentage[2] = figure_properties[types[2]].invasion_percentage;
+        percentage[0] = figure_properties_of(types[0])->invasion_percentage;
+        percentage[1] = figure_properties_of(types[1])->invasion_percentage;
+        percentage[2] = figure_properties_of(types[2])->invasion_percentage;
     } else if (nation == ENEMY_BEDOUIN) {
         types[0] = types[1] = types[2] = FIGURE_BEDOUIN;
-        percentage[0] = figure_properties[types[0]].invasion_percentage;
+        percentage[0] = figure_properties_of(types[0])->invasion_percentage;
         percentage[1] = 0;
         percentage[2] = 0;
         layout = FORMATION_ENEMY_MOB;
     } else {
         types[0] = FIGURE_ENEMY_INFANTRY, types[1] = FIGURE_ENEMY_ARCHER, types[2] = FIGURE_ENEMY_CHARIOT;
-        percentage[0] = figure_properties[types[0]].invasion_percentage;
-        percentage[1] = figure_properties[types[1]].invasion_percentage;
-        percentage[2] = figure_properties[types[2]].invasion_percentage;
+        percentage[0] = figure_properties_of(types[0])->invasion_percentage;
+        percentage[1] = figure_properties_of(types[1])->invasion_percentage;
+        percentage[2] = figure_properties_of(types[2])->invasion_percentage;
     }
     calc_adjust_with_percentage(total, percentage[0]);
     int32_t count1 = calc_adjust_with_percentage(total, percentage[1]);
@@ -354,7 +354,7 @@ void enemy_transport_unload(int32_t figure_id, int32_t x, int32_t y)
 void enemy_transport_go_to_landing(int32_t figure_id, int32_t *moving)
 {
     figure *f = figure_get(figure_id);
-    figure_movement_move_ticks(figure_id, figure_properties[f->type].speed);
+    figure_movement_move_ticks(figure_id, figure_properties_of(f->type)->speed);
     if (f->direction == DIRECTION_AT_DESTINATION) {
         *moving = 0;
         int32_t x = f->ship_landing_x;
@@ -388,7 +388,7 @@ void enemy_transport_go_to_landing(int32_t figure_id, int32_t *moving)
 void enemy_transport_go_away(int32_t figure_id)
 {
     figure *f = figure_get(figure_id);
-    figure_movement_move_ticks(figure_id, figure_properties[f->type].speed);
+    figure_movement_move_ticks(figure_id, figure_properties_of(f->type)->speed);
     if (f->direction == DIRECTION_REROUTE) {
         figure_route_remove(figure_id);
         return;
@@ -579,7 +579,7 @@ int32_t enemy_warship_find_target_at(int32_t x, int32_t y, int32_t range)
             case FIGURE_INFANTRY:
             case FIGURE_CHARIOTEER:
                 distance = calc_maximum_distance(x, y, f->x, f->y);
-                if (distance > figure_properties[figure_current()->type].missile_range) {
+                if (distance > figure_properties_of(figure_current()->type)->missile_range) {
                     continue;
                 }
                 score = WARSHIP_SCORE_LAND_ENEMY;
@@ -624,9 +624,9 @@ int32_t enemy_warship_find_target(int32_t figure_id, int32_t range)
 void enemy_warship_shoot(int32_t figure_id)
 {
     figure *f = figure_get(figure_id);
-    if (++f->wait_ticks_missile > figure_properties[f->type].missile_delay) {
+    if (++f->wait_ticks_missile > figure_properties_of(f->type)->missile_delay) {
         f->wait_ticks_missile = 0;
-        if (enemy_warship_find_target(figure_id, figure_properties[f->type].missile_range) == 0) {
+        if (enemy_warship_find_target(figure_id, figure_properties_of(f->type)->missile_range) == 0) {
             f->attack_image_offset = 0;
         } else {
             f->attack_image_offset = 1;
@@ -692,8 +692,8 @@ void enemy_warship_ram(int32_t figure_id, int32_t *moving)
             if (target->type == FIGURE_WARSHIP && target->action_state == FIGURE_ACTION_WARSHIP_DOCKED) {
                 reduce = ENEMY_WARSHIP_DOCKED_TARGET_REDUCTION;
             }
-            int32_t divisor = figure_ship_direction_table[(facing_direction(target) * DIRECTION_COUNT) + f->direction];
-            int32_t damage = f->ship.steps < figure_properties[f->type].ship_steps ? f->ram_damage_fast : f->ram_damage_slow;
+            int32_t divisor = figure_ship_direction_table_get()[(facing_direction(target) * DIRECTION_COUNT) + f->direction];
+            int32_t damage = f->ship.steps < figure_properties_of(f->type)->ship_steps ? f->ram_damage_fast : f->ram_damage_slow;
             damage = (damage - reduce) / divisor;
             ship_play_ram_sound(divisor);
             target->ship_hit_points -= damage;
@@ -826,9 +826,9 @@ void enemy_warship_attack(int32_t figure_id, int32_t *moving)
     const figure *target = figure_get(target_id);
     int32_t distance = calc_maximum_distance(f->x, f->y, target->x, target->y);
     int32_t in_range = 0;
-    if (distance < figure_properties[f->type].missile_range) {
+    if (distance < figure_properties_of(f->type)->missile_range) {
         in_range = 1;
-        if (++f->wait_ticks_missile > figure_properties[f->type].missile_delay) {
+        if (++f->wait_ticks_missile > figure_properties_of(f->type)->missile_delay) {
             f->wait_ticks_missile = 0;
             f->attack_image_offset = target_id != 0;
         } else {

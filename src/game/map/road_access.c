@@ -383,7 +383,7 @@ int32_t map_get_adjacent_road_tiles_for_roaming(int32_t offset, int32_t figure_i
         int32_t min_visit = 7;
         int32_t max_visit = 0;
         int32_t visits[DIRECTION_COUNT] = { 0 };
-        int32_t tag = figure_type_coverage_tag[f->type];
+        int32_t tag = figure_type_coverage_tag_get()[f->type];
         for (int32_t i = DIRECTION_TOP; i < DIRECTION_COUNT; i += 2) {
             if (map_adjacent_tiles[i] != 0) {
                 int32_t v = map_service_visit_get(tag, map_grid_direction_delta[i] + offset);

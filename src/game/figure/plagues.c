@@ -99,7 +99,7 @@ void figure_locust_action(void)
     f->terrain_usage = TERRAIN_USAGE_ANYWHERE;
     f->cart_image_id = 0;
     int32_t field_id = f->immigrant_building_id;
-    int32_t speed = figure_properties[f->type].speed;
+    int32_t speed = figure_properties_of(f->type)->speed;
     building *field = building_get(field_id);
     if (field->state != BUILDING_STATE_IN_USE) {
         f->state = FIGURE_STATE_DEAD;

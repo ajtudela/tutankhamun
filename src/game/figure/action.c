@@ -165,28 +165,28 @@ void figure_action_profile_begin(int32_t type)
 {
     figure_profile_current_type = type;
     figure_profile_start_ticks = (int32_t) platform_tick_count();
-    if (figure_profile_qpc_available) {
+    if (figure_profile_qpc_available_get()) {
         read_counter(&figure_profile_start_counter);
     }
 }
 
 void figure_action_profile_end(void)
 {
-    if (figure_profile_qpc_available) {
+    if (figure_profile_qpc_available_get()) {
         read_counter(&figure_profile_end_counter.clock);
     }
     int32_t now = (int32_t) platform_tick_count();
     figure_profile_end_ticks = now;
     int32_t elapsed = now - figure_profile_start_ticks;
-    figure_profile_entry *p = &figure_action_profile[figure_profile_current_type];
+    figure_profile_entry *p = &figure_action_profile_get()[figure_profile_current_type];
     p->calls++;
     p->ticks_total += elapsed;
     if (elapsed > p->ticks_max) {
         p->ticks_max = elapsed;
     }
-    if (figure_profile_qpc_available) {
+    if (figure_profile_qpc_available_get()) {
         int32_t counts = (int32_t) (figure_profile_end_counter.clock.low_part - figure_profile_start_counter.low_part);
-        double seconds = (double) counts / (double) figure_profile_frequency.low_part;
+        double seconds = (double) counts / (double) figure_profile_frequency_get()->low_part;
         p->seconds_total = seconds + p->seconds_total;
         if (seconds > p->seconds_max) {
             p->seconds_max = seconds;
@@ -204,7 +204,7 @@ void figure_action_handle(void)
     player->kingdom_soldiers = 0;
     player->soldiers = 0;
     player->senet_house_has_plays = 0;
-    figure_count_processed = 0;
+    figure_count_processed_set(0);
     if (player->security_breach_duration > 0) {
         player->security_breach_duration--;
     }
@@ -224,7 +224,7 @@ void figure_action_handle(void)
                 f->targeted_by_figure_id = 0;
             }
         }
-        figure_count_processed++;
+        figure_count_processed_set(figure_count_processed_get() + 1);
         figure_action_profile_begin(f->type);
         figure_action_table[f->type]();
         figure_action_profile_end();

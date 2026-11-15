@@ -65,7 +65,7 @@ void figure_emigrant_action(void)
     figure *f = figure_get(figure_id);
     f->terrain_usage = TERRAIN_USAGE_ANY;
     f->cart_image_id = 0;
-    int32_t speed = figure_properties[f->type].speed;
+    int32_t speed = figure_properties_of(f->type)->speed;
     uint32_t terrain = map_grids.terrain[f->grid_offset];
     int32_t on_building = (terrain & TERRAIN_WATER) && map_grids.sprite[f->grid_offset] == 0;
     advance_frame(f, EMIGRANT_FRAMES);
@@ -164,7 +164,7 @@ void figure_indigenous_native_action(void)
     f->use_cross_country = 0;
     f->max_roam_length = NATIVE_MAX_ROAM_LENGTH;
     int32_t home_id = f->building_id;
-    int32_t speed = figure_properties[f->type].speed;
+    int32_t speed = figure_properties_of(f->type)->speed;
     building *home = building_get(home_id);
     city_player *player = city_player_current();
     if (home->state != BUILDING_STATE_IN_USE || home->figure_id != figure_id) {
@@ -286,7 +286,7 @@ void figure_native_trader_action(void)
     figure *f = figure_get(figure_id);
     f->is_ghost = 0;
     f->terrain_usage = TERRAIN_USAGE_ANY;
-    int32_t speed = figure_properties[f->type].speed;
+    int32_t speed = figure_properties_of(f->type)->speed;
     advance_frame(f, NATIVE_TRADER_FRAMES);
     f->cart_image_id = 0;
     switch (f->action_state) {
@@ -402,7 +402,7 @@ void figure_flotsam_action(void)
     int32_t figure_id = figure_current_id_get();
     figure *f = figure_get(figure_id);
     f->is_boat = FIGURE_BOAT_FLOTSAM;
-    int32_t speed = figure_properties[f->type].speed;
+    int32_t speed = figure_properties_of(f->type)->speed;
     if (scenario_data.river_exit_x == -1 || scenario_data.river_exit_y == -1) {
         return;
     }

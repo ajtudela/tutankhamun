@@ -178,9 +178,12 @@ void formation_change_all_legion_morale(int32_t amount);
 void formation_change_all_enemy_morale(int32_t amount);
 int32_t formation_find_closest_academy(int32_t formation_id);
 
-extern int32_t formation_move_result_x;
-extern int32_t formation_move_result_y;
-extern int32_t figure_unused_counter;
-extern enemy_army_totals_record enemy_army_totals;
+int32_t formation_move_result_x_get(void);
+void formation_move_result_x_set(int32_t value);
+int32_t formation_move_result_y_get(void);
+void formation_move_result_y_set(int32_t value);
+int32_t figure_unused_counter_get(void);
+void figure_unused_counter_set(int32_t value);
+enemy_army_totals_record *enemy_army_totals_get(void);
 
 #endif

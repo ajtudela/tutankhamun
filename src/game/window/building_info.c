@@ -1171,7 +1171,7 @@ static int32_t figure_speaks(int32_t type)
 static int32_t other_phrase_is_loaded(void)
 {
     for (int32_t i = 0; i < FIGURE_PHRASE_SOUNDS; i++) {
-        if (i != figure_phrase_id && phrase_weight_block.phrase_weights[i] > FIGURE_PHRASE_LOADED_WEIGHT) {
+        if (i != figure_phrase_id_get() && phrase_weight_block_get()->phrase_weights[i] > FIGURE_PHRASE_LOADED_WEIGHT) {
             return 1;
         }
     }

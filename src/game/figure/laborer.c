@@ -688,7 +688,7 @@ void figure_laborer_action(void)
 {
     int32_t figure_id = figure_current_id_get();
     figure *f = figure_get(figure_id);
-    int32_t speed = figure_properties[f->type].speed;
+    int32_t speed = figure_properties_of(f->type)->speed;
     f->terrain_usage = TERRAIN_USAGE_ROADS;
     f->use_cross_country = 0;
     f->max_roam_length = (int16_t) laborer_rules[LABORER_RULE_MAX_ROAM_TICKS];

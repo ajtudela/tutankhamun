@@ -313,7 +313,7 @@ static int32_t category_attacks(int32_t category, int32_t opponent_category, int
 void figure_combat_attack_figure_at(int32_t figure_id, int32_t opponent_id)
 {
     figure *f = figure_get(figure_id);
-    int32_t category = figure_properties[f->type].category;
+    int32_t category = figure_properties_of(f->type)->category;
     if (category <= 0 || category >= 8) {
         return;
     }
@@ -341,7 +341,7 @@ void figure_combat_attack_figure_at(int32_t figure_id, int32_t opponent_id)
                 default:
                     if (opponent->state != FIGURE_STATE_ALIVE || opponent->action_state == FIGURE_ACTION_CORPSE) {
                         attack = 0;
-                    } else if (category_attacks(category, figure_properties[opponent->type].category, opponent->action_state)) {
+                    } else if (category_attacks(category, figure_properties_of(opponent->type)->category, opponent->action_state)) {
                         attack = 1;
                     }
                     if (f->type == FIGURE_CRIMINAL && opponent->type == FIGURE_CART_PUSHER && opponent->resource_id == RESOURCE_GOLD) {
@@ -516,14 +516,14 @@ void figure_combat_handle_attack(int32_t figure_id)
     figure *opponent = figure_get(opponent_id);
     int32_t opponent_formation = opponent->formation_id;
     formation *opponent_legion = formation_get(opponent_formation);
-    int32_t opponent_category = figure_properties[opponent->type].category;
+    int32_t opponent_category = figure_properties_of(opponent->type)->category;
     f->attack_image_offset = opponent_category == 1 || opponent_category == 4 ? 12 : 0;
     int32_t experience_bonus = 0;
     if (opponent->faction_id == city_current_player) {
         experience_bonus = (legion->experience + 10) / 20;
     }
-    int32_t attack = figure_properties[f->type].attack;
-    int32_t defense = figure_properties[opponent->type].defense + experience_bonus;
+    int32_t attack = figure_properties_of(f->type)->attack;
+    int32_t defense = figure_properties_of(opponent->type)->defense + experience_bonus;
     if (defense >= 20) {
         defense = 20;
     }
@@ -587,7 +587,7 @@ void figure_combat_handle_attack(int32_t figure_id)
             defense += military_rules[MILITARY_RULE_KINGDOM_SOLDIER_LINE_BONUS];
         }
     }
-    int32_t max_damage = figure_properties[opponent->type].max_damage;
+    int32_t max_damage = figure_properties_of(opponent->type)->max_damage;
     if (defense < 0) {
         defense = 0;
     }
@@ -635,8 +635,8 @@ void figure_combat_hit_opponent(int32_t figure_id, int32_t opponent_id)
     if (figure_id == opponent_id || opponent->faction_id == city_current_player) {
         return;
     }
-    int32_t attack = figure_properties[f->type].attack;
-    int32_t defense = figure_properties[f->type].defense;
+    int32_t attack = figure_properties_of(f->type)->attack;
+    int32_t defense = figure_properties_of(f->type)->defense;
     int32_t charge = f->charge.steps;
     if (charge_is_at_full_strength(charge)) {
         attack *= military_rules[MILITARY_RULE_CHARGE_ATTACK_FACTOR];
@@ -649,7 +649,7 @@ void figure_combat_hit_opponent(int32_t figure_id, int32_t opponent_id)
         }
     }
     opponent->damage = (uint8_t) (opponent->damage + damage);
-    if (opponent->damage <= figure_properties[opponent->type].max_damage) {
+    if (opponent->damage <= figure_properties_of(opponent->type)->max_damage) {
         figure_play_hit_sound(figure_id);
         return;
     }
@@ -849,7 +849,7 @@ void figure_criminal_action(void)
     city_player *player = city_player_current();
     f->terrain_usage = TERRAIN_USAGE_ROADS;
     f->cart_image_id = 0;
-    int32_t speed = figure_properties[f->type].speed;
+    int32_t speed = figure_properties_of(f->type)->speed;
     if (++f->animation_frame >= 12) {
         f->animation_frame = 0;
     }
@@ -957,7 +957,7 @@ void figure_criminal_action(void)
 
 int32_t tomb_robber_find_target(int32_t figure_id)
 {
-    route_candidates.count = 0;
+    route_candidates_get()->count = 0;
     int32_t any = 0;
     for (int32_t i = -1; i < 35; i++) {
         switch (i) {
@@ -997,14 +997,14 @@ int32_t tomb_robber_find_target(int32_t figure_id)
                 if (!unfinished && !any) {
                     continue;
                 }
-                route_candidates.buildings[route_candidates.count] = id;
+                route_candidates_get()->buildings[route_candidates_get()->count] = id;
                 mausoleum_get_entry_tile(id, &x, &y);
                 break;
             case BUILDING_PYRAMID:
                 if (!any) {
                     continue;
                 }
-                route_candidates.buildings[route_candidates.count] = id;
+                route_candidates_get()->buildings[route_candidates_get()->count] = id;
                 pyramid_get_entry_road_access(id, &x, &y);
                 break;
             case BUILDING_SMALL_ROYAL_TOMB:
@@ -1014,7 +1014,7 @@ int32_t tomb_robber_find_target(int32_t figure_id)
                 if (b->subtype != 0 || (!unfinished && !any)) {
                     continue;
                 }
-                route_candidates.buildings[route_candidates.count] = id;
+                route_candidates_get()->buildings[route_candidates_get()->count] = id;
                 if (b->type == BUILDING_SMALL_ROYAL_TOMB) {
                     small_royal_tomb_get_access_tile(&small_royal_tomb_object.base, id, &x, &y);
                 } else if (b->type == BUILDING_MEDIUM_ROYAL_TOMB) {
@@ -1028,13 +1028,13 @@ int32_t tomb_robber_find_target(int32_t figure_id)
             default:
                 continue;
         }
-        route_candidates.tiles[route_candidates.count] = map_info.grid_start + y * GRID_SIZE + x;
-        route_candidates.count++;
+        route_candidates_get()->tiles[route_candidates_get()->count] = map_info.grid_start + y * GRID_SIZE + x;
+        route_candidates_get()->count++;
     }
-    if (route_candidates.count) {
-        int32_t index = figure_route_add_to_closest_of(figure_id, route_candidates.tiles, route_candidates.count);
+    if (route_candidates_get()->count) {
+        int32_t index = figure_route_add_to_closest_of(figure_id, route_candidates_get()->tiles, route_candidates_get()->count);
         if (index > 0) {
-            return route_candidates.buildings[index - 1];
+            return route_candidates_get()->buildings[index - 1];
         }
     }
     return 0;
@@ -1099,7 +1099,7 @@ void figure_tomb_robber_action(void)
     city_player *player = city_player_current();
     f->terrain_usage = TERRAIN_USAGE_PREFER_ROADS;
     f->cart_image_id = 0;
-    int32_t speed = figure_properties[f->type].speed;
+    int32_t speed = figure_properties_of(f->type)->speed;
     if (++f->animation_frame >= 12) {
         f->animation_frame = 0;
     }
@@ -1265,7 +1265,7 @@ void figure_movement_move_ticks_tower_sentry(int32_t figure_id, int32_t num_tick
 
 int32_t tower_sentry_find_target(int32_t figure_id)
 {
-    if (enemy_army_totals.enemy_formations < 1) {
+    if (enemy_army_totals_get()->enemy_formations < 1) {
         return 0;
     }
     figure *f = figure_get(figure_id);
@@ -1276,7 +1276,7 @@ int32_t tower_sentry_find_target(int32_t figure_id)
         return 0;
     }
     f->wait_ticks_next_target = 0;
-    if (figure_combat_get_missile_target_for_soldier(figure_id, figure_properties[f->type].missile_range) < 1) {
+    if (figure_combat_get_missile_target_for_soldier(figure_id, figure_properties_of(f->type)->missile_range) < 1) {
         return 0;
     }
     if (figure_search_best_distance_get() > military_rules[MILITARY_RULE_SENTRY_SHOOT_DISTANCE]) {
@@ -1354,7 +1354,7 @@ void figure_tower_sentry_action(void)
     f->is_ghost = 1;
     f->height_adjusted_ticks = 10;
     f->max_roam_length = 800;
-    int32_t speed = figure_properties[f->type].speed;
+    int32_t speed = figure_properties_of(f->type)->speed;
     building *tower = building_get(f->building_id);
     if (tower->state != BUILDING_STATE_IN_USE || tower->figure_id != figure_id) {
         f->state = FIGURE_STATE_DEAD;
@@ -1427,10 +1427,10 @@ void figure_tower_sentry_action(void)
             break;
         case FIGURE_ACTION_TOWER_SENTRY_FIRING:
             figure_movement_move_ticks_tower_sentry(figure_id, 1);
-            if (++f->wait_ticks_missile <= figure_properties[f->type].missile_delay) {
+            if (++f->wait_ticks_missile <= figure_properties_of(f->type)->missile_delay) {
                 break;
             }
-            if (figure_combat_get_missile_target_for_soldier(figure_id, figure_properties[f->type].missile_range)) {
+            if (figure_combat_get_missile_target_for_soldier(figure_id, figure_properties_of(f->type)->missile_range)) {
                 sound_figure_play(figure_id, FIGURE_SOUND_TOWER_SENTRY, FIGURE_SOUND_VARIANT_HIT);
                 f->direction = (int8_t) calc_missile_shooter_direction(f->x, f->y, map_result_x, map_result_y);
                 f->wait_ticks_missile = 0;
@@ -1539,12 +1539,12 @@ void figure_javelin_action(void)
             attack_type = shooter_legion->figure_type;
         }
         int32_t type = target->type;
-        int32_t max_damage = is_ship_type(type) ? target->ship_max_hit_points : figure_properties[type].max_damage;
-        int32_t defense = figure_properties[type].missile_defense;
+        int32_t max_damage = is_ship_type(type) ? target->ship_max_hit_points : figure_properties_of(type)->max_damage;
+        int32_t defense = figure_properties_of(type)->missile_defense;
         if (defense >= 20) {
             defense = 20;
         }
-        int32_t attack = figure_properties[attack_type].missile_attack;
+        int32_t attack = figure_properties_of(attack_type)->missile_attack;
         int32_t damage = 0;
         if (attack > 0) {
             damage = ((20 - defense) * attack) / 20;
@@ -1642,17 +1642,17 @@ void figure_ballista_action(void)
                 break;
             }
             f->wait_ticks = 0;
-            if (figure_combat_get_missile_target_for_soldier(figure_id, figure_properties[f->type].missile_range)) {
+            if (figure_combat_get_missile_target_for_soldier(figure_id, figure_properties_of(f->type)->missile_range)) {
                 f->action_state = FIGURE_ACTION_BALLISTA_FIRING;
-                f->wait_ticks_missile = (uint8_t) figure_properties[f->type].missile_delay;
+                f->wait_ticks_missile = (uint8_t) figure_properties_of(f->type)->missile_delay;
             }
             break;
         case FIGURE_ACTION_BALLISTA_FIRING:
-            if (++f->wait_ticks_missile <= figure_properties[f->type].missile_delay) {
+            if (++f->wait_ticks_missile <= figure_properties_of(f->type)->missile_delay) {
                 break;
             }
             shooting = 1;
-            if (!figure_combat_get_missile_target_for_soldier(figure_id, figure_properties[f->type].missile_range)) {
+            if (!figure_combat_get_missile_target_for_soldier(figure_id, figure_properties_of(f->type)->missile_range)) {
                 f->action_state = FIGURE_ACTION_BALLISTA_READY;
                 break;
             }
@@ -1708,7 +1708,7 @@ void ship_move_to_dock(int32_t figure_id, int32_t *moving)
     if (f->x == f->destination_x && f->y == f->destination_y) {
         f->direction = DIRECTION_AT_DESTINATION;
     } else {
-        figure_movement_move_ticks(figure_id, figure_properties[f->type].speed);
+        figure_movement_move_ticks(figure_id, figure_properties_of(f->type)->speed);
     }
     if (f->direction == DIRECTION_REROUTE) {
         figure_route_remove(figure_id);
@@ -1805,7 +1805,7 @@ void ship_move(int32_t figure_id, int32_t cautious)
         case SHIP_MOVE_FULL_SPEED: {
             int32_t speed;
             if (cautious) {
-                if (++*counter >= figure_properties[f->type].ship_moves) {
+                if (++*counter >= figure_properties_of(f->type)->ship_moves) {
                     *counter = 0;
                     f->ship_move_mode = SHIP_MOVE_RESTING;
                     return;
@@ -1818,12 +1818,12 @@ void ship_move(int32_t figure_id, int32_t cautious)
                     f->formation_position_y = f->y;
                     ++*steps;
                 }
-                if (*steps >= figure_properties[f->type].ship_steps) {
-                    figure_movement_move_ticks(figure_id, figure_properties[f->type].speed);
+                if (*steps >= figure_properties_of(f->type)->ship_steps) {
+                    figure_movement_move_ticks(figure_id, figure_properties_of(f->type)->speed);
                     return;
                 }
             }
-            speed = figure_properties[f->type].speed * 2;
+            speed = figure_properties_of(f->type)->speed * 2;
             if (speed >= 18) {
                 speed = 18;
             }
@@ -1831,7 +1831,7 @@ void ship_move(int32_t figure_id, int32_t cautious)
             return;
         }
         case SHIP_MOVE_SLOW:
-            figure_movement_move_ticks(figure_id, calc_adjust_with_percentage(figure_properties[f->type].speed, 40));
+            figure_movement_move_ticks(figure_id, calc_adjust_with_percentage(figure_properties_of(f->type)->speed, 40));
             if (++*counter >= 200) {
                 *counter = 0;
                 f->ship_move_mode = SHIP_MOVE_FULL_SPEED;
@@ -1887,7 +1887,7 @@ void warship_patrol(int32_t figure_id, int32_t *moving)
             const figure *target = figure_get(target_id);
             int32_t distance = calc_maximum_distance(f->x, f->y, target->x, target->y);
             int32_t shoot = 0;
-            if (distance < figure_properties[f->type].missile_range && ++f->wait_ticks_missile > figure_properties[f->type].missile_delay) {
+            if (distance < figure_properties_of(f->type)->missile_range && ++f->wait_ticks_missile > figure_properties_of(f->type)->missile_delay) {
                 f->wait_ticks_missile = 0;
                 shoot = target_id != 0;
             }
@@ -1927,8 +1927,8 @@ void warship_patrol(int32_t figure_id, int32_t *moving)
             if (calc_maximum_distance(f->patrol_x, f->patrol_y, f->x, f->y) < military_rules[MILITARY_RULE_WARSHIP_PATROL_RADIUS]) {
                 int32_t target_id = f->target_figure_id;
                 const figure *target = figure_get(target_id);
-                if (calc_maximum_distance(target->x, target->y, f->x, f->y) < figure_properties[f->type].missile_range) {
-                    if (++f->wait_ticks_missile > figure_properties[f->type].missile_delay) {
+                if (calc_maximum_distance(target->x, target->y, f->x, f->y) < figure_properties_of(f->type)->missile_range) {
+                    if (++f->wait_ticks_missile > figure_properties_of(f->type)->missile_delay) {
                         f->wait_ticks_missile = 0;
                         f->attack_image_offset = target_id != 0;
                     }
@@ -1951,7 +1951,7 @@ void warship_patrol(int32_t figure_id, int32_t *moving)
             return;
         }
         case SHIP_MODE_PATROLLING: {
-            int32_t range = figure_properties[f->type].missile_range + military_rules[MILITARY_RULE_WARSHIP_PATROL_EXTRA_RANGE];
+            int32_t range = figure_properties_of(f->type)->missile_range + military_rules[MILITARY_RULE_WARSHIP_PATROL_EXTRA_RANGE];
             int32_t target_id = figure_warship_find_enemy(figure_id, range);
             if (f->action_state != FIGURE_ACTION_WARSHIP_PATROLLING) {
                 f->warship_secondary_action = SHIP_MODE_WAITING;
@@ -2036,7 +2036,7 @@ void figure_warship_action(void)
             f->action_state = FIGURE_ACTION_WARSHIP_GOING_TO_REQUEST;
         }
     }
-    int32_t speed = figure_properties[f->type].speed;
+    int32_t speed = figure_properties_of(f->type)->speed;
     int32_t building_id = f->building_id;
     int32_t moving = 1;
     city_player_current()->soldiers++;
@@ -2153,7 +2153,7 @@ void figure_transport_ship_action(void)
     int32_t moving = 1;
     figure *f = figure_get(figure_id);
     int32_t building_id = f->building_id;
-    int32_t speed = figure_properties[f->type].speed;
+    int32_t speed = figure_properties_of(f->type)->speed;
     if (building_id) {
         ship_update_dock(figure_id, building_id);
     }
@@ -2260,7 +2260,7 @@ static void soldier_layout_offset(const figure *f, int32_t layout, int32_t check
     } else if (f->type == FIGURE_CHARIOTEER && check_layout == 2) {
         layout = 14;
     }
-    const formation_layout_spot *spot = &enemy_formation_layout_offsets[layout][f->index_in_formation];
+    const formation_layout_spot *spot = &enemy_formation_layout(layout)[f->index_in_formation];
     *dx = (int16_t) spot->x;
     *dy = (int16_t) spot->y;
 }
@@ -2315,11 +2315,11 @@ static void soldier_aim(int32_t figure_id, int32_t target_id)
 static int32_t soldier_reload_and_look(int32_t figure_id, int32_t extra_range, int32_t previous)
 {
     figure *f = figure_get(figure_id);
-    if (++f->wait_ticks_missile <= figure_properties[f->type].missile_delay) {
+    if (++f->wait_ticks_missile <= figure_properties_of(f->type)->missile_delay) {
         return previous;
     }
     f->wait_ticks_missile = 0;
-    int32_t target_id = figure_combat_get_missile_target_for_soldier(figure_id, figure_properties[f->type].missile_range + extra_range);
+    int32_t target_id = figure_combat_get_missile_target_for_soldier(figure_id, figure_properties_of(f->type)->missile_range + extra_range);
     if (!target_id) {
         f->attack_image_offset = 0;
     } else {
@@ -2353,7 +2353,7 @@ static int32_t soldier_engage(int32_t formation_id, int32_t target_id, int32_t s
     int32_t in_range = 0;
     if (f->type == FIGURE_ARCHER || f->type == FIGURE_CHARIOTEER) {
         const figure *target = figure_get(target_id);
-        in_range = calc_maximum_distance(f->x, f->y, target->x, target->y) <= figure_properties[f->type].missile_range;
+        in_range = calc_maximum_distance(f->x, f->y, target->x, target->y) <= figure_properties_of(f->type)->missile_range;
     }
     if (!target_id) {
         return in_range;
@@ -2425,7 +2425,7 @@ void figure_soldier_action(void)
     if (legion->in_use != 1) {
         f->action_state = FIGURE_ACTION_CORPSE;
     }
-    int32_t speed = figure_properties[f->type].speed;
+    int32_t speed = figure_properties_of(f->type)->speed;
     if (legion->has_move_order && legion->move_order_ticks++ > 2000) {
         legion->has_move_order = 0;
     }
@@ -2523,7 +2523,7 @@ void figure_soldier_action(void)
         }
         case FIGURE_ACTION_SOLDIER_ENGAGING: {
             f->formation_at_rest = 0;
-            const formation_layout_spot *spot = &enemy_formation_layout_offsets[layout][f->index_in_formation];
+            const formation_layout_spot *spot = &enemy_formation_layout(layout)[f->index_in_formation];
             int32_t spot_x = legion->order_x + spot->x;
             int32_t spot_y = legion->order_y + spot->y;
             if (f->alternative_location_index) {
@@ -2588,9 +2588,9 @@ void figure_soldier_action(void)
                     break;
                 }
                 int32_t target_id = f->target_figure_id;
-                if (++f->wait_ticks_missile > figure_properties[f->type].missile_delay) {
+                if (++f->wait_ticks_missile > figure_properties_of(f->type)->missile_delay) {
                     f->wait_ticks_missile = 0;
-                    target_id = figure_combat_get_missile_target_for_soldier(figure_id, figure_properties[f->type].missile_range);
+                    target_id = figure_combat_get_missile_target_for_soldier(figure_id, figure_properties_of(f->type)->missile_range);
                     if (!target_id) {
                         f->attack_image_offset = 0;
                         f->target_figure_id = 0;
@@ -2608,7 +2608,7 @@ void figure_soldier_action(void)
                 target->targeted_by_figure_id = (int16_t) figure_id;
                 f->target_figure_created_sequence = target->created_sequence;
                 int32_t x = f->x, y = f->y;
-                if (calc_maximum_distance(x, y, target->x, target->y) > figure_properties[f->type].missile_range) {
+                if (calc_maximum_distance(x, y, target->x, target->y) > figure_properties_of(f->type)->missile_range) {
                     break;
                 }
                 in_range = 1;
@@ -2620,9 +2620,9 @@ void figure_soldier_action(void)
                 if (f->action_state == FIGURE_ACTION_SOLDIER_GOING_TO_STANDARD) {
                     break;
                 }
-                if (++f->wait_ticks_missile > figure_properties[f->type].missile_delay) {
+                if (++f->wait_ticks_missile > figure_properties_of(f->type)->missile_delay) {
                     f->wait_ticks_missile = 0;
-                    int32_t target_id = figure_combat_get_missile_target_for_soldier(figure_id, figure_properties[f->type].missile_range);
+                    int32_t target_id = figure_combat_get_missile_target_for_soldier(figure_id, figure_properties_of(f->type)->missile_range);
                     f->target_figure_id = (int16_t) target_id;
                     if (target_id) {
                         f->attack_image_offset = 1;
@@ -2705,7 +2705,7 @@ void figure_soldier_action(void)
             }
             if (f->type == FIGURE_ARCHER || f->type == FIGURE_CHARIOTEER) {
                 const figure *target = figure_get(target_id);
-                if (calc_maximum_distance(f->x, f->y, target->x, target->y) <= figure_properties[f->type].missile_range) {
+                if (calc_maximum_distance(f->x, f->y, target->x, target->y) <= figure_properties_of(f->type)->missile_range) {
                     f->animation_frame = 0;
                     in_range = 1;
                     soldier_aim(figure_id, target_id);
@@ -2850,7 +2850,7 @@ void figure_soldier_action(void)
         } else if (f->action_state == FIGURE_ACTION_SOLDIER_AT_STANDARD) {
             f->image_id = walk + dir;
         } else if (f->action_state == FIGURE_ACTION_SOLDIER_ENGAGING && attack) {
-            f->image_id = fight + figure_missile_frames[attack >> 1] * 8 + dir;
+            f->image_id = fight + figure_missile_frames_get()[attack >> 1] * 8 + dir;
         } else if (f->action_state == FIGURE_ACTION_CORPSE) {
             f->image_id = corpse + image_group(alt ? IMAGE_GROUP_FIGURE_ENEMY_CHARIOT_DEATH : IMAGE_GROUP_FIGURE_CHARIOTEER_DEATH);
         } else {

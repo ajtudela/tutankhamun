@@ -408,7 +408,7 @@ void figure_cartpusher_action(void)
     figure *f = figure_get(figure_id);
     uint8_t frame = (uint8_t) (f->animation_frame + 1);
     f->animation_frame = frame;
-    int32_t speed = figure_properties[f->type].speed;
+    int32_t speed = figure_properties_of(f->type)->speed;
     if (frame >= CARRIER_ANIMATION_FRAMES) {
         f->animation_frame = 0;
     }
@@ -736,7 +736,7 @@ void figure_warehouseman_action(void)
     figure *f = figure_get(figure_id);
     f->terrain_usage = TERRAIN_USAGE_ROADS;
     uint8_t frame = (uint8_t) (f->animation_frame + 1);
-    int32_t speed = figure_properties[f->type].speed;
+    int32_t speed = figure_properties_of(f->type)->speed;
     f->animation_frame = frame;
     if (frame >= CARRIER_ANIMATION_FRAMES) {
         f->animation_frame = 0;
@@ -1414,7 +1414,7 @@ void figure_market_buyer_action(void)
     f->terrain_usage = TERRAIN_USAGE_ROADS;
     f->use_cross_country = 0;
     f->max_roam_length = 800;
-    int32_t speed = figure_properties[f->type].speed;
+    int32_t speed = figure_properties_of(f->type)->speed;
     int32_t home_id = f->building_id;
     building *home = building_get(home_id);
     if (home->state != BUILDING_STATE_IN_USE) {
@@ -1617,7 +1617,7 @@ void figure_immigrant_action(void)
     f->terrain_usage = TERRAIN_USAGE_ANY;
     f->cart_image_id = 0;
     int32_t house_id = f->immigrant_building_id;
-    int32_t speed = figure_properties[f->type].speed;
+    int32_t speed = figure_properties_of(f->type)->speed;
     int32_t swimming = migrant_is_swimming(f);
     building *house = building_get(house_id);
     if (house->state != BUILDING_STATE_IN_USE || house->immigrant_figure_id != figure_id || house->house_size == 0) {
@@ -1720,7 +1720,7 @@ void figure_homeless_action(void)
 {
     int32_t figure_id = figure_current_id_get();
     figure *f = figure_get(figure_id);
-    int32_t speed = figure_properties[f->type].speed;
+    int32_t speed = figure_properties_of(f->type)->speed;
     int32_t swimming = migrant_is_swimming(f);
     uint8_t frame = (uint8_t) (f->animation_frame + 1);
     f->animation_frame = frame;
@@ -1819,7 +1819,7 @@ void figure_homeless_action(void)
 
 int32_t criminal_find_rich_building(int32_t figure_id)
 {
-    route_candidates.count = 0;
+    route_candidates_get()->count = 0;
     const city_player *player = city_player_current();
     int32_t has_savings = player->personal_savings > 0;
     int32_t has_treasury = player->treasury > 0;
@@ -1840,14 +1840,14 @@ int32_t criminal_find_rich_building(int32_t figure_id)
         if (b->tax_income_or_storage <= 0) {
             continue;
         }
-        route_candidates.buildings[route_candidates.count] = id;
-        route_candidates.count++;
-        route_candidates.tiles[route_candidates.count - 1] = map_info.grid_start + b->road_access_x + b->road_access_y * GRID_SIZE;
+        route_candidates_get()->buildings[route_candidates_get()->count] = id;
+        route_candidates_get()->count++;
+        route_candidates_get()->tiles[route_candidates_get()->count - 1] = map_info.grid_start + b->road_access_x + b->road_access_y * GRID_SIZE;
     }
-    if (route_candidates.count) {
-        int32_t index = figure_route_add_to_closest_of(figure_id, route_candidates.tiles, route_candidates.count);
+    if (route_candidates_get()->count) {
+        int32_t index = figure_route_add_to_closest_of(figure_id, route_candidates_get()->tiles, route_candidates_get()->count);
         if (index > 0) {
-            return route_candidates.buildings[index - 1];
+            return route_candidates_get()->buildings[index - 1];
         }
     }
     return 0;

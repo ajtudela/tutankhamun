@@ -38,9 +38,9 @@ enum storage_input_limit {
 
 static void add_candidate(int32_t id, int32_t tile)
 {
-    route_candidates.buildings[route_candidates.count] = id;
-    route_candidates.tiles[route_candidates.count] = tile;
-    route_candidates.count++;
+    route_candidates_get()->buildings[route_candidates_get()->count] = id;
+    route_candidates_get()->tiles[route_candidates_get()->count] = tile;
+    route_candidates_get()->count++;
 }
 
 static int32_t is_granary(int32_t type)
@@ -76,7 +76,7 @@ int32_t building_granary_for_storing(int32_t source, int32_t figure_id, int32_t 
     if (city_player_current()->stockpiled[resource] != 0 && source == 0) {
         return 0;
     }
-    route_candidates.count = 0;
+    route_candidates_get()->count = 0;
     if (building_highest_id < 1) {
         return 0;
     }
@@ -104,19 +104,19 @@ int32_t building_granary_for_storing(int32_t source, int32_t figure_id, int32_t 
         if (b->data.granary.resource_stored[RESOURCE_NONE] < STORAGE_CART_LOAD) {
             continue;
         }
-        route_candidates.buildings[route_candidates.count] = id;
+        route_candidates_get()->buildings[route_candidates_get()->count] = id;
         map_has_road_access_granary(b->x, b->y);
-        route_candidates.tiles[route_candidates.count] = map_result_x + (map_result_y * GRID_SIZE) + map_info.grid_start;
-        route_candidates.count++;
+        route_candidates_get()->tiles[route_candidates_get()->count] = map_result_x + (map_result_y * GRID_SIZE) + map_info.grid_start;
+        route_candidates_get()->count++;
     }
-    if (route_candidates.count == 0) {
+    if (route_candidates_get()->count == 0) {
         return 0;
     }
-    int32_t chosen = figure_route_add_to_closest_of(figure_id, route_candidates.tiles, route_candidates.count);
+    int32_t chosen = figure_route_add_to_closest_of(figure_id, route_candidates_get()->tiles, route_candidates_get()->count);
     if (chosen == 0) {
         return 0;
     }
-    int32_t id = route_candidates.buildings[chosen - 1];
+    int32_t id = route_candidates_get()->buildings[chosen - 1];
     building *b = building_get(id);
     map_result_x = b->road_access_x;
     map_result_y = b->road_access_y;
@@ -130,7 +130,7 @@ int32_t building_granary_for_storing(int32_t source, int32_t figure_id, int32_t 
 int32_t building_storageyard_for_storing(int32_t source, int32_t figure_id, int32_t resource, int32_t road_network)
 {
     uint32_t network = (uint32_t) road_network;
-    route_candidates.count = 0;
+    route_candidates_get()->count = 0;
     if (resource == RESOURCE_GOLD) {
         return 0;
     }
@@ -164,14 +164,14 @@ int32_t building_storageyard_for_storing(int32_t source, int32_t figure_id, int3
             add_candidate(room_id, map_grid_offset(map_result_x, map_result_y));
         }
     }
-    if (route_candidates.count == 0) {
+    if (route_candidates_get()->count == 0) {
         return 0;
     }
-    int32_t chosen = figure_route_add_to_closest_of(figure_id, route_candidates.tiles, route_candidates.count);
+    int32_t chosen = figure_route_add_to_closest_of(figure_id, route_candidates_get()->tiles, route_candidates_get()->count);
     if (chosen == 0) {
         return 0;
     }
-    int32_t room_id = route_candidates.buildings[chosen - 1];
+    int32_t room_id = route_candidates_get()->buildings[chosen - 1];
     building *main = building_get(building_main(room_id));
     map_result_x = main->road_access_x;
     map_result_y = main->road_access_y;
@@ -285,7 +285,7 @@ int32_t building_granary_getting_food(int32_t figure_id, int32_t resource, int32
     if (city_player_current()->stockpiled[resource] != 0) {
         return 0;
     }
-    route_candidates.count = 0;
+    route_candidates_get()->count = 0;
     for (int32_t id = 1; id <= building_highest_id; id++) {
         building *b = building_get(id);
         if (b->state != BUILDING_STATE_IN_USE || !is_granary(b->type) || !b->has_road_access || b->distance_from_entry <= 0 ||
@@ -301,17 +301,17 @@ int32_t building_granary_getting_food(int32_t figure_id, int32_t resource, int32
             add_candidate(id, map_info.grid_start + b->x + GRID_SIZE + 1 + (b->y * GRID_SIZE));
         }
     }
-    if (route_candidates.count == 0) {
+    if (route_candidates_get()->count == 0) {
         return 0;
     }
-    int32_t chosen = figure_route_add_to_closest_of(figure_id, route_candidates.tiles, route_candidates.count);
+    int32_t chosen = figure_route_add_to_closest_of(figure_id, route_candidates_get()->tiles, route_candidates_get()->count);
     if (chosen == 0) {
         return 0;
     }
-    building *b = building_get(route_candidates.buildings[chosen - 1]);
+    building *b = building_get(route_candidates_get()->buildings[chosen - 1]);
     map_result_y = b->y + 1;
     map_result_x = b->x + 1;
-    return route_candidates.buildings[chosen - 1];
+    return route_candidates_get()->buildings[chosen - 1];
 }
 
 int32_t building_granary_supplier(int32_t id)
@@ -436,7 +436,7 @@ int32_t building_workshop_for_raw_material(int32_t figure_id, int32_t resource, 
     }
     int32_t min_incoming = 10000;
     int32_t min_stock = 10000;
-    route_candidates.count = 0;
+    route_candidates_get()->count = 0;
     for (int32_t id = 1; id <= building_highest_id; id++) {
         building *b = building_get(id);
         if (b->state != BUILDING_STATE_IN_USE || city_labor_industry_is_mothballed(id)) {
@@ -472,14 +472,14 @@ int32_t building_workshop_for_raw_material(int32_t figure_id, int32_t resource, 
             continue;
         }
         if (stock < min_stock) {
-            route_candidates.count = 0;
+            route_candidates_get()->count = 0;
             min_incoming = incoming;
             min_stock = stock;
         }
         add_candidate(id, map_grid_offset(b->road_access_x, b->road_access_y));
     }
-    int32_t chosen = figure_route_add_to_closest_of(figure_id, route_candidates.tiles, route_candidates.count);
-    int32_t id = chosen ? route_candidates.buildings[chosen - 1] : 0;
+    int32_t chosen = figure_route_add_to_closest_of(figure_id, route_candidates_get()->tiles, route_candidates_get()->count);
+    int32_t id = chosen ? route_candidates_get()->buildings[chosen - 1] : 0;
     building *b = building_get(id);
     map_result_x = b->road_access_x;
     map_result_y = b->road_access_y;
@@ -505,7 +505,7 @@ int32_t building_workshop_for_raw_material_any(int32_t figure_id, int32_t resour
         return 0;
     }
     int32_t count = 0;
-    route_candidates.count = 0;
+    route_candidates_get()->count = 0;
     if (building_highest_id < 1) {
         return 0;
     }
@@ -515,20 +515,20 @@ int32_t building_workshop_for_raw_material_any(int32_t figure_id, int32_t resour
             continue;
         }
         if (b->has_road_access && b->distance_from_entry > 0 && b->subtype == index && b->road_network_id == network) {
-            route_candidates.buildings[count] = id;
-            route_candidates.tiles[count] = map_grid_offset(b->x, b->y);
+            route_candidates_get()->buildings[count] = id;
+            route_candidates_get()->tiles[count] = map_grid_offset(b->x, b->y);
             count++;
         }
     }
-    route_candidates.count = count;
+    route_candidates_get()->count = count;
     if (count == 0) {
         return 0;
     }
-    int32_t chosen = figure_route_add_to_closest_of(figure_id, route_candidates.tiles, count);
+    int32_t chosen = figure_route_add_to_closest_of(figure_id, route_candidates_get()->tiles, count);
     if (chosen <= 0) {
         return 0;
     }
-    int32_t id = route_candidates.buildings[chosen - 1];
+    int32_t id = route_candidates_get()->buildings[chosen - 1];
     building *b = building_get(id);
     map_result_x = b->road_access_x;
     map_result_y = b->road_access_y;

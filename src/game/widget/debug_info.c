@@ -229,7 +229,7 @@ void debug_draw_city_info(void)
         num(current->natives_hostile, " natives_are_restless", DEBUG_COLUMN_LEFT, y + 70, DEBUG_COLOR_LABEL);
         num(current->mission_post_operational, " mission_in_place", g_text_width + DEBUG_COLUMN_RIGHT_WIDE, y + 70, DEBUG_COLOR_LABEL);
         g_text_width = 0;
-        num(phrase_weight_block.was_in_int, " was_in_int", DEBUG_COLUMN_LEFT, y + 84, DEBUG_COLOR_LABEL);
+        num(phrase_weight_block_get()->was_in_int, " was_in_int", DEBUG_COLUMN_LEFT, y + 84, DEBUG_COLOR_LABEL);
         num(debug_was_in_set, " was_in_set", g_text_width + DEBUG_COLUMN_RIGHT_WIDE, y + 84, DEBUG_COLOR_LABEL);
         g_text_width = 0;
         num(city_message_problem_count, " alert_messages", DEBUG_COLUMN_LEFT, y + 98, DEBUG_COLOR_LABEL);
@@ -469,7 +469,7 @@ void debug_draw_figure_info(void)
     int32_t id = empire_markers.watched_figure_id;
     if (id == 0) {
         title("Not watching a figure", y + 24, image_group(IMAGE_GROUP_FONT_BLACK), DEBUG_COLOR_LABEL);
-        num(figure_count_processed, " Figs", DEBUG_COLUMN_LEFT, y + 48, DEBUG_COLOR_VALUE);
+        num(figure_count_processed_get(), " Figs", DEBUG_COLUMN_LEFT, y + 48, DEBUG_COLOR_VALUE);
         num(figure_highest_id_get(), " = ever", DEBUG_COLUMN_RIGHT_FAR, y + 48, DEBUG_COLOR_VALUE);
         num(figure_route_count_free(), " free route slots", DEBUG_COLUMN_LEFT, y + 60, DEBUG_COLOR_VALUE);
         return;

@@ -75,7 +75,7 @@ int32_t monument_load_extra_scripts(void)
     if (strcmp(scenario_data.name, glory_of_ptolemy_name) != 0) {
         monument = scenario_get_extra_script_monument();
     }
-    phrase_weight_block.extra_script_monument = monument;
+    phrase_weight_block_get()->extra_script_monument = monument;
     if (monument == MONUMENT_DEF_OBELISK) {
         return anim_load_script(str_obelisk_extra, MONUMENT_SCRIPT_SLOT_EXTRA);
     }

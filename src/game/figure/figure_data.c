@@ -27,7 +27,7 @@
 
 #include <assert.h>
 
-formation_layout_spot enemy_formation_layout_offsets[FORMATION_LAYOUTS][FORMATION_LAYOUT_SPOTS] = {
+static formation_layout_spot enemy_formation_layout_offsets[FORMATION_LAYOUTS][FORMATION_LAYOUT_SPOTS] = {
     {
         { 0, 0 }, { 1, 0 }, { 0, 1 }, { 1, 1 }, { -1, 0 }, { -1, 1 }, { 0, -1 }, { 1, -1 },
         { -1, -1 }, { 2, -1 }, { 2, 0 }, { 2, 1 }, { 0, 2 }, { 1, 2 }, { -1, 2 }, { 2, 2 }
@@ -103,7 +103,7 @@ static const uint8_t figure_corpse_offsets[256] = { 0, 1, 2, 3, 4, 4, 4, 4, 4, 4
     7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 0, 1, 2, 3, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4,
     4 };
 
-uint8_t figure_missile_frames[336] = { 0, 1, 2, 3, 4, 4, 4, 4, 4, 4, 5, 5, 5, 5, 5, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+static uint8_t figure_missile_frames[336] = { 0, 1, 2, 3, 4, 4, 4, 4, 4, 4, 5, 5, 5, 5, 5, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 2, 3, 4, 5, 6, 0, 0, 0, 0, 0, 0, 0, 0, 0,
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -111,13 +111,13 @@ uint8_t figure_missile_frames[336] = { 0, 1, 2, 3, 4, 4, 4, 4, 4, 4, 5, 5, 5, 5,
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 0, 0, 0, 7, 0, 0, 0, 10, 0, 0, 0, 8, 0, 0, 0, 8, 0, 0, 0, 9, 0, 0, 0, 5, 0, 0, 0, 6, 0, 0, 0, 3, 0, 0, 0, 3, 0, 0, 0,
     3, 0, 0, 0, 2, 0, 0, 0, 2, 0, 0, 0, 4, 0, 0, 0, 4, 0, 0, 0, 4, 0, 0, 0, 6, 0, 0, 0, 1, 0, 0, 0, 6 };
 
-int32_t figure_type_coverage_tag[110] = { -1, -1, -1, -1, -1, 7, -1, 7, 2, -1, 1, -1, -1, -1, -1, 4, 4, 4, 4, -1, -1, -1, -1, -1, -1, -1, 8, 6, -1, 5, 5, 9, 9,
+static int32_t figure_type_coverage_tag[110] = { -1, -1, -1, -1, -1, 7, -1, 7, 2, -1, 1, -1, -1, -1, -1, 4, 4, 4, 4, -1, -1, -1, -1, -1, -1, -1, 8, 6, -1, 5, 5, 9, 9,
     9, 9, -1, -1, -1, -1, 8, 3, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 6, -1, 8, -1, -1, -1, -1, -1, -1,
     -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 0, 3, 3, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 4, -1, -1, -1, -1 };
 
 static const int8_t figure_cart_offsets[16] = { 13, -7, 18, -1, 12, 7, 0, 11, -13, 6, -18, -1, -13, -7, 0, -12 };
 
-uint8_t figure_ship_direction_table[64] = { 5, 3, 1, 2, 4, 2, 1, 3, 3, 5, 3, 1, 2, 4, 2, 1, 1, 3, 5, 3, 1, 2, 4, 2, 2, 1, 3, 5, 3, 1, 2, 4, 4, 2, 1, 3, 5, 3, 1,
+static uint8_t figure_ship_direction_table[64] = { 5, 3, 1, 2, 4, 2, 1, 3, 3, 5, 3, 1, 2, 4, 2, 1, 1, 3, 5, 3, 1, 2, 4, 2, 2, 1, 3, 5, 3, 1, 2, 4, 4, 2, 1, 3, 5, 3, 1,
     2, 2, 4, 2, 1, 3, 5, 3, 1, 1, 2, 4, 2, 1, 3, 4, 3, 3, 1, 2, 4, 3, 1, 3, 5 };
 
 const char *figure_type_debug_names[110] = { str_fig_null, str_fig_immigrant, str_fig_emmigrant, str_fig_vagrant, str_fig_cart, str_fig_ghost, str_fig_explosion,
@@ -136,18 +136,6 @@ const char *figure_type_debug_names[110] = { str_fig_null, str_fig_immigrant, st
     str_fig_showman, str_fig_plague_dude, str_fig_bedouin, str_fig_egypt_warship, str_fig_egypt_transport, str_fig_asp, str_fig_lion, str_fig_scorpion,
     str_fig_zookeeper, str_fig_frog, str_fig_locust, str_fig_artisan, str_fig_mummy };
 
-const char str_enemy_persian[8] = "PERSIAN";
-const char str_enemy_phoenician[12] = "PHOENICIAN";
-const char str_enemy_roman[8] = "ROMAN";
-const char str_enemy_assyrian[12] = "ASSYRIAN";
-const char str_enemy_canaanite[12] = "CANAANITE";
-const char str_enemy_nubian[8] = "NUBIAN";
-const char str_enemy_libian[8] = "LIBIAN";
-const char str_enemy_kushite[8] = "KUSHITE";
-const char str_enemy_mitani[8] = "MITANI";
-const char str_enemy_hittite[8] = "HITTITE";
-const char str_enemy_seapeople[12] = "SEAPEOPLE";
-const char str_enemy_hyksos[8] = "HYKSOS";
 const char str_fig_mummy[12] = "FIG_MUMMY";
 const char str_fig_artisan[12] = "FIG_ARTISAN";
 const char str_fig_locust[12] = "FIG_LOCUST";
@@ -269,52 +257,30 @@ const char str_drums_wav[132] = "wavs\\drums.wav\0\0"
                           "Trapped frog %d\n\0\0\0\0"
                           "follow_figure_closely following off pyramid\r\n";
 
-animal_offset hippo_water_steps[8] = {
-    { 0, -1 },
-    { 1, -1 },
-    { 1, 0 },
-    { 1, 1 },
-    { 0, 1 },
-    { -1, 1 },
-    { -1, 0 },
-    { -1, -1 },
-};
-
-animal_offset crocodile_water_steps[8] = {
-    { 0, -1 },
-    { 1, -1 },
-    { 1, 0 },
-    { 1, 1 },
-    { 0, 1 },
-    { -1, 1 },
-    { -1, 0 },
-    { -1, -1 },
-};
-
-uint8_t cheat_side_show_enabled;
+static uint8_t cheat_side_show_enabled;
 
 static_assert(sizeof(figure_properties_table) == 6160, "figure_properties is the figure model file's table of 6160 bytes");
-figure_properties_table figure_properties;
+static figure_properties_table figure_properties;
 
-route_candidate_lists route_candidates;
+static route_candidate_lists route_candidates;
 
-figure_profile_clock figure_profile_frequency;
+static figure_profile_clock figure_profile_frequency;
 
-figure_profile_table figure_action_profile;
+static figure_profile_table figure_action_profile;
 
 uint8_t formation_globals_block[16];
 
-int32_t formation_move_result_y;
+static int32_t formation_move_result_y;
 
-int32_t formation_move_result_x;
+static int32_t formation_move_result_x;
 
-int32_t figure_roaming_enabled;
+static int32_t figure_roaming_enabled;
 
 static int32_t figure_search_best_distance;
 
 static int32_t figure_highest_id;
 
-int32_t figure_unused_counter;
+static int32_t figure_unused_counter;
 
 static_assert(sizeof(figure_table) == 1276000, "city_figures is the savegame's figure table of 1276000 bytes");
 static figure_table city_figures;
@@ -334,18 +300,18 @@ uint8_t *figure_route_paths(void)
     return city_figures.route_paths;
 }
 
-int16_t figure_route_figure_ids[1000];
+static int16_t figure_route_figure_ids[1000];
 
 static_assert(sizeof(enemy_army_totals_record) == 20, "enemy_army_totals is the savegame's enemy army totals of 20 bytes");
-enemy_army_totals_record enemy_army_totals;
+static enemy_army_totals_record enemy_army_totals;
 
-int32_t figure_count_processed;
+static int32_t figure_count_processed;
 
 static int32_t figure_current_id;
 
 static int32_t figure_created_sequence;
 
-uint8_t figure_profile_qpc_available;
+static uint8_t figure_profile_qpc_available;
 
 static_assert(sizeof(random_data) == 36, "random_generator_state is the savegame and scenario random state of 36 bytes");
 random_data random_generator_state;
@@ -360,9 +326,9 @@ int32_t distance_dx;
 
 static int32_t figure_image_direction;
 
-int32_t figure_phrase_id;
+static int32_t figure_phrase_id;
 
-phrase_weight_record phrase_weight_block;
+static phrase_weight_record phrase_weight_block;
 
 figure *figure_current(void)
 {
@@ -446,4 +412,144 @@ uint8_t *figure_bytes_past_formations(int32_t offset)
         return (uint8_t *) &city_figures + offset;
     }
     return 0;
+}
+
+int32_t figure_count_processed_get(void)
+{
+    return figure_count_processed;
+}
+
+void figure_count_processed_set(int32_t value)
+{
+    figure_count_processed = value;
+}
+
+uint8_t figure_profile_qpc_available_get(void)
+{
+    return figure_profile_qpc_available;
+}
+
+void figure_profile_qpc_available_set(uint8_t value)
+{
+    figure_profile_qpc_available = value;
+}
+
+uint8_t cheat_side_show_enabled_get(void)
+{
+    return cheat_side_show_enabled;
+}
+
+void cheat_side_show_enabled_set(uint8_t value)
+{
+    cheat_side_show_enabled = value;
+}
+
+int32_t figure_phrase_id_get(void)
+{
+    return figure_phrase_id;
+}
+
+void figure_phrase_id_set(int32_t value)
+{
+    figure_phrase_id = value;
+}
+
+int32_t formation_move_result_x_get(void)
+{
+    return formation_move_result_x;
+}
+
+void formation_move_result_x_set(int32_t value)
+{
+    formation_move_result_x = value;
+}
+
+int32_t formation_move_result_y_get(void)
+{
+    return formation_move_result_y;
+}
+
+void formation_move_result_y_set(int32_t value)
+{
+    formation_move_result_y = value;
+}
+
+int32_t figure_unused_counter_get(void)
+{
+    return figure_unused_counter;
+}
+
+void figure_unused_counter_set(int32_t value)
+{
+    figure_unused_counter = value;
+}
+
+int32_t figure_roaming_enabled_get(void)
+{
+    return figure_roaming_enabled;
+}
+
+void figure_roaming_enabled_set(int32_t value)
+{
+    figure_roaming_enabled = value;
+}
+
+figure_profile_clock *figure_profile_frequency_get(void)
+{
+    return &figure_profile_frequency;
+}
+
+phrase_weight_record *phrase_weight_block_get(void)
+{
+    return &phrase_weight_block;
+}
+
+enemy_army_totals_record *enemy_army_totals_get(void)
+{
+    return &enemy_army_totals;
+}
+
+route_candidate_lists *route_candidates_get(void)
+{
+    return &route_candidates;
+}
+
+figure_profile_entry *figure_action_profile_get(void)
+{
+    return figure_action_profile;
+}
+
+uint8_t *figure_missile_frames_get(void)
+{
+    return figure_missile_frames;
+}
+
+int16_t *figure_route_figure_ids_get(void)
+{
+    return figure_route_figure_ids;
+}
+
+int32_t *figure_type_coverage_tag_get(void)
+{
+    return figure_type_coverage_tag;
+}
+
+uint8_t *figure_ship_direction_table_get(void)
+{
+    return figure_ship_direction_table;
+}
+
+figure_type_properties *figure_properties_get(void)
+{
+    return figure_properties;
+}
+
+figure_type_properties *figure_properties_of(int32_t type)
+{
+    return &figure_properties[type];
+}
+
+formation_layout_spot *enemy_formation_layout(int32_t index)
+{
+    return enemy_formation_layout_offsets[index];
 }

@@ -687,7 +687,7 @@ static int32_t provide_coverage(int32_t figure_id)
             b->houses_covered = (int16_t) service_rules[SERVICE_RULE_HOUSES_COVERED_MAX];
         }
     }
-    map_service_visit_increment(figure_type_coverage_tag[type], f->grid_offset);
+    map_service_visit_increment(figure_type_coverage_tag_get()[type], f->grid_offset);
     return 0;
 }
 

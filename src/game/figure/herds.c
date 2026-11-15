@@ -71,8 +71,8 @@ static int32_t herd_move_destination(int32_t formation_id, int32_t radius, bool 
     if (!formation_enemy_move_formation_to(formation_id, *x, *y)) {
         return 0;
     }
-    herd->destination_x = (int16_t) formation_move_result_x;
-    herd->destination_y = (int16_t) formation_move_result_y;
+    herd->destination_x = (int16_t) formation_move_result_x_get();
+    herd->destination_y = (int16_t) formation_move_result_y_get();
     return 1;
 }
 

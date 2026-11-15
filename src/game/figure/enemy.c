@@ -29,6 +29,19 @@
 #include "map/terrain.h"
 #include <stdint.h>
 
+static const char str_enemy_persian[8] = "PERSIAN";
+static const char str_enemy_phoenician[12] = "PHOENICIAN";
+static const char str_enemy_roman[8] = "ROMAN";
+static const char str_enemy_assyrian[12] = "ASSYRIAN";
+static const char str_enemy_canaanite[12] = "CANAANITE";
+static const char str_enemy_nubian[8] = "NUBIAN";
+static const char str_enemy_libian[8] = "LIBIAN";
+static const char str_enemy_kushite[8] = "KUSHITE";
+static const char str_enemy_mitani[8] = "MITANI";
+static const char str_enemy_hittite[8] = "HITTITE";
+static const char str_enemy_seapeople[12] = "SEAPEOPLE";
+static const char str_enemy_hyksos[8] = "HYKSOS";
+
 static const char *enemy_graphics_names[12] = { str_enemy_hyksos, str_enemy_seapeople, str_enemy_hittite, str_enemy_mitani, str_enemy_kushite, str_enemy_libian,
     str_enemy_nubian, str_enemy_canaanite, str_enemy_assyrian, str_enemy_roman, str_enemy_phoenician, str_enemy_persian };
 
@@ -186,11 +199,11 @@ void figure_enemy_properties_init(void)
     }
     image_collection_load_file(enemy_graphics_names[enemy], 2);
     const figure_type_properties *model = enemy_model[enemy];
-    figure_properties[FIGURE_ENEMY_INFANTRY] = model[ENEMY_MODEL_INFANTRY];
-    figure_properties[FIGURE_ENEMY_ARCHER] = model[ENEMY_MODEL_ARCHER];
-    figure_properties[FIGURE_ENEMY_CHARIOT] = model[ENEMY_MODEL_CHARIOT];
-    figure_properties[FIGURE_ENEMY_WARSHIP] = model[ENEMY_MODEL_WARSHIP];
-    figure_properties[FIGURE_ENEMY_TRANSPORT_SHIP] = model[ENEMY_MODEL_TRANSPORT_SHIP];
+    *figure_properties_of(FIGURE_ENEMY_INFANTRY) = model[ENEMY_MODEL_INFANTRY];
+    *figure_properties_of(FIGURE_ENEMY_ARCHER) = model[ENEMY_MODEL_ARCHER];
+    *figure_properties_of(FIGURE_ENEMY_CHARIOT) = model[ENEMY_MODEL_CHARIOT];
+    *figure_properties_of(FIGURE_ENEMY_WARSHIP) = model[ENEMY_MODEL_WARSHIP];
+    *figure_properties_of(FIGURE_ENEMY_TRANSPORT_SHIP) = model[ENEMY_MODEL_TRANSPORT_SHIP];
 }
 
 void enemy_action(void)
@@ -200,9 +213,9 @@ void enemy_action(void)
     formation *m = formation_get(f->formation_id);
     city_player *player = city_player_current();
     f->terrain_usage = TERRAIN_USAGE_ENEMY;
-    int32_t speed = figure_properties[f->type].speed;
+    int32_t speed = figure_properties_of(f->type)->speed;
     player->enemies++;
-    const formation_layout_spot *spot = &enemy_formation_layout_offsets[m->layout][f->index_in_formation];
+    const formation_layout_spot *spot = &enemy_formation_layout(m->layout)[f->index_in_formation];
     f->formation_position_x = (int16_t) spot->x;
     f->formation_position_y = (int16_t) spot->y;
 
@@ -241,9 +254,9 @@ void enemy_action(void)
             }
             uint8_t counter = (uint8_t) (f->wait_ticks_missile + 1);
             f->wait_ticks_missile = counter;
-            if (figure_properties[type].missile_delay < (int32_t) counter) {
+            if (figure_properties_of(type)->missile_delay < (int32_t) counter) {
                 f->wait_ticks_missile = 0;
-                if (figure_combat_get_missile_target_for_enemy(figure_id, figure_properties[type].missile_range) == 0) {
+                if (figure_combat_get_missile_target_for_enemy(figure_id, figure_properties_of(type)->missile_range) == 0) {
                     f->attack_image_offset = 0;
                 } else {
                     f->attack_image_offset = 1;
@@ -405,7 +418,7 @@ static void enemy_images_foot(figure *f, int32_t attack, int32_t corpse, int32_t
     if (f->action_state == FIGURE_ACTION_ATTACK) {
         f->image_id = enemy_attack_image(f, attack, dir);
     } else if (missile_frames && f->action_state == FIGURE_ACTION_ENEMY_INITIAL) {
-        f->image_id = (int32_t) (dir + figure_missile_frames[f->attack_image_offset >> 1] * 8u + attack);
+        f->image_id = (int32_t) (dir + figure_missile_frames_get()[f->attack_image_offset >> 1] * 8u + attack);
     } else if (f->action_state == FIGURE_ACTION_CORPSE) {
         f->image_id = (int32_t) (figure_corpse_offset(f->wait_ticks / 2) + corpse);
     } else if (f->direction == DIRECTION_ATTACK) {
@@ -442,7 +455,7 @@ static void enemy_images_rider(figure *f, int32_t base)
             return;
         }
         if (f->action_state == FIGURE_ACTION_ENEMY_INITIAL) {
-            f->image_id = (int32_t) (dir + ENEMY_IMAGE_RIDER_MISSILE + figure_missile_frames[f->attack_image_offset >> 1] * 8u + base);
+            f->image_id = (int32_t) (dir + ENEMY_IMAGE_RIDER_MISSILE + figure_missile_frames_get()[f->attack_image_offset >> 1] * 8u + base);
             return;
         }
         if (f->action_state == FIGURE_ACTION_CORPSE) {

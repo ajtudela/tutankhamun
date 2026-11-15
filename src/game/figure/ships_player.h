@@ -84,6 +84,6 @@ void warship_attack_ship(int32_t figure_id, int32_t *moving);
 int32_t figure_warship_find_enemy_at(int32_t x, int32_t y, int32_t range);
 int32_t figure_warship_find_enemy(int32_t figure_id, int32_t range);
 
-extern uint8_t figure_ship_direction_table[64];
+uint8_t *figure_ship_direction_table_get(void);
 
 #endif

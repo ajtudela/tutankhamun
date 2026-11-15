@@ -254,7 +254,7 @@ void figure_movement_advance_route_tile(int32_t figure_id)
         }
     }
     if ((masked & TERRAIN_ROAD) || (masked & (TERRAIN_WALKABLE_BUILDING | TERRAIN_ACCESS_RAMP))) {
-        if (!figure_roaming_enabled || !(masked & TERRAIN_BUILDING)) {
+        if (!figure_roaming_enabled_get() || !(masked & TERRAIN_BUILDING)) {
             return;
         }
         switch (b->type) {
@@ -298,7 +298,7 @@ void figure_movement_advance_route_tile(int32_t figure_id)
     if (building_type == BUILDING_FESTIVAL_SQUARE) {
         return;
     }
-    if (building_type != BUILDING_FERRY_LANDING || figure_roaming_enabled) {
+    if (building_type != BUILDING_FERRY_LANDING || figure_roaming_enabled_get()) {
         f->direction = DIRECTION_REROUTE;
         return;
     }
@@ -502,7 +502,7 @@ void figure_movement_walk_ticks(int32_t figure_id, int32_t num_ticks)
         }
         figure_movement_advance_tick(figure_id);
     }
-    figure_roaming_enabled = 0;
+    figure_roaming_enabled_set(0);
 }
 
 void figure_movement_move_ticks(int32_t figure_id, int32_t speed)
@@ -774,8 +774,8 @@ void figure_movement_roam_ticks(int32_t figure_id, int32_t num_ticks)
     figure *f = figure_get(figure_id);
     int32_t attempts = 0;
     if (!f->roam_choose_destination) {
-        figure_roaming_enabled = 1;
-        figure_movement_move_ticks(figure_current_id_get(), figure_properties[f->type].speed);
+        figure_roaming_enabled_set(1);
+        figure_movement_move_ticks(figure_current_id_get(), figure_properties_of(f->type)->speed);
         if (f->direction == DIRECTION_REROUTE || f->direction == DIRECTION_LOST) {
             f->roam_choose_destination = 1;
         } else if (f->direction == DIRECTION_AT_DESTINATION) {
