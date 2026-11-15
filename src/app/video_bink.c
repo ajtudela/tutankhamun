@@ -17,7 +17,7 @@
 #include "platform/platform_file.h"
 #include "video/video_data.h"
 #include "window/window_data.h"
-#include "platform/platform_screen.h"
+#include "app/app_screen.h"
 #include "platform/platform_display.h"
 #include "platform/screen.h"
 #include "third_party/akhenaten_bink/bink_c.h"
@@ -124,7 +124,7 @@ static int32_t surface_lock(platform_surface *surface, platform_frame *frame)
 static int32_t surface_unlock(platform_surface *surface)
 {
     (void) surface;
-    platform_screen_update();
+    app_screen_update();
     platform_screen_render();
     return PLATFORM_SURFACE_OK;
 }
@@ -529,7 +529,7 @@ static void *MEDIA_API bink_open_miles(uint32_t param)
 static uint32_t MEDIA_API bink_dd_surface_type(void *surface)
 {
     (void) surface;
-    vb.last_type = platform_screen_is_565() ? BINKSURFACE565 : BINKSURFACE555;
+    vb.last_type = app_screen_is_565() ? BINKSURFACE565 : BINKSURFACE555;
     return (uint32_t) vb.last_type;
 }
 

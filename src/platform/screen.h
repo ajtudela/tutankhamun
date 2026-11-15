@@ -11,7 +11,8 @@ void platform_screen_destroy(void);
 int32_t platform_screen_resize(int32_t width, int32_t height);
 
 void platform_screen_clear(void);
-void platform_screen_update(void);
+// the frame: 16-bit pixels, width * height of them, RGB565 or RGB555
+void platform_screen_update(const uint16_t *pixels, int32_t width, int32_t height, int32_t is_565);
 void platform_screen_render(void);
 
 void *platform_screen_window(void);

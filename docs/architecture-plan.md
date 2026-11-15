@@ -120,9 +120,10 @@ after the changes of phase 1: the file itself is damaged (1.6).
 
 ### Phase 2: clean layers
 
-- [ ] 2.1. `platform_screen.c` without the game's headers: the game hands its buffer and size over through
-  `platform_screen_set_game_buffer(buffer, width, height, is_565)` from `platform_set_screen_size`
-  (`game/platform/platform_win.c`), or the file moves into `src/game/graphics/`, whichever its callers suggest.
+- [x] 2.1. `platform_screen.c` without the game's headers: its callers are the program's (`app/play.c`,
+  `app/video_bink.c`), so it became `app/app_screen.c`, which reads the game's buffer, size and pixel format and hands
+  them to `platform_screen_update(pixels, width, height, is_565)` of `platform/screen.c`; its external buffer, never
+  set, is gone.
 - [ ] 2.2. `updater.c` without `app/`: what it takes from `app/app_files.h` comes from `main.c` as an argument, or the
   file moves into `src/app/`.
 - [ ] 2.3. `src/game/platform` becomes `src/game/host` (`"host/host_window.h"`, ...); the function prefixes stay for

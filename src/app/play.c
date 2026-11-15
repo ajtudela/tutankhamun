@@ -22,6 +22,7 @@
 
 #include "app/app_files.h"
 #include "app/app_icon.h"
+#include "app/app_screen.h"
 #include "app/media_lib.h"
 #include "app/play_cursors.h"
 #include "building/building_data.h"
@@ -33,7 +34,6 @@
 #include "window/window_id.h"
 #include "game/discord_presence.h"
 #include "graphics/screen_fade.h"
-#include "platform/platform_screen.h"
 #include "platform/platform_dialog.h"
 #include "platform/platform_input.h"
 #include "platform/platform_time.h"
@@ -1013,7 +1013,7 @@ static void frame_begin(void)
 
 static void frame_end(void)
 {
-    platform_screen_update();
+    app_screen_update();
     platform_screen_render();
 #if defined(__EMSCRIPTEN__)
     browser_next_frame();

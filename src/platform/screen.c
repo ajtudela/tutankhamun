@@ -4,15 +4,30 @@
  * Taken from Julius: the function names platform_screen_create / _destroy / _resize / _clear / _update / _render
  * and their shape (one SDL window, renderer and streaming texture; update = clear and copy the texture; render =
  * present). The bodies are this project's: no Julius config, cursor, scaling, fullscreen or platform
- * branches; the game's 16-bit screen buffer converted to ARGB8888 and uploaded in platform_screen_update. */
+ * branches; a 16-bit frame (the program passes the game's, app/app_screen.c) converted to ARGB8888 and uploaded in
+ * platform_screen_update. */
 
 #include "platform/screen.h"
-
-#include "platform/platform_screen.h"
 
 #include <stdlib.h>
 #include <string.h>
 #include "SDL.h"
+
+static inline uint32_t rgb565_to_argb8888(uint16_t pixel)
+{
+    uint32_t r = (uint32_t) ((pixel >> 8) & 0xf8);
+    uint32_t g = (uint32_t) ((pixel >> 3) & 0xfc);
+    uint32_t b = (uint32_t) ((pixel << 3) & 0xf8);
+    return 0xff000000u | (r << 16) | (g << 8) | b;
+}
+
+static inline uint32_t rgb555_to_argb8888(uint16_t pixel)
+{
+    uint32_t r = (uint32_t) ((pixel >> 7) & 0xf8);
+    uint32_t g = (uint32_t) ((pixel >> 2) & 0xf8);
+    uint32_t b = (uint32_t) ((pixel << 3) & 0xf8);
+    return 0xff000000u | (r << 16) | (g << 8) | b;
+}
 
 static struct {
     SDL_Window *window;
@@ -111,11 +126,8 @@ void platform_screen_clear(void)
     }
 }
 
-void platform_screen_update(void)
+void platform_screen_update(const uint16_t *src, int32_t w, int32_t h, int32_t is_565)
 {
-    const uint16_t *src = platform_screen_buffer();
-    int32_t w = platform_screen_width();
-    int32_t h = platform_screen_height();
     int32_t x, y;
 
     if (!sdl.renderer || !sdl.texture || !sdl.argb || !src || w < 1 || h < 1) {
@@ -128,12 +140,11 @@ void platform_screen_update(void)
         }
     }
 
-    int32_t is_565 = platform_screen_is_565();
     for (y = 0; y < h; y++) {
         const uint16_t *row = src + (size_t) y * (size_t) w;
         uint32_t *dst = sdl.argb + (size_t) y * (size_t) w;
         for (x = 0; x < w; x++) {
-            dst[x] = is_565 ? platform_rgb565_to_argb8888(row[x]) : platform_rgb555_to_argb8888(row[x]);
+            dst[x] = is_565 ? rgb565_to_argb8888(row[x]) : rgb555_to_argb8888(row[x]);
         }
     }
 
