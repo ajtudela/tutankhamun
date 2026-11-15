@@ -20,6 +20,7 @@
 #include "city/city_player.h"
 #include "city/resource_type.h"
 #include "figure/figure_data.h"
+#include "figure/figure_phrase.h"
 #include "game/game_data.h"
 #include "map/grid.h"
 #include <string.h>

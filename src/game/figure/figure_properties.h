@@ -52,4 +52,6 @@ static_assert(sizeof(figure_type_properties) == 0x38, "figure_type_properties is
 static_assert(offsetof(figure_type_properties, missile_defense) == 0x10 && offsetof(figure_type_properties, speed) == 0x20 &&
                   offsetof(figure_type_properties, ship_steps) == 0x28, "figure_type_properties is the model file's layout");
 
+extern figure_properties_table figure_properties;
+
 #endif

@@ -73,4 +73,6 @@ void figure_crocodile_action(void);
 void figure_hippo_action(void);
 void figure_asp_action(void);
 
+extern uint8_t cheat_side_show_enabled;
+
 #endif

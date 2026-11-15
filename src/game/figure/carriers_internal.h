@@ -6,6 +6,7 @@
 
 #include "building/building_data.h"
 #include "city/resource_type.h"
+#include "figure/figure.h"
 #include "figure/figure_data.h"
 #include "map/grid.h"
 #include <stdint.h>

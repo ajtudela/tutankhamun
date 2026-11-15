@@ -59,6 +59,14 @@
 #include "sound/sound_play.h"
 #include <stdint.h>
 
+static int32_t military_size_tile_offsets[EXPLOSION_SIZES] = { 0, 0, 0, 1, 1, 2 };
+static const int32_t explosion_size_cloud_offsets[EXPLOSION_SIZES] = { 0, 7, 14, 7, 14, 7 };
+static const int32_t explosion_cloud_drifts[EXPLOSION_CLOUDS][2] = {
+    { 0, -6 }, { -2, -5 }, { -4, -4 }, { -5, -2 }, { -6, 0 }, { -5, -2 }, { -4, -4 }, { -2, -5 },
+    { 0, -6 }, { -2, -5 }, { -4, -4 }, { -5, -2 }, { -6, 0 }, { -5, -2 }, { -4, -4 }, { -2, -5 }
+};
+static const int32_t explosion_cloud_speeds[EXPLOSION_CLOUDS] = { 1, 2, 1, 3, 2, 4, 3, 2, 1, 4, 2, 3, 4, 1, 3, 1 };
+
 int32_t military_rules[MILITARY_RULE_COUNT] = {
     [MILITARY_RULE_MELEE_HIT_TICKS] = 24,
     [MILITARY_RULE_FLANK_ATTACK_BONUS] = 4,

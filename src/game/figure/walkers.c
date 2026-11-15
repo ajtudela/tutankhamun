@@ -26,6 +26,7 @@
 #include "figure/figure_data.h"
 #include "figure/figure_image_group.h"
 #include "figure/figure_type.h"
+#include "figure/formation.h"
 #include "figure/military.h"
 #include "figure/movement.h"
 #include "graphics/image_collection.h"

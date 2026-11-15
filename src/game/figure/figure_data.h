@@ -26,35 +26,7 @@ static inline const formation_layout_spot *herd_spawn_offsets(void)
     return enemy_formation_layout_offsets[FORMATION_LAYOUT_HERD_SPAWN];
 }
 
-extern uint8_t figure_corpse_offsets[256];
-
-extern uint8_t figure_missile_frames[336];
-
-extern int32_t figure_type_coverage_tag[110];
-
-extern int8_t figure_cart_offsets[16];
-
-extern uint8_t figure_ship_direction_table[64];
-
-extern global_function figure_action_table[110];
-
 extern const char *figure_type_debug_names[110];
-
-extern int32_t military_size_tile_offsets[EXPLOSION_SIZES];
-
-extern const int32_t explosion_size_cloud_offsets[EXPLOSION_SIZES];
-
-extern const int32_t explosion_cloud_drifts[EXPLOSION_CLOUDS][2];
-
-extern const int32_t explosion_cloud_speeds[EXPLOSION_CLOUDS];
-
-extern const formation_layout_spot enemy_formation_spots[ENEMY_FORMATION_LAYOUTS][ENEMY_FORMATION_SPOT_DIRECTIONS][ENEMY_FORMATION_SPOTS];
-
-extern int16_t enemy_attack_priority[400];
-
-extern int16_t enemy_attack_fallback[100];
-
-extern const char *enemy_graphics_names[12];
 
 extern const char str_enemy_persian[8];
 extern const char str_enemy_phoenician[12];
@@ -185,64 +157,8 @@ extern const char str_horn2_wav[16];
 
 extern const char str_drums_wav[132];
 
-extern int32_t animal_threat_types[8];
-
-extern int32_t animal_prey_types[7];
-
-extern int32_t hippo_water_grid_offsets[9];
-
-extern int32_t hippo_actions[4];
-
-extern int32_t crocodile_water_grid_offsets[8];
-
-extern int32_t crocodile_actions[2];
-
-extern uint8_t cheat_side_show_enabled;
-
-extern figure_properties_table figure_properties;
-
 extern route_candidate_lists route_candidates;
 
-extern figure_profile_clock figure_profile_frequency;
-
-extern figure_profile_table figure_action_profile;
-
 extern uint8_t formation_globals_block[16];
-
-extern int32_t formation_move_result_y;
-
-extern int32_t formation_move_result_x;
-
-extern int32_t figure_roaming_enabled;
-
-extern int32_t figure_search_best_distance;
-
-extern int32_t figure_highest_id;
-
-extern int32_t figure_unused_counter;
-
-extern figure_table city_figures;
-
-extern int16_t figure_route_figure_ids[1000];
-
-extern enemy_army_totals_record enemy_army_totals;
-
-extern int32_t figure_count_processed;
-
-extern int32_t figure_current_id;
-
-extern int32_t figure_created_sequence;
-
-extern uint8_t figure_profile_qpc_available;
-
-extern int32_t map_result_y;
-
-extern int32_t map_result_x;
-
-extern int32_t figure_image_direction;
-
-extern int32_t figure_phrase_id;
-
-extern phrase_weight_record phrase_weight_block;
 
 #endif

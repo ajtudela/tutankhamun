@@ -29,4 +29,6 @@ void figure_spear_action(void);
 int32_t missile_hit_target(int32_t figure_id);
 int32_t soldier_find_enemy(int32_t x, int32_t y, int32_t max_distance, int32_t figure_id);
 
+extern uint8_t figure_missile_frames[336];
+
 #endif

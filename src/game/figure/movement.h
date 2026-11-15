@@ -75,4 +75,6 @@ void figure_movement_set_cross_country_direction(int32_t figure_id, int32_t x_sr
 int32_t figure_bridge_height(int32_t sprite);
 int32_t figure_movement_can_launch_cross_country_missile(int32_t x_src, int32_t y_src, int32_t x_dst, int32_t y_dst);
 
+extern int32_t figure_roaming_enabled;
+
 #endif

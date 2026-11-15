@@ -7,6 +7,8 @@
 #include "building/monument_data.h"
 #include "city/city_data.h"
 #include "editor/editor_data.h"
+#include "figure/formation.h"
+#include "figure/route.h"
 #include "game/game_data.h"
 #include "io/io_data.h"
 #include "map/grid.h"

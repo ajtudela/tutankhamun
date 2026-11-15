@@ -12,6 +12,7 @@
 #include "city/city_player.h"
 #include "figure/figure.h"
 #include "figure/figure_type.h"
+#include "figure/service.h"
 #include "map/grid.h"
 #include "map/map_data.h"
 #include "map/service_visit.h"

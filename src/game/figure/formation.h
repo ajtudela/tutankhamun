@@ -8,6 +8,7 @@
 #ifndef FIGURE_FORMATION_H
 #define FIGURE_FORMATION_H
 
+#include "figure/formation_layout_types.h"
 #include "figure/formation_types.h"
 #include "window/window_data.h"
 #include <stdint.h>
@@ -178,5 +179,10 @@ void formation_update_morale_after_death(int32_t formation_id);
 void formation_change_all_legion_morale(int32_t amount);
 void formation_change_all_enemy_morale(int32_t amount);
 int32_t formation_find_closest_academy(int32_t formation_id);
+
+extern int32_t formation_move_result_x;
+extern int32_t formation_move_result_y;
+extern int32_t figure_unused_counter;
+extern enemy_army_totals_record enemy_army_totals;
 
 #endif

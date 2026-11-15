@@ -37,6 +37,13 @@
 #include <stdbool.h>
 #include <stdint.h>
 
+static int32_t animal_threat_types[8] = { 73, 82, 83, 84, 102, 103, 104 };
+static int32_t animal_prey_types[7] = { 70, 68, 69, -228, -1, 228, 1 };
+static int32_t hippo_water_grid_offsets[9] = { -228, -227, 1, 229, 228, 227, -1, -229 };
+static int32_t hippo_actions[4] = { 19, 18, 26, 25 };
+static int32_t crocodile_water_grid_offsets[8] = { -228, -227, 1, 229, 228, 227, -1, -229 };
+static int32_t crocodile_actions[2] = { 19, 18 };
+
 int32_t animal_rules[ANIMAL_RULE_COUNT] = {
     [ANIMAL_RULE_DYING_TICKS] = 500,
     [ANIMAL_RULE_NO_TILE_WAIT_TICKS] = 100,

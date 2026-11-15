@@ -65,4 +65,7 @@ void map_terrain_init_outside_map(void);
 int32_t map_grid_offset_is_outside(int32_t offset);
 void map_property_init_alternate_terrain(void);
 
+extern int32_t map_result_x;
+extern int32_t map_result_y;
+
 #endif

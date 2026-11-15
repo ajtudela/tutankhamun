@@ -55,4 +55,6 @@ int32_t service_provide_dancer_coverage(int32_t x, int32_t y);
 int32_t service_provide_senet_coverage(int32_t x, int32_t y);
 int32_t service_provide_zoo_coverage(int32_t x, int32_t y);
 
+extern int32_t figure_type_coverage_tag[110];
+
 #endif

@@ -20,6 +20,8 @@
 #include "core/calc.h"
 #include "core/crt_compat.h"
 #include "core/random.h"
+#include "figure/action.h"
+#include "figure/formation.h"
 #include "game/static_init.h"
 #include "core/text.h"
 #include "editor/editor_data.h"

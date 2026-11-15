@@ -150,10 +150,13 @@ move, each into the header of the module that owns the data (`extern int32_t far
   use the building tables include `building_data.h` themselves; 128 files include it, 130 `window_data.h`.
 - [ ] 3.4. One owner per commit: `figure_data.h`, `widget_data.h`, `graphics_data.h`, then `window_data.h`,
   `building_data.h` and `monument_data.h` in series by subsystem (pyramids, tombs, temple complexes, ...).
+  - [x] `figure_data.h`: 42 of its 44 externs used elsewhere moved into the figure headers (the figure records and
+    the shared figure state into `figure/figure.h`, the result tile of a map search into `map/grid.h`);
+    `enemy_formation_layout_offsets` stays for its inline readers there, `route_candidates` for three modules.
 - [ ] 3.5. An emptied `*_data.h` is removed, or kept for its `*_data.c` alone.
 
-A script (`tools/extern_owners.py`) lists for each `extern` of a `*_data.h` the modules that use it: one module takes
-it, several take it in the header of the module it belongs to. Each commit: the MSVC Win32 build and the regression;
+A one-off search lists for each `extern` of a `*_data.h` the modules that use it: one module takes it, several take
+it in the header of the module it belongs to. Each commit: the MSVC Win32 build and the regression;
 its message gives the number of files that still include `building_data.h` and `window_data.h`.
 
 Phase 3 starts only with the regression of phase 1 in place.
@@ -169,19 +172,20 @@ Phase 3 starts only with the regression of phase 1 in place.
 - [ ] 4.3. The fixed-size string globals of `io/io_data.c` that are neither saved nor reached by offset become
   literals.
 
-### Phase 5: fewer `extern`s
+### Phase 5: no `extern` in the headers
 
-A global that only its own module uses needs no `extern` at all. Where the saved games and the original's layout allow
-it, the global leaves the shared tables:
+A header declares types and functions only. A global is `static` in the `.c` of the module that owns it, and the
+other modules reach it through that module's functions.
 
-- [ ] 5.1. A global used by one file becomes `static` in that file.
-- [ ] 5.2. A global used by one module becomes the module's own state, `static` in its `.c`, read and changed by the
-  module's functions.
-- [ ] 5.3. A table only read becomes `static const` beside its reader.
+- [ ] 5.1. A global used only where it is defined loses its `extern`.
+- [ ] 5.2. A global used by one other file moves into it as `static`, `static const` when nothing writes it (done
+  for 15 tables of `figure_data.c`: the animals', the explosions', the enemies' attack lists, ...).
+- [ ] 5.3. A global used by several files is `static` in its module, with access functions: a pointer to the record
+  or the table, a get and a set for a value.
+- [ ] 5.4. The saved game's chunk tables (`io/io_data.c`) take the addresses from the owners' functions.
 
-A global stays where it is, with its `extern`, when a saved chunk points at it (`io/io_data.c`'s chunk tables), when it
-is read by offset or past its end (the reason is in its file's header), or when moving it changes the regression.
-`tools/extern_owners.py` lists the candidates: the `extern`s with one using file or one using module.
+Each step keeps the regression the same. The search of 2426 `extern`s in all the headers: 940 used only where
+defined, 623 by one other file, 921 by one module.
 
 | phase | commits | after |
 |---|---|---|
@@ -190,4 +194,4 @@ is read by offset or past its end (the reason is in its file's header), or when 
 | 2. layers | 4 | 1 |
 | 3. declarations by module | 15-30 | 1, 2 |
 | 4. the rest | 3-5 | 1 |
-| 5. fewer `extern`s | by module | 3 |
+| 5. no `extern` in the headers | by module | 3 |

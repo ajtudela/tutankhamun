@@ -6,6 +6,7 @@
 #define FIGURE_MILITARY_H
 
 #include "city/difficulty.h"
+#include "figure/formation_layout_types.h"
 #include "map/grid.h"
 #include <stdbool.h>
 #include <stdint.h>

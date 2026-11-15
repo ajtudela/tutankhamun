@@ -12,6 +12,15 @@
 #include <stddef.h>
 #include <stdint.h>
 
+extern figure_table city_figures;
+extern int32_t figure_current_id;
+extern int32_t figure_highest_id;
+extern int32_t figure_image_direction;
+extern int32_t figure_created_sequence;
+extern uint8_t figure_corpse_offsets[256];
+extern int32_t figure_search_best_distance;
+extern int8_t figure_cart_offsets[16];
+
 static inline figure *figure_get(int32_t id)
 {
     return &city_figures.records[id];

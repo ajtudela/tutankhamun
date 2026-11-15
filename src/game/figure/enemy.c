@@ -19,6 +19,7 @@
 #include "figure/formation.h"
 #include "figure/military.h"
 #include "figure/military_internal.h"
+#include "figure/missiles.h"
 #include "figure/movement.h"
 #include "figure/route.h"
 #include "graphics/image_collection.h"
@@ -26,6 +27,9 @@
 #include "map/routing.h"
 #include "map/terrain.h"
 #include <stdint.h>
+
+static const char *enemy_graphics_names[12] = { str_enemy_hyksos, str_enemy_seapeople, str_enemy_hittite, str_enemy_mitani, str_enemy_kushite, str_enemy_libian,
+    str_enemy_nubian, str_enemy_canaanite, str_enemy_assyrian, str_enemy_roman, str_enemy_phoenician, str_enemy_persian };
 
 int32_t enemy_find_soldier(int32_t x, int32_t y)
 {
