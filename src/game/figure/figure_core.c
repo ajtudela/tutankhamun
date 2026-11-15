@@ -561,7 +561,7 @@ int32_t map_figure_count_at(int32_t grid_offset)
     int32_t id = map_grids.figure_ids[grid_offset];
     while (id != 0) {
         count++;
-        id = city_figures.records[id].next_figure_id_on_same_tile;
+        id = figure_get(id)->next_figure_id_on_same_tile;
     }
     return count;
 }

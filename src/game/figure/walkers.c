@@ -477,8 +477,8 @@ static int32_t venue_matches(int32_t building_type, int32_t first, int32_t secon
 
 static int32_t venue_grid(int32_t building_id)
 {
-    int32_t x = city_buildings.records[building_id].road_access_x;
-    int32_t y = city_buildings.records[building_id].road_access_y;
+    int32_t x = building_get(building_id)->road_access_x;
+    int32_t y = building_get(building_id)->road_access_y;
     return map_info.grid_start + x + y * GRID_SIZE;
 }
 
@@ -494,21 +494,21 @@ int32_t figure_entertainer_determine_destination(int32_t figure_id)
     route_candidates.count = 0;
     if (building_highest_id >= 1) {
         for (int32_t id = 1; id <= building_highest_id; id++) {
-            if (city_buildings.records[id].state != BUILDING_STATE_IN_USE || city_buildings.records[id].num_workers <= 0) {
+            if (building_get(id)->state != BUILDING_STATE_IN_USE || building_get(id)->num_workers <= 0) {
                 continue;
             }
-            int32_t building_type = city_buildings.records[id].type;
+            int32_t building_type = building_get(id)->type;
             if (!venue_matches(building_type, first, second, third) || building_main(id) != id) {
                 continue;
             }
             if ((figure_type == FIGURE_JUGGLER || figure_type == FIGURE_SENET_PLAYER || figure_type == FIGURE_ZOOKEEPER) &&
-                city_buildings.records[id].data.entertainment.show_days_left[0] != 0) {
+                building_get(id)->data.entertainment.show_days_left[0] != 0) {
                 continue;
             }
-            if (figure_type == FIGURE_MUSICIAN && city_buildings.records[id].data.entertainment.show_days_left[1] != 0) {
+            if (figure_type == FIGURE_MUSICIAN && building_get(id)->data.entertainment.show_days_left[1] != 0) {
                 continue;
             }
-            if (figure_type == FIGURE_DANCER && city_buildings.records[id].data.entertainment.show_days_left[2] != 0) {
+            if (figure_type == FIGURE_DANCER && building_get(id)->data.entertainment.show_days_left[2] != 0) {
                 continue;
             }
             int32_t count = route_candidates.count;
@@ -529,28 +529,28 @@ int32_t figure_entertainer_determine_destination(int32_t figure_id)
     map_routing_calculate_distances(f->x, f->y);
     if (building_highest_id >= 1) {
         for (int32_t id = 1; id <= building_highest_id; id++) {
-            if (city_buildings.records[id].state != BUILDING_STATE_IN_USE || city_buildings.records[id].num_workers <= 0) {
+            if (building_get(id)->state != BUILDING_STATE_IN_USE || building_get(id)->num_workers <= 0) {
                 continue;
             }
-            int32_t building_type = city_buildings.records[id].type;
+            int32_t building_type = building_get(id)->type;
             if (!venue_matches(building_type, first, second, third) || building_main(id) != id) {
                 continue;
             }
             int32_t distance = routing_grids.distance[venue_grid(id)];
             if (figure_type == FIGURE_JUGGLER) {
-                uint8_t shown = city_buildings.records[id].data.entertainment.show_days_left[0];
+                uint8_t shown = building_get(id)->data.entertainment.show_days_left[0];
                 if (shown != 0) {
                     distance += shown;
                 }
             }
             if (figure_type == FIGURE_MUSICIAN) {
-                uint8_t shown = city_buildings.records[id].data.entertainment.show_days_left[1];
+                uint8_t shown = building_get(id)->data.entertainment.show_days_left[1];
                 if (shown != 0) {
                     distance += shown;
                 }
             }
             if (figure_type == FIGURE_DANCER) {
-                uint8_t shown = city_buildings.records[id].data.entertainment.show_days_left[2];
+                uint8_t shown = building_get(id)->data.entertainment.show_days_left[2];
                 if (shown != 0) {
                     distance += shown;
                 }
@@ -565,8 +565,8 @@ int32_t figure_entertainer_determine_destination(int32_t figure_id)
         return 0;
     }
     f->destination_building_id = (int16_t) best_id;
-    f->destination_x = city_buildings.records[best_id].road_access_x;
-    f->destination_y = city_buildings.records[best_id].road_access_y;
+    f->destination_x = building_get(best_id)->road_access_x;
+    f->destination_y = building_get(best_id)->road_access_y;
     return best_id;
 }
 

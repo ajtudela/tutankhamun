@@ -195,8 +195,8 @@ static void seth_curse_kill(int32_t figure_id)
         return;
     }
     int32_t path_byte = ((figure_id - MAX_FIGURES) * (int32_t) sizeof(figure)) + (int32_t) offsetof(figure, state);
-    if (path_byte < (int32_t) sizeof(city_figures.route_paths)) {
-        city_figures.route_paths[path_byte] = FIGURE_STATE_DEAD;
+    if (path_byte < (int32_t) MAX_PATHS * MAX_PATH_LENGTH) {
+        figure_route_paths()[path_byte] = FIGURE_STATE_DEAD;
     }
 }
 

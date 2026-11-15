@@ -427,12 +427,12 @@ void figure_combat_attack_figure_at(int32_t figure_id, int32_t opponent_id)
 
 void figure_combat_attack_adjacent(int32_t figure_id)
 {
-    int32_t offset = city_figures.records[figure_id].grid_offset;
+    int32_t offset = figure_get(figure_id)->grid_offset;
     for (int32_t d = 0; d < DIRECTION_COUNT; d++) {
-        if (city_figures.records[figure_id].action_state == FIGURE_ACTION_ATTACK) {
+        if (figure_get(figure_id)->action_state == FIGURE_ACTION_ATTACK) {
             return;
         }
-        switch (city_figures.records[figure_id].type) {
+        switch (figure_get(figure_id)->type) {
             case FIGURE_FISHING_BOAT:
             case FIGURE_TRANSPORT_SHIP:
             case FIGURE_WARSHIP:
@@ -1985,7 +1985,7 @@ int32_t figure_next_route_direction(int32_t figure_id)
     if (f->routing_path_current_tile >= f->routing_path_length) {
         return 8;
     }
-    return city_figures.route_paths[(f->routing_path_id * 500) + f->routing_path_current_tile];
+    return figure_route_paths()[(f->routing_path_id * 500) + f->routing_path_current_tile];
 }
 
 static int32_t ship_image_direction(const figure *f)

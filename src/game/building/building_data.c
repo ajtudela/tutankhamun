@@ -2,6 +2,7 @@
 // names. building/building_data.h declares them.
 
 #include "building/monument_object.h"
+#include "building/building.h"
 #include "window/advisor/ratings.h"
 #include "building/house_evolve.h"
 
@@ -744,7 +745,17 @@ static_assert(sizeof(building_storage) * 200 == 39200, "building_storages is the
 building_storage building_storages[200];
 
 static_assert(sizeof(building_table) == 1056108, "city_buildings is the savegame's building table of 1056108 bytes");
-building_table city_buildings;
+static building_table city_buildings;
+
+building_table *building_table_get(void)
+{
+    return &city_buildings;
+}
+
+building *building_get(int32_t id)
+{
+    return &city_buildings.records[id];
+}
 
 static_assert(sizeof(ferry_path) * 50 == 2200, "ferry_path_records is the savegame's ferry path table of 2200 bytes");
 ferry_path ferry_path_records[50];

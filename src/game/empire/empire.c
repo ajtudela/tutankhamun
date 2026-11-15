@@ -452,7 +452,7 @@ void empire_city_generate_trader(void)
                 continue;
             }
             int32_t ship_id = figure_create(city_current_player, FIGURE_TRADE_SHIP, scenario_data.river_entry_x, scenario_data.river_entry_y, 0);
-            figure *ship = &city_figures.records[ship_id];
+            figure *ship = figure_get(ship_id);
             ship->resource_amount = (int16_t) empire_trade_rules[EMPIRE_TRADE_RULE_SHIP_LOADS];
             ship->trader_amount_bought = 0;
             ship->empire_city_id = (uint8_t) id;
@@ -467,16 +467,16 @@ void empire_city_generate_trader(void)
         }
         int32_t caravan_id = figure_create(city_current_player, FIGURE_TRADE_CARAVAN, player->entry_point_x, player->entry_point_y, 0);
         c->trader_figures[slot] = (int16_t) caravan_id;
-        figure *caravan = &city_figures.records[caravan_id];
+        figure *caravan = figure_get(caravan_id);
         caravan->empire_city_id = (uint8_t) id;
         caravan->action_state = FIGURE_ACTION_TRADE_CARAVAN_CREATED;
         caravan->wait_ticks = (int16_t) empire_trade_rules[EMPIRE_TRADE_RULE_TRADER_WAIT_TICKS];
         int32_t donkey1_id = figure_create(city_current_player, FIGURE_TRADE_CARAVAN_DONKEY, player->entry_point_x, player->entry_point_y, 0);
-        city_figures.records[donkey1_id].action_state = FIGURE_ACTION_TRADE_CARAVAN_CREATED;
-        city_figures.records[donkey1_id].leading_figure_id = (int16_t) caravan_id;
+        figure_get(donkey1_id)->action_state = FIGURE_ACTION_TRADE_CARAVAN_CREATED;
+        figure_get(donkey1_id)->leading_figure_id = (int16_t) caravan_id;
         int32_t donkey2_id = figure_create(city_current_player, FIGURE_TRADE_CARAVAN_DONKEY, player->entry_point_x, player->entry_point_y, 0);
-        city_figures.records[donkey2_id].action_state = FIGURE_ACTION_TRADE_CARAVAN_CREATED;
-        city_figures.records[donkey2_id].leading_figure_id = (int16_t) donkey1_id;
+        figure_get(donkey2_id)->action_state = FIGURE_ACTION_TRADE_CARAVAN_CREATED;
+        figure_get(donkey2_id)->leading_figure_id = (int16_t) donkey1_id;
         return;
     }
 }

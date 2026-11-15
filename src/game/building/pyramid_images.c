@@ -640,8 +640,8 @@ static void place_part_figures(int32_t grid_offset, int32_t mark, int32_t x, int
         if (last_tile) {
             *last_tile = tile;
         }
-        for (int32_t id = map_grids.figure_ids[tile]; id > 0; id = city_figures.records[id].next_figure_id_on_same_tile) {
-            int32_t pixel = city_figures.records[id].pyramid_walk_mode;
+        for (int32_t id = map_grids.figure_ids[tile]; id > 0; id = figure_get(id)->next_figure_id_on_same_tile) {
+            int32_t pixel = figure_get(id)->pyramid_walk_mode;
             if (mark == 3) {
                 if (pixel == 3) {
                     city_draw_figure(id, x, y, 0);

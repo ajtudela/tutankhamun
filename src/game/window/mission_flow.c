@@ -292,7 +292,7 @@ static void store_monument_position(const building *b, int32_t id)
         campaign_object.monuments.library_y = (int16_t) (b->y + 2);
     }
     if (b->type == BUILDING_LIGHTHOUSE) {
-        const building *main = &city_buildings.records[id - b->subtype];
+        const building *main = building_get(id - b->subtype);
         campaign_object.monuments.lighthouse_x = main->x;
         campaign_object.monuments.lighthouse_y = main->y;
     }
@@ -316,7 +316,7 @@ void mission_records_store(void)
     store_best_legions();
     if (mission_options(settings_data.mission_id)[MISSION_OPTION_STORE_MONUMENTS] == '1') {
         for (int32_t id = 1; id < MAX_BUILDINGS; id++) {
-            const building *b = &city_buildings.records[id];
+            const building *b = building_get(id);
             if (b->state == BUILDING_STATE_IN_USE) {
                 store_monument_position(b, id);
             }
@@ -364,7 +364,7 @@ static bool move_to_next_link(int32_t next)
 static void store_large_tomb_position(void)
 {
     for (int32_t id = 1; id < MAX_BUILDINGS; id++) {
-        const building *b = &city_buildings.records[id];
+        const building *b = building_get(id);
         if (b->type == BUILDING_LARGE_ROYAL_TOMB) {
             campaign_object.monuments.large_tomb_x = (int16_t) (b->x + 1);
             campaign_object.monuments.large_tomb_y = (int16_t) (b->y + 17);
@@ -525,7 +525,7 @@ void mission_records_apply(void)
 
 static int32_t monument_progress(int32_t id)
 {
-    switch (city_buildings.records[id].type) {
+    switch (building_get(id)->type) {
         case BUILDING_PYRAMID: {
             pyramid_progress info;
             pyramid_get_progress_info(id, &info);
@@ -533,7 +533,7 @@ static int32_t monument_progress(int32_t id)
         }
         case BUILDING_SMALL_OBELISK:
         case BUILDING_LARGE_OBELISK:
-            return city_buildings.records[id].data.obelisk.progress;
+            return building_get(id)->data.obelisk.progress;
         case BUILDING_SPHINX:
             return city_player_current()->sphinx_stage * 100 / 16;
         case BUILDING_SUN_TEMPLE:

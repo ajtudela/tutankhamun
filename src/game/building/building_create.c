@@ -61,7 +61,7 @@ static int32_t run_is_free(int32_t first_id, int32_t count)
 {
     int32_t end = first_id + count;
     for (int32_t id = first_id + 1; id < end; id++) {
-        if (city_buildings.records[id].state != BUILDING_STATE_UNUSED) {
+        if (building_get(id)->state != BUILDING_STATE_UNUSED) {
             return 0;
         }
     }
@@ -76,7 +76,7 @@ static int32_t run_is_free(int32_t first_id, int32_t count)
 static int32_t find_free_run(int32_t count)
 {
     for (int32_t id = 1; id < MAX_BUILDINGS; id++) {
-        if (city_buildings.records[id].state == BUILDING_STATE_UNUSED && game_undo_contains_building(id) == 0 && (count <= 1 || run_is_free(id, count))) {
+        if (building_get(id)->state == BUILDING_STATE_UNUSED && game_undo_contains_building(id) == 0 && (count <= 1 || run_is_free(id, count))) {
             return id;
         }
     }

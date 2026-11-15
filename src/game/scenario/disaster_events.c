@@ -146,7 +146,7 @@ void scenario_earthquake_destroy_tile(int32_t x, int32_t y)
         sound_effect_play(SOUND_EFFECT_BUILDING_DESTROYED);
     }
     if (map_grids.building_ids[grid_offset]) {
-        city_buildings.records[map_grids.building_ids[grid_offset]].state = BUILDING_STATE_DELETED_BY_GAME;
+        building_get(map_grids.building_ids[grid_offset])->state = BUILDING_STATE_DELETED_BY_GAME;
     }
     map_grids.terrain[grid_offset] = 0;
     map_tiles_set_fault_image(x, y, 1);

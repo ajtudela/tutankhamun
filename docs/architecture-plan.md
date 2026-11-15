@@ -181,8 +181,10 @@ other modules reach it through that module's functions.
 - [ ] 5.2. A global used by one other file moves into it as `static`, `static const` when nothing writes it (done
   for 15 tables of `figure_data.c`: the animals', the explosions', the enemies' attack lists, ...).
 - [ ] 5.3. A global used by several files is `static` in its module, with access functions: a pointer to the record
-  or the table, a get and a set for a value.
-- [ ] 5.4. The saved game's chunk tables (`io/io_data.c`) take the addresses from the owners' functions.
+  or the table, a get and a set for a value (done for `city_figures` and `city_buildings`: `figure_get`,
+  `figure_route_paths`, `figure_table_get`, `building_get`, `building_table_get`, no longer inline).
+- [ ] 5.4. The saved game's chunk tables (`io/io_data.c`) take the addresses from the owners' functions (the figures',
+  the route paths' and the buildings' chunks are set in `game_file_init_save_chunk_table_ext`).
 
 Each step keeps the regression the same. The search of 2426 `extern`s in all the headers: 940 used only where
 defined, 623 by one other file, 921 by one module.

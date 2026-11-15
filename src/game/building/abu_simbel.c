@@ -196,8 +196,8 @@ bool abu_simbel_can_place(monument_object *object, int32_t grid_offset)
 
 void abu_simbel_draw_built_parts(abu_simbel_object_t *self, int32_t building_id, int32_t x, int32_t y)
 {
-    int32_t main_id = building_id - city_buildings.records[building_id].subtype;
-    const uint8_t *flags = city_buildings.records[main_id].data.abu_simbel.built_parts;
+    int32_t main_id = building_id - building_get(building_id)->subtype;
+    const uint8_t *flags = building_get(main_id)->data.abu_simbel.built_parts;
     int32_t view = map_info.orientation / 2;
     for (int32_t n = 0; n < ABU_SIMBEL_BUILT_PARTS; n++) {
         if (flags[n] == 0) {

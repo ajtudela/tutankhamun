@@ -76,7 +76,7 @@ void figure_route_remove(int32_t figure_id)
 
 void figure_route_clear_all(void)
 {
-    memset(city_figures.route_paths, 0, MAX_PATHS * MAX_PATH_LENGTH);
+    memset(figure_route_paths(), 0, MAX_PATHS * MAX_PATH_LENGTH);
     memset(figure_route_figure_ids, 0, MAX_PATHS * sizeof(int16_t));
 }
 

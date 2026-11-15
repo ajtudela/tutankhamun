@@ -41,7 +41,7 @@ void routing_queue_reset(int32_t source_offset)
 
 void routing_store_path(int32_t path_id, int32_t length)
 {
-    uint8_t *path = &city_figures.route_paths[path_id * MAX_PATH_LENGTH];
+    uint8_t *path = &figure_route_paths()[path_id * MAX_PATH_LENGTH];
     for (int32_t i = 0; i < length; i++) {
         path[i] = routing_grids.direction_path_tmp[length - 1 - i];
     }

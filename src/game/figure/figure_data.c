@@ -5,6 +5,7 @@
 #include "figure/figure_data.h"
 #include "figure/animals_internal.h"
 #include "figure/carriers.h"
+#include "figure/figure.h"
 #include "figure/natives.h"
 #include "figure/walkers.h"
 #include "figure/military.h"
@@ -316,7 +317,22 @@ int32_t figure_highest_id;
 int32_t figure_unused_counter;
 
 static_assert(sizeof(figure_table) == 1276000, "city_figures is the savegame's figure table of 1276000 bytes");
-figure_table city_figures;
+static figure_table city_figures;
+
+figure_table *figure_table_get(void)
+{
+    return &city_figures;
+}
+
+figure *figure_get(int32_t id)
+{
+    return &city_figures.records[id];
+}
+
+uint8_t *figure_route_paths(void)
+{
+    return city_figures.route_paths;
+}
 
 int16_t figure_route_figure_ids[1000];
 

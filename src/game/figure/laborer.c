@@ -1463,18 +1463,18 @@ void building_work_camp_spawn_figure(floods *self, int32_t building_id)
 void laborer_arrive_at_farm(floods *self, int32_t figure_id)
 {
     (void) self;
-    int32_t farm = city_figures.records[figure_id].destination_building_id;
-    int32_t home = city_figures.records[figure_id].building_id;
+    int32_t farm = figure_get(figure_id)->destination_building_id;
+    int32_t home = figure_get(figure_id)->building_id;
     if (!building_is_farm(farm)) {
-        city_buildings.records[home].data.industry.labor_days_left[1] = (uint8_t) laborer_rules[LABORER_RULE_CAMP_LABOR_DAYS];
+        building_get(home)->data.industry.labor_days_left[1] = (uint8_t) laborer_rules[LABORER_RULE_CAMP_LABOR_DAYS];
         return;
     }
-    city_figures.records[figure_id].state = FIGURE_STATE_DEAD;
+    figure_get(figure_id)->state = FIGURE_STATE_DEAD;
     if (city_locusts_countdown != 0) {
         return;
     }
-    building *farm_building = &city_buildings.records[farm];
-    city_buildings.records[home].data.industry.labor_days_left[0] = (uint8_t) laborer_rules[LABORER_RULE_CAMP_LABOR_DAYS];
+    building *farm_building = building_get(farm);
+    building_get(home)->data.industry.labor_days_left[0] = (uint8_t) laborer_rules[LABORER_RULE_CAMP_LABOR_DAYS];
     farm_building->data.industry.labor_days_left[0] = (uint8_t) laborer_rules[LABORER_RULE_FARM_LABOR_DAYS];
     farm_building->data.industry.worker_count++;
     farm_building->data.industry.worker_figure_id = 0;
@@ -1487,8 +1487,8 @@ bool laborer_farm_work_waiting(floods *self)
         return 0;
     }
     for (int32_t id = 1; id <= MAX_BUILDINGS - 1; id++) {
-        if (city_buildings.records[id].state == BUILDING_STATE_IN_USE && building_is_farm(id) &&
-            building_is_on_floodplain(id) && city_buildings.records[id].data.industry.worker_figure_id == 0 &&
+        if (building_get(id)->state == BUILDING_STATE_IN_USE && building_is_farm(id) &&
+            building_is_on_floodplain(id) && building_get(id)->data.industry.worker_figure_id == 0 &&
             city_labor_industry_is_mothballed(id) == 0) {
             return 1;
         }

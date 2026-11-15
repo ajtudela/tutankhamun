@@ -813,7 +813,7 @@ int32_t figure_route_find_ferry_on_path(int32_t figure_id, int32_t ferry_buildin
             }
             return FERRY_ON_PATH_UNSTAFFED;
         }
-        grid_offset += map_grid_direction_delta[city_figures.route_paths[f->routing_path_id * 500 + i]];
+        grid_offset += map_grid_direction_delta[figure_route_paths()[f->routing_path_id * 500 + i]];
     }
     return FERRY_NOT_ON_PATH;
 }

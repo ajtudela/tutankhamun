@@ -734,12 +734,12 @@ bool royal_tomb_anim_tick(tomb_object *self)
 
 bool royal_tomb_part_worker_active(tomb_object *self, int32_t building_id)
 {
-    building *part = &city_buildings.records[building_id];
+    building *part = building_get(building_id);
     int32_t figure_id = part->data.royal_tomb.worker_figure_id;
     if (figure_id == 0) {
         return 0;
     }
-    const figure *worker = &city_figures.records[figure_id];
+    const figure *worker = figure_get(figure_id);
     if (worker->state != FIGURE_STATE_NONE) {
         int32_t action = worker->action_state;
         if (action == FIGURE_ACTION_ON_FERRY || action == FIGURE_ACTION_WAIT_FOR_FERRY) {

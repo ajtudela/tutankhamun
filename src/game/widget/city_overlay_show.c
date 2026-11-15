@@ -28,7 +28,7 @@ bool city_with_overlay_show_building(int32_t building_id)
     if (overlay == OVERLAY_HIDE_CLIFFS) {
         return 1;
     }
-    if (overlay == OVERLAY_FIRE && city_buildings.records[building_id].fire_duration != 0) {
+    if (overlay == OVERLAY_FIRE && building_get(building_id)->fire_duration != 0) {
         return 1;
     }
     int32_t *list = overlay_show_building_lists[overlay];

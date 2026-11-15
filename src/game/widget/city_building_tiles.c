@@ -55,7 +55,7 @@ int32_t city_building_cart_pusher_waiting(const building *b)
     if (b->figure_id == 0) {
         return 0;
     }
-    const figure *f = &city_figures.records[b->figure_id];
+    const figure *f = figure_get(b->figure_id);
     return f->type == FIGURE_CART_PUSHER && f->action_state == FIGURE_ACTION_CART_INITIAL && f->min_max_seen != 0;
 }
 

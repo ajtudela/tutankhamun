@@ -8,12 +8,9 @@
 #include <stddef.h>
 #include <stdint.h>
 
-extern building_table city_buildings;
-
-static inline building *building_get(int32_t id)
-{
-    return &city_buildings.records[id];
-}
+// the whole table (the records, then the bazaars' nearest storage ids), for the saved game's chunks
+building_table *building_table_get(void);
+building *building_get(int32_t id);
 
 static inline int32_t monument_main_part_id(int32_t id)
 {

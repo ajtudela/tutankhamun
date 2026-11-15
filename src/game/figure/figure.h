@@ -12,7 +12,6 @@
 #include <stddef.h>
 #include <stdint.h>
 
-extern figure_table city_figures;
 extern int32_t figure_current_id;
 extern int32_t figure_highest_id;
 extern int32_t figure_image_direction;
@@ -21,10 +20,11 @@ extern uint8_t figure_corpse_offsets[256];
 extern int32_t figure_search_best_distance;
 extern int8_t figure_cart_offsets[16];
 
-static inline figure *figure_get(int32_t id)
-{
-    return &city_figures.records[id];
-}
+// the whole table (the records, then the route paths), for the readers by byte offset and the saved game's chunks
+figure_table *figure_table_get(void);
+figure *figure_get(int32_t id);
+// MAX_PATHS paths of MAX_PATH_LENGTH directions
+uint8_t *figure_route_paths(void);
 
 int32_t figure_route_get_first_available(int32_t figure_id, int32_t *path_id);
 void figure_route_remove(int32_t figure_id);

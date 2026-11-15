@@ -148,7 +148,7 @@ static void set_transport_cursor(void)
         cursor_set(CURSOR_SHAPE_ARROW);
     }
     int32_t shape;
-    switch (city_figures.records[figure_id].action_state) {
+    switch (figure_get(figure_id)->action_state) {
         case FIGURE_ACTION_TRANSPORT_SHIP_SAILING:
             shape = transport_cursor_can_embark(figure_id) ? CURSOR_SHAPE_SHIP_EMBARK : ship_land_cursor(figure_id);
             break;
@@ -195,7 +195,7 @@ static void set_warship_cursor(void)
         cursor_set(CURSOR_SHAPE_ARROW);
     }
     int32_t shape;
-    switch (city_figures.records[selected_warship_id].action_state) {
+    switch (figure_get(selected_warship_id)->action_state) {
         case FIGURE_ACTION_WARSHIP_HUNTING:
             shape = CURSOR_SHAPE_WARSHIP_HUNTING;
             break;

@@ -1251,8 +1251,8 @@ uint8_t *formation_memory_past_records(int32_t offset)
         return (uint8_t *) counters[offset / (int32_t) sizeof(int32_t)] + (offset % (int32_t) sizeof(int32_t));
     }
     offset -= counter_bytes;
-    if (offset < (int32_t) sizeof(city_figures)) {
-        return (uint8_t *) &city_figures + offset;
+    if (offset < (int32_t) sizeof(figure_table)) {
+        return (uint8_t *) figure_table_get() + offset;
     }
     return 0;
 }

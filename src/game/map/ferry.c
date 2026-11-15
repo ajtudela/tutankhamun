@@ -37,7 +37,7 @@ int32_t map_ferry_landing_at(int32_t x, int32_t y)
     }
     int32_t offset = map_info.grid_start + (y * GRID_SIZE) + x;
     int32_t id = map_grids.building_ids[offset];
-    if (id == 0 || city_buildings.records[id].type != BUILDING_FERRY_LANDING) {
+    if (id == 0 || building_get(id)->type != BUILDING_FERRY_LANDING) {
         return FERRY_LANDING_NOT_HERE;
     }
     for (int32_t group = 0; group < 2; group++) {

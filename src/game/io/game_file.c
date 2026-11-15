@@ -44,6 +44,7 @@
 #include "figure/carriers.h"
 #include "figure/enemy.h"
 #include "figure/enemy_ships.h"
+#include "figure/figure.h"
 #include "figure/figure_core.h"
 #include "figure/route.h"
 #include "flood/flood_internal.h"
@@ -102,6 +103,9 @@ enum game_file_chunk {
     SAVEGAME_CHUNKS_STATIC = 147,
     SCENARIO_CHUNKS_STATIC = 21,
     SAVEGAME_CHUNK_MONUMENT_SPOT_STATE = 175,
+    SAVEGAME_CHUNK_FIGURES = 21,
+    SAVEGAME_CHUNK_ROUTE_PATHS = 23,
+    SAVEGAME_CHUNK_BUILDINGS = 32,
 };
 
 enum game_file_limit {
@@ -183,6 +187,9 @@ static void init_table_ext(chunk_entry *table, int32_t first, const chunk_entry 
 
 void game_file_init_save_chunk_table_ext(void)
 {
+    savegame_chunk_table[SAVEGAME_CHUNK_FIGURES].data = figure_table_get()->records;
+    savegame_chunk_table[SAVEGAME_CHUNK_ROUTE_PATHS].data = figure_table_get()->route_paths;
+    savegame_chunk_table[SAVEGAME_CHUNK_BUILDINGS].data = building_table_get()->records;
     init_table_ext(savegame_chunk_table, SAVEGAME_CHUNKS_STATIC, savegame_chunks_ext, SAVEGAME_CHUNKS - SAVEGAME_CHUNKS_STATIC);
 }
 

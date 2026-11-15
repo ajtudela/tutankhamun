@@ -18,7 +18,7 @@
 
 void mausoleum_update_all_images(int32_t building_id)
 {
-    const building *b = &city_buildings.records[building_id];
+    const building *b = building_get(building_id);
     if (b->type != BUILDING_MAUSOLEUM) {
         return;
     }
@@ -30,9 +30,9 @@ void mausoleum_update_all_images(int32_t building_id)
 
 void mausoleum_complete_instant(int32_t building_id)
 {
-    int32_t main_id = building_id - city_buildings.records[building_id].subtype;
+    int32_t main_id = building_id - building_get(building_id)->subtype;
     for (int32_t i = 0; i < MAUSOLEUM_PARTS; i++) {
-        building *part = &city_buildings.records[main_id + i];
+        building *part = building_get(main_id + i);
         int32_t is_block = (mausoleum_part_descs[i].kind & 0xFF) < MAUSOLEUM_BLOCK_KINDS;
         part->data.mausoleum.stage = is_block ? MAUSOLEUM_BLOCK_FULL : MAUSOLEUM_GROUND_FINISHED;
         part->data.mausoleum.work_flags = MAUSOLEUM_MAIN_FLAGS_ALL;
@@ -47,7 +47,7 @@ void library_set_completed(library_object_t *self, int32_t building_id)
 {
     int32_t end = building_id + LIBRARY_PARTS;
     for (int32_t id = building_id; id < end; id++) {
-        building *part = &city_buildings.records[id];
+        building *part = building_get(id);
         part->data.monument.stage = LIBRARY_STAGE_COMPLETE;
         part->data.monument.is_main_part = 1;
         part->data.monument.completion_shown = 1;
@@ -58,7 +58,7 @@ void library_set_completed(library_object_t *self, int32_t building_id)
 
 void lighthouse_complete_instant(lighthouse_object_t *self, int32_t building_id)
 {
-    building *part = &city_buildings.records[building_id];
+    building *part = building_get(building_id);
     part->data.monument.stage = LIGHTHOUSE_STAGE_COMPLETE;
     part->data.monument.work_flags = MONUMENT_WORK_COMPLETE;
     part->data.monument.is_main_part = 3;

@@ -245,7 +245,7 @@ static void hippo_create(int32_t formation_id, int32_t index_in_formation)
     const formation_layout_spot *offset = &herd_spawn_offsets()[index];
     int32_t figure_id = figure_create(CITY_PLAYER_HUMAN, FIGURE_HIPPO, offset->x + map_info.cursor_tile_x, offset->y + map_info.cursor_tile_y,
         random_generator_state.random1_3bit);
-    figure *hippo = &city_figures.records[figure_id];
+    figure *hippo = figure_get(figure_id);
     hippo->action_state = FIGURE_ACTION_HIPPO_CHARGE;
     hippo->formation_id = (int16_t) formation_id;
     hippo->wait_ticks = HIPPO_STOMP_HIPPO_WAIT_TICKS;

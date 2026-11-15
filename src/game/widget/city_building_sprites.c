@@ -35,9 +35,9 @@ static void draw_pile(int32_t amount, int32_t max, int32_t group, int32_t x, int
 
 void draw_workshop_raw_material_storage(int32_t building_id, int32_t x, int32_t y)
 {
-    int32_t a = (city_buildings.records[building_id].loads_stored - 100) / 100;
-    int32_t b = (city_buildings.records[building_id].second_input_stock - 100) / 100;
-    switch (city_buildings.records[building_id].type) {
+    int32_t a = (building_get(building_id)->loads_stored - 100) / 100;
+    int32_t b = (building_get(building_id)->second_input_stock - 100) / 100;
+    switch (building_get(building_id)->type) {
         case BUILDING_SENET_HOUSE:
             draw_pile(a, 2, IMAGE_GROUP_STOCK_BEER, x + 107, y + 5);
             break;
@@ -53,7 +53,7 @@ void draw_workshop_raw_material_storage(int32_t building_id, int32_t x, int32_t 
         case BUILDING_SHIPWRIGHT:
             if (a >= 0) {
                 static const int32_t offsets[4][2] = { { 0x46, 0x19 }, { 0x78, -0x19 }, { 0x5A, 10 }, { 0x28, -5 } };
-                int32_t view = city_buildings.records[building_id].data.oriented.orientation - map_info.orientation / 2;
+                int32_t view = building_get(building_id)->data.oriented.orientation - map_info.orientation / 2;
                 if (view < 0) {
                     view += 4;
                 }

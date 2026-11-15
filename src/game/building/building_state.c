@@ -332,12 +332,12 @@ void building_reset_tick47_counters(void)
 
 int32_t building_get_subtype(int32_t building_id)
 {
-    return city_buildings.records[building_id].subtype;
+    return building_get(building_id)->subtype;
 }
 
 void building_clear_all(void)
 {
-    memset(city_buildings.records, 0, MAX_BUILDINGS * sizeof(building));
+    memset(building_table_get()->records, 0, MAX_BUILDINGS * sizeof(building));
     building_highest_id_ever = 0;
     building_extra_sequence = 0;
 }

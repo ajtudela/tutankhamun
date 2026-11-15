@@ -63,7 +63,7 @@ void figure_movement_set_next_route_tile_direction(int32_t figure_id)
         figure_route_remove(figure_id);
         f->direction = DIRECTION_AT_DESTINATION;
     } else {
-        f->direction = (int8_t) city_figures.route_paths[f->routing_path_id * MAX_PATH_LENGTH + f->routing_path_current_tile];
+        f->direction = (int8_t) figure_route_paths()[f->routing_path_id * MAX_PATH_LENGTH + f->routing_path_current_tile];
     }
 }
 

@@ -87,7 +87,7 @@ bool map_terrain_roads_in_both_axes(int32_t offset)
 
 static int32_t road_building_at(int32_t offset)
 {
-    int32_t type = city_buildings.records[map_grids.building_ids[offset]].type;
+    int32_t type = building_get(map_grids.building_ids[offset])->type;
     return (type == BUILDING_ROADBLOCK) || (type == BUILDING_FERRY_LANDING);
 }
 

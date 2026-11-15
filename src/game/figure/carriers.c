@@ -1009,48 +1009,48 @@ static int32_t is_workshop_type(int32_t type)
 void figure_count_by_destination(void)
 {
     for (int32_t id = 1; id <= MAX_BUILDINGS - 1; id++) {
-        if (city_buildings.records[id].state != BUILDING_STATE_IN_USE) {
+        if (building_get(id)->state != BUILDING_STATE_IN_USE) {
             continue;
         }
-        int16_t type = city_buildings.records[id].type;
+        int16_t type = building_get(id)->type;
         if (is_workshop_type(type) || type == BUILDING_GRANARY || type == BUILDING_RECRUITER) {
-            city_buildings.records[id].incoming_carts = 0;
-            city_buildings.records[id].incoming_loads = 0;
+            building_get(id)->incoming_carts = 0;
+            building_get(id)->incoming_loads = 0;
         }
     }
     for (int32_t f = 1; f <= MAX_FIGURES - 1; f++) {
-        if (!city_figures.records[f].state) {
+        if (!figure_get(f)->state) {
             continue;
         }
-        int16_t amount = city_figures.records[f].resource_amount;
+        int16_t amount = figure_get(f)->resource_amount;
         if (amount == 0) {
             continue;
         }
-        int32_t b = city_figures.records[f].destination_building_id;
-        int16_t type = city_buildings.records[b].type;
+        int32_t b = figure_get(f)->destination_building_id;
+        int16_t type = building_get(b)->type;
         if (!is_workshop_type(type)) {
             if (type == BUILDING_GRANARY) {
-                int16_t *incoming_loads = &city_buildings.records[b].incoming_loads;
-                city_buildings.records[b].incoming_carts++;
+                int16_t *incoming_loads = &building_get(b)->incoming_loads;
+                building_get(b)->incoming_carts++;
                 *incoming_loads += amount;
             }
             continue;
         }
-        uint8_t kind = city_figures.records[f].resource_id;
+        uint8_t kind = figure_get(f)->resource_id;
         if (type == BUILDING_RECRUITER) {
             if (kind == RESOURCE_CHARIOTS) {
-                city_buildings.records[b].incoming_loads++;
+                building_get(b)->incoming_loads++;
             } else if (kind == RESOURCE_WEAPONS) {
-                city_buildings.records[b].incoming_carts++;
+                building_get(b)->incoming_carts++;
             }
         } else if (type == BUILDING_BRICKWORKS) {
             if (kind == RESOURCE_STRAW) {
-                city_buildings.records[b].incoming_loads++;
+                building_get(b)->incoming_loads++;
             } else if (kind == RESOURCE_CLAY) {
-                city_buildings.records[b].incoming_carts++;
+                building_get(b)->incoming_carts++;
             }
         } else {
-            city_buildings.records[b].incoming_carts++;
+            building_get(b)->incoming_carts++;
         }
     }
 }
@@ -1240,8 +1240,8 @@ static void buyer_next_storage(int32_t figure_id, int32_t home_id, int32_t stora
         building_market_update_buyer_storages(figure_id, storage_id);
         while (index != -1) {
             int32_t item = figure_get(figure_id)->buyer_resources[index];
-            if (city_buildings.market_nearest_storage[item] > 0) {
-                buyer_go_to_storage(figure_id, city_buildings.market_nearest_storage[item]);
+            if (building_table_get()->market_nearest_storage[item] > 0) {
+                buyer_go_to_storage(figure_id, building_table_get()->market_nearest_storage[item]);
                 return;
             }
             wants[index] = 0;

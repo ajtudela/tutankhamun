@@ -29,7 +29,7 @@
 
 int32_t figure_soldier_refuses_orders(int32_t figure_id)
 {
-    uint8_t action = city_figures.records[figure_id].action_state;
+    uint8_t action = figure_get(figure_id)->action_state;
     int32_t at_ferry = (action == FIGURE_ACTION_ON_FERRY) || (action == FIGURE_ACTION_WAIT_FOR_FERRY);
     int32_t going_to_fort = (action == FIGURE_ACTION_SOLDIER_TRAINED_GOING_TO_FORT) || (action == FIGURE_ACTION_SOLDIER_RECRUIT_GOING_TO_FORT);
     return at_ferry || going_to_fort;
@@ -38,7 +38,7 @@ int32_t figure_soldier_refuses_orders(int32_t figure_id)
 static int32_t soldier_takes_order(int32_t formation_id, int32_t figure_id, int32_t refuse_attacking)
 {
     const formation *legion = formation_get(formation_id);
-    uint8_t action = city_figures.records[figure_id].action_state;
+    uint8_t action = figure_get(figure_id)->action_state;
     if (action == FIGURE_ACTION_CORPSE || (refuse_attacking && action == FIGURE_ACTION_ATTACK) || legion->months_very_low_morale != 0 ||
         legion->months_low_morale > 1 || figure_soldier_refuses_orders(figure_id)) {
         return 0;
@@ -52,7 +52,7 @@ static int32_t soldier_takes_order(int32_t formation_id, int32_t figure_id, int3
 static int32_t legion_is_charging(int32_t formation_id)
 {
     const formation *legion = formation_get(formation_id);
-    return legion->figure_type == FIGURE_CHARIOTEER && city_figures.records[legion->figures[0]].action_state == FIGURE_ACTION_SOLDIER_CHARGE && button_parameter != 1;
+    return legion->figure_type == FIGURE_CHARIOTEER && figure_get(legion->figures[0])->action_state == FIGURE_ACTION_SOLDIER_CHARGE && button_parameter != 1;
 }
 
 int32_t formation_legion_move_to(int32_t x, int32_t y, int32_t formation_id, bool quiet)
@@ -107,7 +107,7 @@ int32_t formation_legion_move_to(int32_t x, int32_t y, int32_t formation_id, boo
             soldier->charge.tile_x = soldier->x;
             soldier->charge.tile_y = soldier->y;
             soldier->action_state = FIGURE_ACTION_SOLDIER_ENGAGING;
-            city_figures.records[figure_current_id].animation_frame = 0;
+            figure_get(figure_current_id)->animation_frame = 0;
         }
     }
     for (int32_t i = 0; i < FORMATION_MAX_FIGURES; i++) {
@@ -191,7 +191,7 @@ int32_t formation_legion_attack_near(int32_t x, int32_t y, int32_t formation_id,
             soldier->charge.tile_y = soldier->y;
             soldier->action_state = FIGURE_ACTION_SOLDIER_ATTACKING_FORMATION;
             soldier->target_figure_id = 0;
-            city_figures.records[figure_current_id].animation_frame = 0;
+            figure_get(figure_current_id)->animation_frame = 0;
         }
     }
     for (int32_t n = 0; n < FORMATION_MAX_FIGURES; n++) {

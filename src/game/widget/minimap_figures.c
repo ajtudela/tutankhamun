@@ -71,10 +71,10 @@ int32_t minimap_figure_show(int32_t figure_id)
         if (city_with_overlay_show_figure(figure_id) != 0) {
             return 1;
         }
-        if (city_overlay == OVERLAY_NONE && is_alert_figure(city_figures.records[figure_id].type)) {
+        if (city_overlay == OVERLAY_NONE && is_alert_figure(figure_get(figure_id)->type)) {
             return 1;
         }
-        figure_id = city_figures.records[figure_id].next_figure_id_on_same_tile;
+        figure_id = figure_get(figure_id)->next_figure_id_on_same_tile;
     }
     return 0;
 }
@@ -82,7 +82,7 @@ int32_t minimap_figure_show(int32_t figure_id)
 int32_t minimap_figure_military_kind(int32_t figure_id)
 {
     while (figure_id != 0) {
-        const figure *f = &city_figures.records[figure_id];
+        const figure *f = figure_get(figure_id);
         uint8_t type = f->type;
         if (type >= FIGURE_ARCHER && type <= FIGURE_CHARIOTEER) {
             return (formation_get(f->formation_id)->request_event_id < 0) ? MINIMAP_MILITARY_OWN_SOLDIER : MINIMAP_MILITARY_NONE;
@@ -101,7 +101,7 @@ int32_t minimap_figure_military_kind(int32_t figure_id)
 int32_t minimap_figure_ship_kind(int32_t figure_id)
 {
     while (figure_id != 0) {
-        const figure *f = &city_figures.records[figure_id];
+        const figure *f = figure_get(figure_id);
         if (is_own_ship(f->type)) {
             return MINIMAP_SHIP_OWN;
         }

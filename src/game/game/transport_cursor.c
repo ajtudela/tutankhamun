@@ -18,7 +18,7 @@ static int32_t mouse_grid_offset(void)
 
 int32_t transport_cursor_can_embark(int32_t figure_id)
 {
-    if (selected_transport_active == 0 || city_figures.records[figure_id].has_troops_on_board != 0) {
+    if (selected_transport_active == 0 || figure_get(figure_id)->has_troops_on_board != 0) {
         return 0;
     }
     return formation_legion_at_grid_offset(mouse_grid_offset()) != 0;
@@ -26,7 +26,7 @@ int32_t transport_cursor_can_embark(int32_t figure_id)
 
 int32_t transport_cursor_can_land(int32_t figure_id)
 {
-    if (selected_transport_active == 0 || city_figures.records[figure_id].has_troops_on_board == 0) {
+    if (selected_transport_active == 0 || figure_get(figure_id)->has_troops_on_board == 0) {
         return 0;
     }
     return (map_grids.terrain[mouse_grid_offset()] & TERRAIN_WATER) != TERRAIN_WATER;

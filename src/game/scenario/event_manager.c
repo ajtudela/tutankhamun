@@ -189,7 +189,7 @@ static int32_t invasion_has_formation(int32_t event_id)
 static int32_t invasion_has_transport_ship(int32_t event_id)
 {
     for (int32_t i = 1; i < MAX_FIGURES; i++) {
-        const figure *f = &city_figures.records[i];
+        const figure *f = figure_get(i);
         if (f->state != FIGURE_STATE_NONE && f->type == FIGURE_ENEMY_TRANSPORT_SHIP && f->invasion_event_id == event_id) {
             return 1;
         }

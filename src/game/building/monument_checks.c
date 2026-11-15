@@ -65,7 +65,7 @@ bool sun_temple_tile_is_free(int32_t grid_offset)
 bool sun_temple_any_completed(void)
 {
     for (int32_t id = 1; id < MAX_BUILDINGS; id++) {
-        if (city_buildings.records[id].state == BUILDING_STATE_IN_USE && city_buildings.records[id].type == BUILDING_SUN_TEMPLE) {
+        if (building_get(id)->state == BUILDING_STATE_IN_USE && building_get(id)->type == BUILDING_SUN_TEMPLE) {
             if (sun_temple_get_progress(id, 0) == MONUMENT_PROGRESS_COMPLETE) {
                 return 1;
             }
@@ -77,18 +77,18 @@ bool sun_temple_any_completed(void)
 
 void pyramid_init_preset_parts(int32_t building_id)
 {
-    int32_t size = city_buildings.records[building_id].data.pyramid.size_variant;
+    int32_t size = building_get(building_id)->data.pyramid.size_variant;
     int32_t view = map_info.orientation / 2;
     const pyramid_preset_list *lists = (scenario_pyramid_style == PYRAMID_STYLE_MASTABA) ? mastaba_preset_parts : pyramid_preset_parts.lists;
     for (int32_t i = 0; i < lists[size].count; i++) {
         int32_t part_id = lists[size].parts[i].part + building_id;
-        building *part = &city_buildings.records[part_id];
+        building *part = building_get(part_id);
         part->data.pyramid.stage = PYRAMID_STAGE_PRESET;
         part->data.pyramid.prep_mask = 0;
         pyramid_part_update_image(part_id, view, size);
     }
     if (pyramid_has_complex_temple(size)) {
-        int32_t offset = pyramid_complex_temple_offset[size] + city_buildings.records[building_id].grid_offset - map_info.grid_start;
+        int32_t offset = pyramid_complex_temple_offset[size] + building_get(building_id)->grid_offset - map_info.grid_start;
         pyramid_complex_area_op(offset % GRID_SIZE, offset / GRID_SIZE, PYRAMID_COMPLEX_AREA_MARK_GROUND, 0);
     }
 }

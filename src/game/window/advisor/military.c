@@ -456,7 +456,7 @@ void advisor_military_count_ships(void)
     city_player_current()->total_warships = 0;
     city_player_current()->total_transport_ships = 0;
     for (int32_t id = 1; id < MAX_FIGURES; id++) {
-        const figure *f = &city_figures.records[id];
+        const figure *f = figure_get(id);
         if (f->state == 0 || f->faction_id != player) {
             continue;
         }

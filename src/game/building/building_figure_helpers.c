@@ -613,7 +613,7 @@ static void clear_market_tables(void)
         market_storages[i] = 0;
     }
     for (int32_t i = 0; i < MARKET_SLOTS; i++) {
-        city_buildings.market_nearest_storage[i] = 0;
+        building_table_get()->market_nearest_storage[i] = 0;
     }
 }
 
@@ -708,17 +708,17 @@ int32_t building_market_get_storage_destination(int32_t id, int32_t second_flag,
             }
         }
         if (nearest) {
-            city_buildings.market_nearest_storage[slot] = building_main(market_storages[(slot * MARKET_SLOT_SIZE) + nearest - 1]);
+            building_table_get()->market_nearest_storage[slot] = building_main(market_storages[(slot * MARKET_SLOT_SIZE) + nearest - 1]);
         } else {
             market_counts[slot] = 0;
         }
     }
     if (!second) {
         market_food_items(id, market_counts, items);
-        return market_food_destination(id, market_counts, city_buildings.market_nearest_storage);
+        return market_food_destination(id, market_counts, building_table_get()->market_nearest_storage);
     }
     market_goods_items(id, market_counts, items);
-    return market_goods_destination(id, market_counts, city_buildings.market_nearest_storage);
+    return market_goods_destination(id, market_counts, building_table_get()->market_nearest_storage);
 }
 
 void building_market_update_buyer_storages(int32_t figure_id, int32_t id)
@@ -734,14 +734,14 @@ void building_market_update_buyer_storages(int32_t figure_id, int32_t id)
         int32_t nearest =
             map_routing_citizen_find_first_of_road_garden(bazaar->road_access_x, bazaar->road_access_y, &market_tiles[slot * MARKET_SLOT_SIZE], count);
         if (nearest) {
-            city_buildings.market_nearest_storage[slot] = building_main(market_storages[(slot * MARKET_SLOT_SIZE) + nearest - 1]);
+            building_table_get()->market_nearest_storage[slot] = building_main(market_storages[(slot * MARKET_SLOT_SIZE) + nearest - 1]);
         }
     }
     building *home = building_get(figure_get(figure_id)->building_id);
     for (int32_t g = 0; g < BAZAAR_DEMANDS; g++) {
         if (home->data.market.good_demands[g] <= 0) {
             market_counts[bazaar_goods_by_demand[g].slot] = 0;
-            city_buildings.market_nearest_storage[bazaar_goods_by_demand[g].slot] = 0;
+            building_table_get()->market_nearest_storage[bazaar_goods_by_demand[g].slot] = 0;
         } else {
             home->data.market.good_demands[g]--;
         }
