@@ -217,18 +217,20 @@ void game_file_upgrade_empire_object_flags(void)
 {
     for (int32_t i = 0; i < EMPIRE_OBJECT_COUNT; i++) {
         empire_object *o = &empire_map_objects[i];
-        const empire_object_before_object_flags *old = (const empire_object_before_object_flags *) o;
+        // the records are 98 bytes apart, so the old record is copied out before its 4-byte fields are read
+        empire_object_before_object_flags old;
+        memcpy(&old, o, sizeof(old));
         empire_object upgraded;
         memset(&upgraded, 0, sizeof(upgraded));
-        memcpy(&upgraded, old, sizeof(*old));
+        memcpy(&upgraded, &old, sizeof(old));
         for (int32_t resource = 0; resource < EMPIRE_OBJECT_BEFORE_OBJECT_FLAGS_MASKED_RESOURCES; resource++) {
             uint32_t bit = 1u << resource;
             uint8_t amount;
-            if (old->resources_traded_high & bit) {
+            if (old.resources_traded_high & bit) {
                 amount = TRADE_AMOUNT_HIGH;
-            } else if (old->resources_traded_medium & bit) {
+            } else if (old.resources_traded_medium & bit) {
                 amount = TRADE_AMOUNT_MEDIUM;
-            } else if (old->resources_traded_low & bit) {
+            } else if (old.resources_traded_low & bit) {
                 amount = TRADE_AMOUNT_LOW;
             } else {
                 amount = TRADE_AMOUNT_NONE;

@@ -19,7 +19,7 @@ static int32_t counter_shift(int32_t service)
 
 static uint32_t clear_counter_and_high_half(uint32_t value, int32_t shift)
 {
-    return ((SERVICE_VISIT_COUNTER_MAX << shift) ^ 0xFFFFu) & value;
+    return (((uint32_t) SERVICE_VISIT_COUNTER_MAX << shift) ^ 0xFFFFu) & value;
 }
 
 void map_service_visit_decay(void)

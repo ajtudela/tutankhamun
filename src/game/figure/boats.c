@@ -5,7 +5,10 @@
 // - when no dock is free the last dock of the list is claimed all the same;
 // - the closest fishing point's coordinates are cut to their low byte;
 // - ferry_queue_release counts against the shrinking queue, so only about half of the waiting figures are released;
-// - passengers going ashore set progress_on_tile again for each of their followers.
+// - passengers going ashore set progress_on_tile again for each of their followers;
+// - ferry_unload walks as many slots as there are passengers, empty slots (-1) included, so the passengers after an
+//   empty slot stay aboard. The original reads the figure record before the first (id -1) for an empty slot; here an
+//   empty slot is skipped, since what lies before the figures is not the original's memory.
 
 #include "figure/boats.h"
 #include "building/building.h"
@@ -590,6 +593,9 @@ void ferry_unload(int32_t figure_id, int32_t building_id)
     for (; count != 0; count--, slot++) {
         int32_t passenger_id = *slot;
         *slot = -1;
+        if (passenger_id <= 0) {
+            continue;
+        }
         figure *p = figure_get(passenger_id);
         if (p->state != FIGURE_STATE_ALIVE || p->action_state != FIGURE_ACTION_ON_FERRY) {
             continue;

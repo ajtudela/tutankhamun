@@ -11,7 +11,8 @@ build=${1:?usage: sanitizer_checks.sh <build dir>}
 cd "$(dirname "$0")/.."
 
 export ASAN_OPTIONS="${ASAN_OPTIONS:-abort_on_error=1:detect_leaks=0}"
-export UBSAN_OPTIONS="${UBSAN_OPTIONS:-print_stacktrace=1:halt_on_error=1}"
+# the suppressions file by its full path: UBSan takes a relative one from the program's folder
+export UBSAN_OPTIONS="${UBSAN_OPTIONS:-print_stacktrace=1:halt_on_error=1:suppressions=$PWD/tests/ubsan.supp}"
 
 echo "--- the configs"
 "$build/bin/tutankhamun" --check-configs config

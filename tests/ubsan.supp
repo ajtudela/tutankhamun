@@ -1,0 +1,14 @@
+# UndefinedBehaviorSanitizer: the original's behaviours that the game keeps on purpose (docs/architecture-plan.md, 1.5),
+# so that a run of the regression under linux-ubsan reports only what is new:
+#
+#     UBSAN_OPTIONS=suppressions=$PWD/tests/ubsan.supp:print_stacktrace=1 python3 tests/run_regression.py --sim ... --game ...
+#
+# (the full path: UBSan takes a relative one from the program's folder)
+#
+# The route searches step from a tile to its neighbours without a check at the edges of the grid: an offset past one
+# routing grid lands in the next one of routing_grids, which lie in the original's order (map/routing_grid_types.h).
+bounds:*/map/routing.c
+bounds:*/map/routing_citizen.c
+bounds:*/map/routing_enemy.c
+bounds:*/map/routing_land.c
+bounds:*/map/routing_water.c
