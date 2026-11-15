@@ -129,8 +129,6 @@ extern uint8_t g_multiline_flag;
 
 extern int32_t capture_cursor_position[20];
 
-extern char string_number_buffer[256];
-
 extern char tmp_line_buffer[2204];
 
 extern int32_t dash_blink_frame;

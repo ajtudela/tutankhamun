@@ -8,6 +8,7 @@
 
 #include "building/building_data.h"
 #include "core/random.h"
+#include "figure/figure_types.h"
 #include "map/grid.h"
 #include "map/map_data.h"
 #include "map/routing.h"

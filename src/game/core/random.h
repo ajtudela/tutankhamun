@@ -4,8 +4,7 @@
 #ifndef CORE_RANDOM_H
 #define CORE_RANDOM_H
 
-#include "core/random_types.h"
-#include "figure/figure_data.h"
+#include "core/core_data.h"
 
 #include <stdint.h>
 

@@ -6,7 +6,6 @@
 #include "building/route_candidate_types.h"
 #include "core/calc.h"
 #include "core/core_data.h"
-#include "core/random_types.h"
 #include "figure/figure_phrase_types.h"
 #include "figure/figure_profile_types.h"
 #include "figure/figure_properties.h"
@@ -235,8 +234,6 @@ extern int32_t figure_current_id;
 extern int32_t figure_created_sequence;
 
 extern uint8_t figure_profile_qpc_available;
-
-extern random_data random_generator_state;
 
 extern int32_t map_result_y;
 

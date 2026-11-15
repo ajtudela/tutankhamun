@@ -5,6 +5,8 @@
 
 #include <stdint.h>
 
+extern char string_number_buffer[256];
+
 int32_t string_compare_n(const char *a, const char *b, int32_t length);
 int32_t string_find(const char *text, const char *needle, int32_t length);
 int32_t string_index_of(const char *text, char c, int32_t length);

@@ -8,8 +8,6 @@
 
 #include "core/text.h"
 
-#include "graphics/graphics_data.h"
-
 #include <stddef.h>
 #include <stdint.h>
 #include <string.h>
