@@ -8,6 +8,7 @@
 #include "map/desirability.h"
 
 #include "building/building.h"
+#include "building/building_data.h"
 #include "building/building_type.h"
 #include "core/calc.h"
 #include "map/grid.h"

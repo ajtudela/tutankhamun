@@ -7,6 +7,7 @@
 #include "map/water_supply.h"
 
 #include "building/building.h"
+#include "building/building_data.h"
 #include "building/building_image_group.h"
 #include "building/building_industry.h"
 #include "building/building_type.h"

@@ -4,10 +4,11 @@
 #ifndef BUILDING_BUILDING_H
 #define BUILDING_BUILDING_H
 
-#include "building/building_data.h"
 #include "building/building_types.h"
 #include <stddef.h>
 #include <stdint.h>
+
+extern building_table city_buildings;
 
 static inline building *building_get(int32_t id)
 {

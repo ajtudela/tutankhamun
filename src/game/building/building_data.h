@@ -547,8 +547,6 @@ extern int16_t building_list_large[4000];
 
 extern building_storage building_storages[200];
 
-extern building_table city_buildings;
-
 extern ferry_path ferry_path_records[50];
 
 extern int32_t houses_frozen;

@@ -146,7 +146,8 @@ move, each into the header of the module that owns the data (`extern int32_t far
   and `string_number_buffer` are declared in `core/`, `static_init` and `config_names.c` moved into `game/`.
 - [x] 3.2. `map/grid.h` without `building/building_data.h`: `pharaohmap_info` moves into `map/map_grid_types.h`,
   `map_info` and `map_grids` are declared in `map/grid.h`; 126 files include `building_data.h`, 130 `window_data.h`.
-- [ ] 3.3. `building/building.h` without `building_data.h`.
+- [x] 3.3. `building/building.h` without `building_data.h`: `city_buildings` is declared there; three map files that
+  use the building tables include `building_data.h` themselves; 128 files include it, 130 `window_data.h`.
 - [ ] 3.4. One owner per commit: `figure_data.h`, `widget_data.h`, `graphics_data.h`, then `window_data.h`,
   `building_data.h` and `monument_data.h` in series by subsystem (pyramids, tombs, temple complexes, ...).
 - [ ] 3.5. An emptied `*_data.h` is removed, or kept for its `*_data.c` alone.

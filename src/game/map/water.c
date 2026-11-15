@@ -6,6 +6,7 @@
 #include "map/water.h"
 
 #include "building/building.h"
+#include "building/building_data.h"
 #include "building/building_type.h"
 #include "core/crt_compat.h"
 #include "figure/figure.h"
