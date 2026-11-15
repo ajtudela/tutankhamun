@@ -4,11 +4,14 @@
 # The upstream file has no copyright line of its own (copyright: the Akhenaten authors).
 # Copied with additions here: the codec selection (WAVE and MP3 through minimp3 only, every other codec off), the
 # static MSVC runtime (CMAKE_MSVC_RUNTIME_LIBRARY) and the pass-through of the parent's generator / platform /
-# toolset (SDL2_MIXER_GENERATOR*). The rest is unchanged.
+# toolset (SDL2_MIXER_GENERATOR*) and the additional arguments passed as one value. The rest is unchanged.
 
 # This file is used to build SDL2_mixer as a standalone project
 # It should be called from the main CMakeLists.txt with: cmake -P BuildSDL2_mixer.cmake
 # Required variables: SDL2_MIXER_SOURCE_DIR, SDL2_MIXER_BUILD_DIR, SDL2_MIXER_INSTALL_DIR, SDL2_ROOT, SDL2_MIXER_ADDITIONAL_CMAKE_ARGS
+
+# the parent passes the additional arguments as one value, separated by | (TutankhamunBuildSDL.cmake)
+string(REPLACE "|" ";" SDL2_MIXER_ADDITIONAL_CMAKE_ARGS "${SDL2_MIXER_ADDITIONAL_CMAKE_ARGS}")
 
 # Create build and install directories
 file(MAKE_DIRECTORY ${SDL2_MIXER_BUILD_DIR})

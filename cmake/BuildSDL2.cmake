@@ -2,12 +2,16 @@
 # 3978bfeea6d4e3ce5cd02220636d3e5985197f1d, 2026-10-12; the file last changed there in cf7ac941, 2025-12-02;
 # written by dalerank). Licence: GNU Affero General Public License v3.0 (LICENSES/AGPL-3.0.txt).
 # The upstream file has no copyright line of its own (copyright: the Akhenaten authors).
-# Copied with additions here: the static MSVC runtime (SDL_FORCE_STATIC_VCRT, CMAKE_MSVC_RUNTIME_LIBRARY) and the
-# pass-through of the parent's generator / platform / toolset (SDL2_GENERATOR*). The rest is unchanged.
+# Copied with additions here: the static MSVC runtime (SDL_FORCE_STATIC_VCRT, CMAKE_MSVC_RUNTIME_LIBRARY), the
+# pass-through of the parent's generator / platform / toolset (SDL2_GENERATOR*) and the additional arguments passed
+# as one value. The rest is unchanged.
 
 # This file is used to build SDL2 as a standalone project
 # It should be called from the main CMakeLists.txt with: cmake -P BuildSDL2.cmake
 # Required variables: SDL2_SOURCE_DIR, SDL2_BUILD_DIR, SDL2_INSTALL_DIR, SDL2_ADDITIONAL_CMAKE_ARGS, SDL2_IS_MSVC
+
+# the parent passes the additional arguments as one value, separated by | (TutankhamunBuildSDL.cmake)
+string(REPLACE "|" ";" SDL2_ADDITIONAL_CMAKE_ARGS "${SDL2_ADDITIONAL_CMAKE_ARGS}")
 
 # Create build and install directories
 file(MAKE_DIRECTORY ${SDL2_BUILD_DIR})
