@@ -4,6 +4,8 @@ out/
 _deps/
 *.exe
 *.sav
+# the saved games of the regression (tests/run_regression.py); its references stay local
+!tests/saves/*.sav
 
 # the upload key and the service account key of Google Play (android/app/build.gradle)
 android/keystore.properties
