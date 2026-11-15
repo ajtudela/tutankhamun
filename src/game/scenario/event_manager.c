@@ -13,7 +13,7 @@
 #include "figure/figure_type.h"
 #include "figure/formation.h"
 #include "game/game_data.h"
-#include "platform/status_log.h"
+#include "host/status_log.h"
 #include "scenario/scenario_data.h"
 #include "scenario/scenario_internal.h"
 #include "scenario/scenario_rules.h"

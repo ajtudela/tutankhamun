@@ -10,7 +10,7 @@
 #include "core/text.h"
 #include "io/io_data.h"
 #include "platform/platform_file.h"
-#include "platform/status_log.h"
+#include "host/status_log.h"
 #include "window/window_data.h"
 
 #include <stdint.h>

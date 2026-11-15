@@ -10,7 +10,7 @@
 #include "io/io_data.h"
 #include "io/zip_library.h"
 #include "io/zip_tables.h"
-#include "platform/status_log.h"
+#include "host/status_log.h"
 
 #include <stddef.h>
 #include <stdint.h>

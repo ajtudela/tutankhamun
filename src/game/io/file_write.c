@@ -12,7 +12,7 @@
 #include "graphics/graphics_data.h"
 #include "io/io_data.h"
 #include "platform/platform_file.h"
-#include "platform/status_log.h"
+#include "host/status_log.h"
 #include "text/lang.h"
 #include "text/text_data.h"
 #include "window/file_list.h"

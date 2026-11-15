@@ -9,7 +9,7 @@
 #include "graphics/graphics_data.h"
 #include "io/file.h"
 #include "platform/platform_dialog.h"
-#include "platform/status_log.h"
+#include "host/status_log.h"
 #include "scenario/event_helpers.h"
 #include "scenario/scenario_data.h"
 #include "window/window_data.h"

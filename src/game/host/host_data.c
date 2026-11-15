@@ -1,7 +1,6 @@
-// The initial data of the platform: window, display and file strings, as C tables. platform/platform_data.h declares
-// them.
+// The initial data of the platform: window, display and file strings, as C tables. host/host_data.h declares them.
 
-#include "platform/platform_data.h"
+#include "host/host_data.h"
 
 const char campaign_file_name[684] = "campaign.txt\0\0\0\0"
                              "ERR:Exited Pharaoh, could not load tax sentiment data.\0\0"

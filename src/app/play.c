@@ -29,7 +29,7 @@
 #include "graphics/graphics_data.h"
 #include "input/input_data.h"
 #include "io/game_file.h"
-#include "platform/platform_data.h"
+#include "host/host_data.h"
 #include "window/window_data.h"
 #include "window/window_id.h"
 #include "game/discord_presence.h"

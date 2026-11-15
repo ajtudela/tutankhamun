@@ -28,7 +28,7 @@
 #include "input/input_data.h"
 #include "platform/log.h"
 #include "platform/platform_time.h"
-#include "platform/platform_win.h"
+#include "host/host_window.h"
 #include "video/bink.h"
 #include "video/smacker.h"
 #include "video/video_data.h"

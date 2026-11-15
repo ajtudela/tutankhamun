@@ -12,7 +12,7 @@
 #include "core/text.h"
 #include "io/file.h"
 #include "platform/platform_dialog.h"
-#include "platform/status_log.h"
+#include "host/status_log.h"
 #include <stdint.h>
 #include <stdio.h>
 #include <string.h>

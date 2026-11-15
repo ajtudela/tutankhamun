@@ -14,7 +14,7 @@
 
 #include "graphics/ui_layout.h"
 #include "platform/language_store.h"
-#include "platform/status_log.h"
+#include "host/status_log.h"
 #include "text/lang.h"
 #include "text/lang_message_types.h"
 #include "text/text_data.h"

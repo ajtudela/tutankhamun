@@ -1,7 +1,7 @@
-// The tables of platform/platform_data.c, the initial data of the platform: window, display and file strings.
+// The tables of host/host_data.c, the initial data of the platform: window, display and file strings.
 
-#ifndef PLATFORM_PLATFORM_DATA_H
-#define PLATFORM_PLATFORM_DATA_H
+#ifndef HOST_HOST_DATA_H
+#define HOST_HOST_DATA_H
 
 #include <stdint.h>
 

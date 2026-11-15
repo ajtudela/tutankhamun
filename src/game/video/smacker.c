@@ -12,7 +12,7 @@
 #include "platform/platform_display.h"
 #include "platform/platform_system.h"
 #include "platform/platform_video.h"
-#include "platform/status_log.h"
+#include "host/status_log.h"
 #include "sound/sound_data.h"
 #include "sound/sound_lib.h"
 #include "video/video_data.h"

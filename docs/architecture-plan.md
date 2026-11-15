@@ -56,7 +56,7 @@ The files with the most includes: `window/window_draw.c` 82, `window/building_in
 
 `src/platform/` and `src/game/platform/` are both included as `"platform/xxx.h"`, since the include path has both
 `src` and `src/game`. It works only because no file name is in both; an include does not say which layer it means,
-and the first name in both would take the wrong file without an error.
+and the first name in both would take the wrong file without an error (fixed by 2.3).
 
 ### 4. No tests
 
@@ -127,7 +127,8 @@ after the changes of phase 1: the file itself is damaged (1.6).
 - [x] 2.2. `updater.c` and `language_store.c` without `app/`: `main.c` reads `[update] check` and calls
   `updater_disable`; the language store, all ini and config folder, is `app/app_language.c` behind
   `platform/language_store.h`, as `app/media_audio.c` is behind `platform/platform_sound.h`.
-- [ ] 2.3. `src/game/platform` becomes `src/game/host` (`"host/host_window.h"`, ...); the function prefixes stay for
+- [x] 2.3. `src/game/platform` becomes `src/game/host` (`"host/host_window.h"`, ...), `platform_rect.h`, a type of
+  `platform/platform_window.h`, moves into `src/platform`; the function prefixes stay for
   now.
 - [ ] 2.4. `PRIVATE src/game` out of `tutankhamun_platform`: an include of the game's headers in `src/platform` is
   then a build error.

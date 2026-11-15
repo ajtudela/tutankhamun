@@ -10,7 +10,7 @@
 #include "graphics/image_collection.h"
 #include "input/input_data.h"
 #include "map/grid.h"
-#include "platform/platform_data.h"
+#include "host/host_data.h"
 #include "platform/platform_time.h"
 #include "sound/city_view.h"
 #include "widget/city_view_rotate.h"

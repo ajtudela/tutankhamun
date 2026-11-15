@@ -1,7 +1,7 @@
 // The functions of loading_text.c that other files call.
 
-#ifndef PLATFORM_LOADING_TEXT_H
-#define PLATFORM_LOADING_TEXT_H
+#ifndef HOST_LOADING_TEXT_H
+#define HOST_LOADING_TEXT_H
 
 #include <stdint.h>
 

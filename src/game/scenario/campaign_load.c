@@ -7,7 +7,7 @@
 #include "io/io_data.h"
 #include "platform/log.h"
 #include "platform/platform_file.h"
-#include "platform/status_log.h"
+#include "host/status_log.h"
 #include "scenario/campaign.h"
 #include "scenario/scenario_data.h"
 #include "window/window_data.h"

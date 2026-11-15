@@ -1,14 +1,14 @@
 // The game window's display mode: the screen size and the drawing area of a mode, the window resized and centred,
 // pause and resume, and the display surfaces restored after they were lost.
 
-#include "platform/platform_win.h"
+#include "host/host_window.h"
 
 #include <stdint.h>
 #include "graphics/graphics_data.h"
-#include "platform/platform_data.h"
+#include "host/host_data.h"
 #include "platform/platform_display.h"
 #include "platform/platform_window.h"
-#include "platform/status_log.h"
+#include "host/status_log.h"
 #include "video/video_data.h"
 #include "window/display_resolution_list.h"
 #include "window/options_windows.h"

@@ -18,7 +18,7 @@
 #include "input/input_data.h"
 #include "io/file.h"
 #include "io/io_data.h"
-#include "platform/platform_data.h"
+#include "host/host_data.h"
 #include "platform/platform_file.h"
 #include "scenario/campaign_load.h"
 #include "window/file_list.h"

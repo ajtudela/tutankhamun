@@ -4,13 +4,13 @@
 // the desktop); the text is centred the same way on the desktop, which is where it lands only in full screen. An empty
 // text draws nothing.
 
-#include "platform/loading_text.h"
+#include "host/loading_text.h"
 
 #include <stdint.h>
 #include "core/text.h"
 #include "graphics/graphics_data.h"
 #include "graphics/graphics_primitives.h"
-#include "platform/platform_data.h"
+#include "host/host_data.h"
 #include "platform/platform_window.h"
 
 enum loading_text_box {

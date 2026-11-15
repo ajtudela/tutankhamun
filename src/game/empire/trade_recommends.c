@@ -10,7 +10,7 @@
 #include "graphics/graphics_data.h"
 #include "io/file.h"
 #include "platform/platform_dialog.h"
-#include "platform/status_log.h"
+#include "host/status_log.h"
 #include "window/window_data.h"
 
 #include <stdint.h>

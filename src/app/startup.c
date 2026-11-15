@@ -16,7 +16,7 @@
 #include "platform/log.h"
 #include "platform/platform_dialog.h"
 #include "platform/platform_window.h"
-#include "platform/platform_data.h"
+#include "host/host_data.h"
 #include "scenario/campaign_load.h"
 #include "scenario/reason_phrases.h"
 #include "sound/sound_init.h"

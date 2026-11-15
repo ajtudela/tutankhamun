@@ -1,8 +1,8 @@
-// The functions of platform_win.c that other files call and the values of game_quit_request (a quit asked: the main loop
+// The functions of host_window.c that other files call and the values of game_quit_request (a quit asked: the main loop
 // posts the close message; the window closing).
 
-#ifndef PLATFORM_PLATFORM_WIN_H
-#define PLATFORM_PLATFORM_WIN_H
+#ifndef HOST_HOST_WINDOW_H
+#define HOST_HOST_WINDOW_H
 
 #include <stdint.h>
 

@@ -1,7 +1,7 @@
 // The status log of status_log.c: a line with a number, or without one.
 
-#ifndef PLATFORM_STATUS_LOG_H
-#define PLATFORM_STATUS_LOG_H
+#ifndef HOST_STATUS_LOG_H
+#define HOST_STATUS_LOG_H
 
 #include <stdint.h>
 

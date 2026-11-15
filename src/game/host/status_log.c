@@ -1,7 +1,7 @@
 // The game's status log, written to the port's log: a line is the text, then the argument string when given and the
 // number (log_info; log_info_text has none), each followed by two spaces; texts are cut at 100 characters.
 
-#include "platform/status_log.h"
+#include "host/status_log.h"
 
 #include <stdint.h>
 #include <stdio.h>
