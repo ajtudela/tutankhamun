@@ -11,12 +11,13 @@
 // run's own (bound with platform_bind: a fixed start, 40 ms a tick; the predators reseed rand() from it), so a run
 // gives the same save every time. A message box is logged and answered OK. Sound and video go to libraries that do
 // nothing (the wave output does not open, so the game turns digital sound off; no video opens). --seed sets the C run
-// time's random seed (1 by default), which the saves do not keep.
+// time's random seed (1 by default), which the saves do not keep. The screen is 640x480 whatever the player's settings
+// say, since the city view's size reaches the game.
 //
 //     tutankhamun_sim --diff-saves a.sav b.sav
 //
-// compares two saves of this build's layout chunk by chunk (docs/architecture-plan.md, 1.3): for each chunk that
-// differs, how many of its elements differ and where the first difference is.
+// compares two saves of the same layout chunk by chunk (docs/architecture-plan.md, 1.3), the chunks read by the files'
+// own schema: for each chunk that differs, how many of its elements differ and where the first difference is.
 //
 // Exit codes: 0 done (with --diff-saves: the saves are the same); 1 a usage error, or the saves differ; 2 the game does
 // not start, or a save does not load, read or write.
@@ -34,6 +35,7 @@
 #include "platform/platform_file.h"
 #include "platform/platform_win32.h"
 #include "widget/widget_data.h"
+#include "window/options_windows.h"
 #include "platform/version.h"
 
 #include <stdint.h>
@@ -282,15 +284,23 @@ static const platform_bindings sim_bindings = {
 
 // --- the comparison of two saves ---
 
+enum sim_diff_chunks {
+    // the chunks every layout starts with: the mission, the version, the file's chunk count and its schema
+    SIM_CHUNK_SCHEMA_COUNT = 5,
+    SIM_CHUNK_SCHEMA = 6,
+};
+
 typedef struct {
     int32_t fd;
     uint8_t *data;
+    int32_t schema_count;
+    chunk_schema_record schema[CHUNK_SCHEMA_RECORDS];
 } save_reader;
 
-// the chunk as this build writes it: compressed, or its bytes as they are
-static int32_t read_chunk(save_reader *r, const chunk_entry *c, int32_t size)
+// a chunk as the file keeps it: compressed, or its bytes as they are
+static int32_t read_chunk(save_reader *r, int32_t compressed, int32_t size)
 {
-    if (c->compressed) {
+    if (compressed) {
         return io_read_compressed_chunk(r->fd, r->data, size);
     }
     return platform_file_read(r->fd, r->data, (uint32_t) size) == size;
@@ -298,30 +308,69 @@ static int32_t read_chunk(save_reader *r, const chunk_entry *c, int32_t size)
 
 static int32_t diff_saves(const char *a_path, const char *b_path)
 {
-    save_reader a = { platform_file_open(a_path, PLATFORM_OPEN_READ), malloc(CHUNK_MAX_SIZE) };
-    save_reader b = { platform_file_open(b_path, PLATFORM_OPEN_READ), malloc(CHUNK_MAX_SIZE) };
+    save_reader *readers = calloc(2, sizeof(save_reader));
+    if (!readers) {
+        return SIM_EXIT_FAILED;
+    }
+    save_reader *a = &readers[0], *b = &readers[1];
+    a->fd = platform_file_open(a_path, PLATFORM_OPEN_READ);
+    b->fd = platform_file_open(b_path, PLATFORM_OPEN_READ);
+    a->data = malloc(CHUNK_MAX_SIZE);
+    b->data = malloc(CHUNK_MAX_SIZE);
     int32_t result = SIM_EXIT_FAILED;
-    if (a.fd == -1 || b.fd == -1 || !a.data || !b.data) {
-        fprintf(stderr, "cannot open %s\n", a.fd == -1 ? a_path : b_path);
+    if (a->fd == -1 || b->fd == -1 || !a->data || !b->data) {
+        fprintf(stderr, "cannot open %s\n", a->fd == -1 ? a_path : b_path);
         goto done;
     }
     int32_t differing = 0;
-    for (int32_t i = 0; i < SAVEGAME_CHUNKS; i++) {
-        const chunk_entry *c = &savegame_chunk_table[i];
-        int32_t size = c->element_size * c->count;
-        if (size > CHUNK_MAX_SIZE || !read_chunk(&a, c, size) || !read_chunk(&b, c, size)) {
-            fprintf(stderr, "chunk %d (%d x %d bytes) does not read: the saves are not of this build's layout\n", i, c->count, c->element_size);
+    int32_t chunks = SAVEGAME_CHUNKS;
+    for (int32_t i = 0; i < chunks; i++) {
+        // the header by this build's table, the rest by the file's own schema (a save of an older layout has fewer
+        // chunks and other sizes); a file without a schema by this build's table
+        chunk_entry c = savegame_chunk_table[i];
+        if (i > SIM_CHUNK_SCHEMA && a->schema_count) {
+            c.compressed = a->schema[i].compressed;
+            c.element_size = a->schema[i].element_size;
+            c.count = a->schema[i].count;
+        }
+        int32_t size = c.element_size * c.count;
+        if (size < 0 || size > CHUNK_MAX_SIZE || !read_chunk(a, c.compressed, size) || !read_chunk(b, c.compressed, size)) {
+            fprintf(stderr, "chunk %d (%d x %d bytes) does not read: the file is damaged or not of its schema\n", i, c.count, c.element_size);
             goto done;
+        }
+        if (i == SIM_CHUNK_SCHEMA_COUNT) {
+            memcpy(&a->schema_count, a->data, sizeof(int32_t));
+            memcpy(&b->schema_count, b->data, sizeof(int32_t));
+            if (a->schema_count != b->schema_count || a->schema_count < 0 || a->schema_count > SAVEGAME_CHUNKS) {
+                fprintf(stderr, "the saves are of different layouts: %d and %d chunks\n", a->schema_count, b->schema_count);
+                goto done;
+            }
+            if (a->schema_count) {
+                chunks = a->schema_count;
+            }
+        } else if (i == SIM_CHUNK_SCHEMA) {
+            // the reserved fields keep what the writing build had there (its chunk table's memory addresses): they
+            // are neither the layout nor compared
+            for (int32_t k = 0; k < CHUNK_SCHEMA_RECORDS; k++) {
+                chunk_schema_record *ra = (chunk_schema_record *) a->data + k, *rb = (chunk_schema_record *) b->data + k;
+                ra->reserved_1 = ra->reserved_2 = rb->reserved_1 = rb->reserved_2 = 0;
+            }
+            memcpy(a->schema, a->data, sizeof(a->schema));
+            memcpy(b->schema, b->data, sizeof(b->schema));
+            if (memcmp(a->schema, b->schema, (size_t) a->schema_count * sizeof(chunk_schema_record)) != 0) {
+                fprintf(stderr, "the saves are of different layouts: their chunk schemas differ\n");
+                goto done;
+            }
         }
         int32_t first = -1, elements = 0, last_element = -1;
         for (int32_t at = 0; at < size; at++) {
-            if (a.data[at] == b.data[at]) {
+            if (a->data[at] == b->data[at]) {
                 continue;
             }
             if (first < 0) {
                 first = at;
             }
-            int32_t element = at / c->element_size;
+            int32_t element = at / c.element_size;
             if (element != last_element) {
                 elements++;
                 last_element = element;
@@ -329,21 +378,22 @@ static int32_t diff_saves(const char *a_path, const char *b_path)
         }
         if (first >= 0) {
             differing++;
-            printf("chunk %3d: %d of %d elements of %d bytes differ, the first at offset %d (element %d, byte %d)\n", i, elements, c->count, c->element_size,
-                first, first / c->element_size, first % c->element_size);
+            printf("chunk %3d: %d of %d elements of %d bytes differ, the first at offset %d (element %d, byte %d)\n", i, elements, c.count, c.element_size,
+                first, first / c.element_size, first % c.element_size);
         }
     }
     printf(differing ? "%d chunks differ\n" : "the saves are the same\n", differing);
     result = differing ? SIM_EXIT_USAGE : 0;
 done:
-    if (a.fd != -1) {
-        platform_file_close(a.fd);
+    if (a->fd != -1) {
+        platform_file_close(a->fd);
     }
-    if (b.fd != -1) {
-        platform_file_close(b.fd);
+    if (b->fd != -1) {
+        platform_file_close(b->fd);
     }
-    free(a.data);
-    free(b.data);
+    free(a->data);
+    free(b->data);
+    free(readers);
     return result;
 }
 
@@ -424,6 +474,9 @@ int main(int argc, char **argv)
     platform_path_absolute(log, log_path, sizeof(log_path));
     platform_log_open(log_path);
     platform_log("sim: %s", version_text());
+    // the screen is 640x480 whatever the player's settings: the city view's size goes into the game (the crime base
+    // of a non-house is read past the house models, as far as the city view's width in tiles, figure/service.c)
+    app_request_display_mode(DISPLAY_MODE_640X480);
     if (!image_init() || !platform_dir_enter(game_dir) || !app_startup()) {
         fprintf(stderr, "the game does not start in %s, see %s\n", game_dir, log_path);
         return SIM_EXIT_FAILED;
