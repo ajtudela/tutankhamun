@@ -7,11 +7,12 @@
 [![Android](res/badges/android.svg)](https://nightly.link/dalerank/tutankhamun/workflows/tutankhamun_android/main/android_apk.zip)
 [![macOS arm64](res/badges/macos.svg)](https://nightly.link/dalerank/tutankhamun/workflows/tutankhamun_macos/main/macos_arm_build.zip)
 [![macOS x64](res/badges/macos_x64.svg)](https://nightly.link/dalerank/tutankhamun/workflows/tutankhamun_macos/main/macos_x64_build.zip)
+[![iPad / iOS](res/badges/ios.svg)](https://nightly.link/dalerank/tutankhamun/workflows/tutankhamun_ios/main/ios_build.zip)
 [![Play online](res/badges/web.svg)](https://dalerank.github.io/tutankhamun/play/)
 
 Tutankhamun is an open-source re-implementation of **Pharaoh + Cleopatra 2.1** (Impressions Games, 2000) in C: the
 game written again as a program of its own, `tutankhamun`, that plays on the files of your own copy of the game
-in a window (SDL2) on modern Windows, Linux and macOS, on Android and in the browser. It is also a readable
+in a window (SDL2) on modern Windows, Linux and macOS, on Android, the iPad and in the browser. It is also a readable
 reference for the game's behaviour, mainly to support [Akhenaten](https://github.com/dalerank/Akhenaten).
 
 ![Tutankhamun: a city of the Pharaoh campaign](res/screenshots/tutankhamun.png)
@@ -35,6 +36,7 @@ are also present in Tutankhamun. No game assets are part of this repository.
 | macOS arm64 | [![Github Actions](https://github.com/dalerank/tutankhamun/actions/workflows/tutankhamun_macos.yml/badge.svg)](https://nightly.link/dalerank/tutankhamun/workflows/tutankhamun_macos/main/macos_arm_build.zip) | [docs/macos.md](docs/macos.md) |
 | macOS x64 | [![Github Actions](https://github.com/dalerank/tutankhamun/actions/workflows/tutankhamun_macos.yml/badge.svg)](https://nightly.link/dalerank/tutankhamun/workflows/tutankhamun_macos/main/macos_x64_build.zip) | [docs/macos.md](docs/macos.md) |
 | Android | [![Github Actions](https://github.com/dalerank/tutankhamun/actions/workflows/tutankhamun_android.yml/badge.svg)](https://nightly.link/dalerank/tutankhamun/workflows/tutankhamun_android/main/android_apk.zip) | [docs/android.md](docs/android.md) |
+| iPad / iOS | [![Github Actions](https://github.com/dalerank/tutankhamun/actions/workflows/tutankhamun_ios.yml/badge.svg)](https://nightly.link/dalerank/tutankhamun/workflows/tutankhamun_ios/main/ios_build.zip) | [docs/ios.md](docs/ios.md) |
 | Web | [![Github Actions](https://github.com/dalerank/tutankhamun/actions/workflows/tutankhamun_web.yml/badge.svg)](https://dalerank.github.io/tutankhamun/play/) | [docs/web.md](docs/web.md) |
 
 The unstable build is the latest build of `main`:
@@ -43,6 +45,8 @@ The unstable build is the latest build of `main`:
 - **Linux**: `Tutankhamun-x86_64.AppImage`, one file for 64-bit distributions with glibc 2.34+;
 - **macOS**: a disk image with `Tutankhamun.app` for Apple silicon (11.7+) or Intel (10.15+), signed ad hoc;
 - **Android**: `app-release.apk` for Android 5.0+, played with touch;
+- **iPad / iOS**: `Tutankhamun.ipa` for iOS 13+, not signed: a check of the build until it is signed for a device
+  ([docs/ios.md](docs/ios.md));
 - **Web**: [the game's page](https://dalerank.github.io/tutankhamun/play/) in a desktop browser; the folder of your
   game is copied into the browser once.
 
@@ -66,7 +70,8 @@ it off).
 Every platform builds from the same CMake project, with SDL2 and SDL2_mixer fetched and linked statically:
 `build.bat` on [Windows](docs/windows.md#building), presets and an AppImage script on [Linux](docs/linux.md#building),
 presets and a disk image script on [macOS](docs/macos.md#building), Gradle on [Android](docs/android.md#building)
-(and [Google Play](docs/android.md#google-play)), Emscripten for [the browser](docs/web.md#building). [BUILD.md](BUILD.md)
+(and [Google Play](docs/android.md#google-play)), Xcode for [the iPad](docs/ios.md#building), Emscripten for
+[the browser](docs/web.md#building). [BUILD.md](BUILD.md)
 has the details.
 
 ## Contributing

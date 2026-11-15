@@ -1,0 +1,26 @@
+name: Tutankhamun Build iOS
+
+# As Julius's iOS job (.github/workflows/main.yml, "iOS"): the iPhone and iPad app built on macos-latest with the
+# Xcode generator, not signed (packaging/ios/build_ios.sh). The unsigned Tutankhamun.ipa is kept as the artifact.
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+  workflow_dispatch:
+
+jobs:
+  ios:
+    name: build the iOS app
+    runs-on: macos-latest
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        fetch-depth: 0 # the commit count is the build number (CMakeLists.txt)
+    - name: build
+      run: bash packaging/ios/build_ios.sh build/ios
+    - uses: actions/upload-artifact@v4
+      with:
+        name: ios_build
+        path: build/ios/Tutankhamun.ipa
