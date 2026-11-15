@@ -33,8 +33,6 @@ enum laborer_rule {
     LABORER_RULE_COUNT,
 };
 
-extern int32_t laborer_rules[LABORER_RULE_COUNT];
-
 enum laborer_limit {
     LABORER_TASK_CANDIDATES = 500,
     LABORER_NO_DISTANCE = 10000,

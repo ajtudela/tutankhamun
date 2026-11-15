@@ -30,8 +30,6 @@ enum guild_worker_rule {
     GUILD_WORKER_RULE_COUNT = 10,
 };
 
-extern int32_t guild_worker_rules[GUILD_WORKER_RULE_COUNT];
-
 void building_artisans_guild_spawn_figure(int32_t building_id);
 void building_bricklayers_guild_spawn_figure(int32_t building_id);
 void building_carpenters_guild_spawn_figure(int32_t building_id);

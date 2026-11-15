@@ -93,8 +93,6 @@ enum formation_morale {
     FORMATION_DEATH_SHARE_STEPS = 5,
 };
 
-extern int32_t formation_morale_rules[FORMATION_MORALE_RULE_COUNT];
-
 enum formation_timing {
     FORMATION_RECENT_FIGHT_TICKS = 6,
     ENEMY_FORMATION_GATHER_TICKS = 32,

@@ -60,8 +60,6 @@ enum figure_speech_code {
     FIGURE_SPEECH_PRIEST_OSIRIS = 230,
 };
 
-extern int32_t figure_speech_sounds[FIGURE_TYPE_COUNT];
-
 int32_t figure_phrase_city_weights(uint8_t *weights, uint8_t *none);
 int32_t figure_phrase_pick_city_problem(void);
 int32_t figure_trade_ship_dock_activity(int32_t figure_id);

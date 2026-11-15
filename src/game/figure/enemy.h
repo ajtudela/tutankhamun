@@ -72,14 +72,10 @@ typedef struct enemy_cart_offset {
     int32_t dy;
 } enemy_cart_offset;
 
-extern enemy_cart_offset enemy_cart_offsets[DIRECTION_COUNT];
-
 typedef struct enemy_foot_rule {
     int32_t speed_factor;
     int32_t attack_sound;
 } enemy_foot_rule;
-
-extern enemy_foot_rule enemy_foot_rules[ENEMY_FOOT_KINDS];
 
 void enemy_action(void);
 void figure_enemy_properties_init(void);

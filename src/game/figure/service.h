@@ -27,8 +27,6 @@ enum service_temple_complex {
     SERVICE_BAST_COMPLEX_UPGRADE = 10,
 };
 
-extern int32_t service_rules[SERVICE_RULE_COUNT];
-
 int32_t figure_service_provide_coverage(int32_t figure_id);
 int32_t service_provide_labor_seeker_coverage(int32_t x, int32_t y);
 int32_t service_provide_tax_collector_coverage(int32_t x, int32_t y);

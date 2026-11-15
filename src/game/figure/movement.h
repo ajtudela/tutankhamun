@@ -30,8 +30,6 @@ enum movement_rule {
     MOVEMENT_RULE_COUNT,
 };
 
-extern int32_t movement_rules[MOVEMENT_RULE_COUNT];
-
 enum movement_roam {
     MOVEMENT_ROAM_TURN_CLOCKWISE = 2,
     MOVEMENT_ROAM_TURN_COUNTER_CLOCKWISE = -2,

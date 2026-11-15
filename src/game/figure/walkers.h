@@ -42,8 +42,6 @@ enum walker_rule {
     WALKER_RULE_COUNT = 19,
 };
 
-extern int32_t walker_rules[WALKER_RULE_COUNT];
-
 void figure_roamer_action(void);
 int32_t figure_entertainer_determine_destination(int32_t figure_id);
 int32_t figure_closest_enemy_for_constable(int32_t x, int32_t y, int32_t max_distance);
