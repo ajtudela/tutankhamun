@@ -394,7 +394,9 @@ static config_snapshot config_snapshot_take(const config_table *table)
     for (int32_t s = 0; s < snapshot.count; s++) {
         config_span *span = &snapshot.spans[s];
         span->copy = malloc(span->size > 0 ? span->size : 1);
-        memcpy(span->copy, span->data, span->size);
+        if (span->size > 0) {
+            memcpy(span->copy, span->data, span->size);
+        }
     }
     return snapshot;
 }
@@ -402,7 +404,9 @@ static config_snapshot config_snapshot_take(const config_table *table)
 static void config_snapshot_restore(const config_snapshot *snapshot)
 {
     for (int32_t s = 0; s < snapshot->count; s++) {
-        memcpy(snapshot->spans[s].data, snapshot->spans[s].copy, snapshot->spans[s].size);
+        if (snapshot->spans[s].size > 0) {
+            memcpy(snapshot->spans[s].data, snapshot->spans[s].copy, snapshot->spans[s].size);
+        }
     }
 }
 
