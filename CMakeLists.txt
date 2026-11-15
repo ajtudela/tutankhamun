@@ -267,6 +267,25 @@ endif()
 target_compile_definitions(tutankhamun PRIVATE SDL_MAIN_HANDLED)
 target_link_libraries(tutankhamun PRIVATE tutankhamun_game parson tutankhamun_platform akhenaten_bink)
 
+# The headless runner of the saved game regression (src/tools/sim_main.c, docs/architecture-plan.md 1.2): the program's
+# sources with sim_main.c for main.c, beside the program with its configs. Not on Android or in the browser.
+if(NOT ANDROID AND NOT EMSCRIPTEN)
+    set(TUTANKHAMUN_SIM_SOURCES ${TUTANKHAMUN_SOURCES})
+    list(REMOVE_ITEM TUTANKHAMUN_SIM_SOURCES src/app/main.c res/tutankhamun.rc)
+    add_executable(tutankhamun_sim ${TUTANKHAMUN_SIM_SOURCES} src/tools/sim_main.c)
+    target_include_directories(tutankhamun_sim PRIVATE src src/game)
+    target_compile_options(tutankhamun_sim PRIVATE ${TUTANKHAMUN_STRICT_CALLS})
+    target_compile_definitions(tutankhamun_sim PRIVATE SDL_MAIN_HANDLED)
+    target_link_libraries(tutankhamun_sim PRIVATE tutankhamun_game parson tutankhamun_platform akhenaten_bink)
+    if(MSVC)
+        target_link_options(tutankhamun_sim PRIVATE /DYNAMICBASE /INCREMENTAL:NO)
+        target_link_libraries(tutankhamun_sim PRIVATE winmm winhttp)
+    elseif(NOT APPLE)
+        target_link_options(tutankhamun_sim PRIVATE -static-libstdc++ -static-libgcc -rdynamic)
+    endif()
+    set_target_properties(tutankhamun_sim PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
+endif()
+
 if(ANDROID)
     # the configs go into the APK's assets (android/app/build.gradle) and are copied to the app's storage at start
     return()
