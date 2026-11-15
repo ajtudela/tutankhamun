@@ -124,8 +124,9 @@ after the changes of phase 1: the file itself is damaged (1.6).
   `app/video_bink.c`), so it became `app/app_screen.c`, which reads the game's buffer, size and pixel format and hands
   them to `platform_screen_update(pixels, width, height, is_565)` of `platform/screen.c`; its external buffer, never
   set, is gone.
-- [ ] 2.2. `updater.c` without `app/`: what it takes from `app/app_files.h` comes from `main.c` as an argument, or the
-  file moves into `src/app/`.
+- [x] 2.2. `updater.c` and `language_store.c` without `app/`: `main.c` reads `[update] check` and calls
+  `updater_disable`; the language store, all ini and config folder, is `app/app_language.c` behind
+  `platform/language_store.h`, as `app/media_audio.c` is behind `platform/platform_sound.h`.
 - [ ] 2.3. `src/game/platform` becomes `src/game/host` (`"host/host_window.h"`, ...); the function prefixes stay for
   now.
 - [ ] 2.4. `PRIVATE src/game` out of `tutankhamun_platform`: an include of the game's headers in `src/platform` is

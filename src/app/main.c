@@ -30,6 +30,12 @@
 
 static const char PLAY_LOG_NAME[] = "tutankhamun_play.log";
 
+static int32_t update_check_off(void)
+{
+    char ini[PLATFORM_PATH_MAX];
+    return app_ini_path(ini, sizeof(ini)) && app_ini_read_int(ini, "update", "check", 1) == 0;
+}
+
 static int32_t names_exe(const char *path)
 {
     size_t length = strlen(path);
@@ -239,6 +245,9 @@ static int32_t play_main(int32_t argc, char **argv, int32_t first)
     }
     platform_log_open(log_path);
     platform_log("port: %s", version_text());
+    if (update_check_off()) {
+        updater_disable();
+    }
     updater_start();
     static const play_host host = { platform_log, game_run_tick, game_run_frame };
     play_bind(&host);

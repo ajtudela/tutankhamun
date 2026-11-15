@@ -1,4 +1,4 @@
-// The chosen language in the program's ini and the config folder of the language packs (language_store.h).
+// The chosen language in the program's ini and the config folder of the language packs (platform/language_store.h).
 
 #include "platform/language_store.h"
 

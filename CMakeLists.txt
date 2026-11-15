@@ -146,6 +146,7 @@ set(TUTANKHAMUN_SOURCES
     ${TUTANKHAMUN_SYSTEM_SOURCES}
     src/app/app_files.c
     src/app/app_icon.c
+    src/app/app_language.c
     src/app/app_screen.c
     src/app/game_dir.c
     src/app/main.c
@@ -162,7 +163,6 @@ set(TUTANKHAMUN_SOURCES
     src/platform/platform_display.c
     src/platform/platform_file.c
     src/platform/http.c
-    src/platform/language_store.c
     src/platform/report.c
     src/platform/updater.c
     src/platform/version.c

@@ -20,7 +20,6 @@
 #if defined(_WIN32) && defined(TUTANKHAMUN_UPDATER)
 #define UPDATER_SUPPORTED 1
 #include <windows.h>
-#include "app/app_files.h"
 #endif
 
 static volatile int32_t state = UPDATER_OFF;
@@ -514,11 +513,7 @@ static DWORD WINAPI update_thread(LPVOID unused)
 
 static int32_t check_wanted(void)
 {
-    char ini[UPDATER_PATH];
-    if (disabled) {
-        return 0;
-    }
-    return !app_ini_path(ini, sizeof(ini)) || app_ini_read_int(ini, "update", "check", 1) != 0;
+    return !disabled;
 }
 
 void updater_start(void)
