@@ -40,6 +40,7 @@ static const config_table *const tables[] = {
     &empire_trade_rule_table,
     &enemy_cart_offset_table,
     &enemy_foot_rule_table,
+    &enemy_formation_layout_table,
     &enemy_name_group_table,
     &enemy_theft_percentage_table,
     &event_type_text_table,

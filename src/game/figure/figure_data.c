@@ -3,6 +3,7 @@
 // figure/figure_data.h declares them.
 
 #include "figure/figure_data.h"
+#include "core/config.h"
 #include "figure/animals_internal.h"
 #include "figure/carriers.h"
 #include "figure/figure.h"
@@ -553,3 +554,39 @@ formation_layout_spot *enemy_formation_layout(int32_t index)
 {
     return enemy_formation_layout_offsets[index];
 }
+
+static void *enemy_formation_layout_block(int32_t record, int32_t *count)
+{
+    *count = FORMATION_LAYOUT_SPOTS;
+    return enemy_formation_layout_offsets[record];
+}
+
+static const config_field enemy_formation_spot_fields[] = {
+    { "x", 0, 0, 1, -100, 100, 0, (int32_t) offsetof(formation_layout_spot, x) },
+    { "y", 0, 0, 1, -100, 100, 0, (int32_t) offsetof(formation_layout_spot, y) },
+};
+
+static const config_list enemy_formation_spot_list = {
+    "spot",
+    sizeof(formation_layout_spot),
+    enemy_formation_spot_fields,
+    CONFIG_COUNT(enemy_formation_spot_fields),
+    enemy_formation_layout_block,
+    0,
+};
+
+static const config_field enemy_formation_layout_fields[] = {
+    { "spots", 0, 0, 1, 0, 0, 0, 0, 0, &enemy_formation_spot_list },
+};
+
+static const config_storage enemy_formation_layout_storage[] = {
+    { enemy_formation_layout_offsets, sizeof(enemy_formation_layout_offsets) },
+};
+
+const config_table enemy_formation_layout_table = {
+    "enemy_formation_layouts.json",
+    "layout",
+    0,
+    FORMATION_LAYOUTS,
+    CONFIG_TABLE_COLUMNS(enemy_formation_layout_fields, enemy_formation_layout_storage),
+};

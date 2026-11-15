@@ -168,7 +168,7 @@ Phase 3 starts only with the regression of phase 1 in place.
   display, frame).
 - [ ] 4.2. The large tables in C looked through: what the saved games keep or what is reached by offset stays, with the
   reason in the file's header; the rest goes into `config/*.json` like the other configs, checked by
-  `--check-configs`.
+  `--check-configs` (done for the enemy formation layouts: `config/enemy_formation_layouts.json`).
 - [ ] 4.3. The fixed-size string globals of `io/io_data.c` that are neither saved nor reached by offset become
   literals.
 

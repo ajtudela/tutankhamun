@@ -42,6 +42,7 @@ extern const config_table empire_map_region_table;
 extern const config_table empire_trade_rule_table;
 extern const config_table enemy_cart_offset_table;
 extern const config_table enemy_foot_rule_table;
+extern const config_table enemy_formation_layout_table;
 extern const config_table enemy_name_group_table;
 extern const config_table enemy_theft_percentage_table;
 extern const config_table event_type_text_table;
