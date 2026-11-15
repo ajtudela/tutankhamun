@@ -64,7 +64,7 @@ and the first name in both would take the wrong file without an error.
 
 The aim, the original's logic byte for byte, has no check of its own beyond playing. The loading of `test.sav` also
 logs `ERR:COMP1 Corrupt.`, `ERR:COMP Error uncompressing.` and four `crt: invalid parameter`, the same before and
-after the changes of phase 1: a chunk that does not decompress, still to be found.
+after the changes of phase 1: the file itself is damaged (1.6).
 
 ### 5. Smaller ones
 
@@ -110,7 +110,13 @@ after the changes of phase 1: a chunk that does not decompress, still to be foun
   about 25 s.
 - [ ] 1.5. The preset `linux-asan` (`-fsanitize=address,undefined`), the regression run under it; a real overrun is a
   fix of its own, a behaviour of the original stays and the file's header says so.
-- [ ] 1.6. The `ERR:COMP1 Corrupt.` of `test.sav` found with `--diff-saves` and the chunk table.
+- [x] 1.6. The `ERR:COMP1 Corrupt.` of `test.sav` found with `--diff-saves` and the chunk table: the file is damaged,
+  the reader is right. `test.sav` (2023, version 147, a schema of 175 chunks) has 9775 bytes after chunk 146 that its
+  schema does not list: 1463 bytes (915 of `FF`, 548 of zeros), chunks 147-174 with the city's data (the flood settings,
+  the service visit grid, the rubble and moisture grids), 3682 zeros; then chunks 147-174 again, all zero, to the end of
+  the file. The game reads chunk 147 at the first of those bytes, takes `FFFFFFFF` for its compressed size (the `crt:
+  invalid parameter` of a read of 4 GB, then `ERR:COMP1` and `ERR:COMP`), and 148, 168 and 170 the same way. The 8 saves
+  of `tests/saves/` read by their schemas end exactly at the end of the file.
 
 ### Phase 2: clean layers
 
