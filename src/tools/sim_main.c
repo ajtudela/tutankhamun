@@ -431,7 +431,7 @@ int main(int argc, char **argv)
         if (!image_init()) {
             return SIM_EXIT_FAILED;
         }
-        // the static initializers fill the chunk table (core/static_init.c); a compressed chunk is read through the
+        // the static initializers fill the chunk table (game/static_init.c); a compressed chunk is read through the
         // spare screen, which the game's start-up allocates
         image_run_static_initializers();
         spare_screen = malloc(CHUNK_MAX_SIZE);

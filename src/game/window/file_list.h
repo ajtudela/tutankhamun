@@ -3,7 +3,7 @@
 #ifndef WINDOW_FILE_LIST_H
 #define WINDOW_FILE_LIST_H
 
-#include "core/static_init.h"
+#include "game/static_init.h"
 #include "core/string_compare.h"
 #include "game/player_record.h"
 #include "window/window_state_types.h"

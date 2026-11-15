@@ -9,7 +9,7 @@
 // - image_get_size returns the header's address with only the low byte set to the success flag.
 
 #include "graphics/image_collection.h"
-#include "core/static_init.h"
+#include "game/static_init.h"
 #include "graphics/graphics_data.h"
 #include "graphics/image_blit.h"
 #include "io/file.h"

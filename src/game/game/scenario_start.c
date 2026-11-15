@@ -20,7 +20,7 @@
 #include "core/calc.h"
 #include "core/crt_compat.h"
 #include "core/random.h"
-#include "core/static_init.h"
+#include "game/static_init.h"
 #include "core/text.h"
 #include "editor/editor_data.h"
 #include "editor/editor_new_scenario.h"

@@ -6,7 +6,7 @@
 #define _GNU_SOURCE
 
 #include "app/image.h"
-#include "core/static_init.h"
+#include "game/static_init.h"
 #include "platform/log.h"
 
 #include <dlfcn.h>

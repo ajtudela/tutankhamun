@@ -6,7 +6,7 @@
 // A text continued on the next line ("\" then a line end) is looked for from the position "key index + 1" of the file
 // rather than after the backslash.
 
-#include "core/static_init.h"
+#include "game/static_init.h"
 
 #include "building/abu_simbel.h"
 #include "building/caesareum.h"

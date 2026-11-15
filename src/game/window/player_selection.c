@@ -4,7 +4,7 @@
 
 #include "window/player_selection.h"
 #include "core/calc.h"
-#include "core/static_init.h"
+#include "game/static_init.h"
 #include "game/game_data.h"
 #include "game/game_internal.h"
 #include "game/player_record.h"

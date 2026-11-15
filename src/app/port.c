@@ -2,7 +2,7 @@
 // with the registers and the return addresses on the stack (a stack cookie found overwritten with its function).
 
 #include "app/image.h"
-#include "core/static_init.h"
+#include "game/static_init.h"
 #include "platform/log.h"
 
 #include <windows.h>

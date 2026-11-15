@@ -1,8 +1,8 @@
-// The functions of core/static_init.c: the constructors of the global objects, their start-up initialization
+// The functions of game/static_init.c: the constructors of the global objects, their start-up initialization
 // (game_static_init), the sound manager's exit shutdown and the key text table EVENTMSG.TXT is read into.
 
-#ifndef CORE_STATIC_INIT_H
-#define CORE_STATIC_INIT_H
+#ifndef GAME_STATIC_INIT_H
+#define GAME_STATIC_INIT_H
 
 #include "core/key_text_types.h"
 #include "core/queue.h"

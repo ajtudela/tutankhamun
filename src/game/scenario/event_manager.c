@@ -8,7 +8,7 @@
 // - the first random number of an event's reset only advances the seeds;
 // - without an invasion the invasion search may hand out the cheats' record.
 
-#include "core/static_init.h"
+#include "game/static_init.h"
 #include "figure/figure.h"
 #include "figure/figure_type.h"
 #include "figure/formation.h"

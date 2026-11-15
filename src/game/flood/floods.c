@@ -13,7 +13,7 @@
 #include "core/crt_compat.h"
 #include "core/random.h"
 #include "core/sorted_list.h"
-#include "core/static_init.h"
+#include "game/static_init.h"
 #include "figure/action.h"
 #include "figure/figure.h"
 #include "figure/figure_action.h"

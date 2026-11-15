@@ -21,7 +21,7 @@
 #include "city/population.h"
 #include "city/resource_type.h"
 #include "core/queue.h"
-#include "core/static_init.h"
+#include "game/static_init.h"
 #include "empire/empire_data.h"
 #include "figure/enemy.h"
 #include "figure/figure.h"

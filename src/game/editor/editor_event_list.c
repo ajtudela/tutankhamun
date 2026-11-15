@@ -3,7 +3,7 @@
 
 #include "editor/editor_event_list.h"
 #include "core/calc.h"
-#include "core/static_init.h"
+#include "game/static_init.h"
 #include "editor/editor_data.h"
 #include "editor/editor_events.h"
 #include "graphics/image_buttons.h"

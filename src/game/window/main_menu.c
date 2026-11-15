@@ -6,7 +6,7 @@
 // The replay selection counts no period as done: every period stays open there.
 
 #include "window/main_menu.h"
-#include "core/static_init.h"
+#include "game/static_init.h"
 #include "editor/editor_data.h"
 #include "game/game_data.h"
 #include "graphics/button_border.h"

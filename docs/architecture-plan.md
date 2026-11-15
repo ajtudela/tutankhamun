@@ -142,8 +142,8 @@ The definitions stay in the `*_data.c` files, in their order and with their type
 move, each into the header of the module that owns the data (`extern int32_t farm_harvest_months[40];` from
 `building/building_data.h` into the farm's header).
 
-- [ ] 3.1. `core/` includes only `core/` and the standard headers: what `core/random.h` takes from
-  `figure/figure_data.h` moves into `core/random_types.h`.
+- [x] 3.1. `core/` includes only `core/`, the platform, parson and the standard headers: `random_generator_state`
+  and `string_number_buffer` are declared in `core/`, `static_init` and `config_names.c` moved into `game/`.
 - [ ] 3.2. `map/grid.h` without `building/building_data.h`: what the grid uses moves into `map/map_grid_types.h`.
 - [ ] 3.3. `building/building.h` without `building_data.h`.
 - [ ] 3.4. One owner per commit: `figure_data.h`, `widget_data.h`, `graphics_data.h`, then `window_data.h`,

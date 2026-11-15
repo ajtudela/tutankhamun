@@ -4,7 +4,7 @@
 #ifndef WINDOW_MAP_SELECTION_H
 #define WINDOW_MAP_SELECTION_H
 
-#include "core/static_init.h"
+#include "game/static_init.h"
 #include "graphics/button.h"
 #include "scenario/scenario_event_types.h"
 #include <stdbool.h>

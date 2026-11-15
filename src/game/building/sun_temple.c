@@ -17,7 +17,7 @@
 #include "building/monument_spots.h"
 #include "building/monument_static.h"
 #include "city/resource_type.h"
-#include "core/static_init.h"
+#include "game/static_init.h"
 #include "figure/action.h"
 #include "figure/figure.h"
 #include "figure/figure_action.h"

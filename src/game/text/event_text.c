@@ -9,7 +9,7 @@
 
 #include "city/city_data.h"
 #include "city/message.h"
-#include "core/static_init.h"
+#include "game/static_init.h"
 #include "platform/platform_file.h"
 #include "scenario/event_helpers.h"
 #include "text/lang.h"

@@ -3,7 +3,7 @@
 
 #include "sound/sound_lib.h"
 
-#include "core/static_init.h"
+#include "game/static_init.h"
 #include "platform/platform_sound.h"
 #include "platform/platform_system.h"
 #include "sound/sound_data.h"
