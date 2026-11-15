@@ -18,6 +18,7 @@
 // takes a confirming second tap and has a cancel button (widget/touch_construction.c).
 
 #include "app/play.h"
+#include "app/app_platform.h"
 
 #include "app/app_files.h"
 #include "app/app_icon.h"
@@ -610,7 +611,7 @@ static void text_event(const char *text)
     }
 }
 
-#if defined(__ANDROID__)
+#if defined(APP_TOUCH)
 enum touch_state {
     TOUCH_NONE = 0,
     TOUCH_PENDING = 1,
@@ -869,7 +870,7 @@ static void android_display_size(play_display_request *request)
 
 static void handle_event(const SDL_Event *e)
 {
-#if defined(__ANDROID__)
+#if defined(APP_TOUCH)
     if (touch_event(e)) {
         return;
     }
@@ -997,13 +998,13 @@ static void deliver_posted_keys(void)
 static void frame_begin(void)
 {
     SDL_Event e;
-#if defined(__ANDROID__)
+#if defined(APP_TOUCH)
     touch_release();
 #endif
     while (SDL_PollEvent(&e)) {
         handle_event(&e);
     }
-#if defined(__ANDROID__)
+#if defined(APP_TOUCH)
     touch_long_press();
     text_field_frame();
 #endif
@@ -1173,7 +1174,7 @@ int32_t play_display_prepare(const play_display_request *command_line)
     if (command_line->fullscreen >= 0) {
         request.fullscreen = command_line->fullscreen;
     }
-#if defined(__ANDROID__)
+#if defined(APP_TOUCH)
     if (request.width <= 0 || request.height <= 0) {
         android_display_size(&request);
     }
@@ -1243,7 +1244,7 @@ static void display_remember_if_changed(void)
 int32_t play_run(const char *save)
 {
     SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "linear");
-#if defined(__ANDROID__)
+#if defined(APP_TOUCH)
     SDL_SetHint(SDL_HINT_ORIENTATIONS, "LandscapeLeft LandscapeRight");
     touch_construction_enabled = 1;
 #endif
@@ -1279,7 +1280,7 @@ int32_t play_run(const char *save)
     if (save) {
         play_load_save(save);
     }
-#if !defined(__ANDROID__)
+#if !defined(APP_TOUCH)
     SDL_StartTextInput();
 #endif
     while (!play.quit) {
