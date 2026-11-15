@@ -240,17 +240,17 @@ static void fishing_boat_go_to_wharf(int32_t wharf_id)
 {
     const building *wharf = building_get(wharf_id);
     map_water_tile_next_to(wharf->x, wharf->y, wharf->size);
-    figure *f = figure_get(figure_current_id);
+    figure *f = figure_get(figure_current_id_get());
     f->destination_x = (int16_t) map_result_x;
     f->destination_y = (int16_t) map_result_y;
     f->source_x = (int16_t) map_result_x;
     f->source_y = (int16_t) map_result_y;
-    figure_route_remove(figure_current_id);
+    figure_route_remove(figure_current_id_get());
 }
 
 void figure_fishing_boat_action(void)
 {
-    int32_t figure_id = figure_current_id;
+    int32_t figure_id = figure_current_id_get();
     figure *f = figure_get(figure_id);
     int32_t speed = figure_properties[f->type].speed;
     int32_t home_id = f->building_id;
@@ -385,14 +385,14 @@ void figure_fishing_boat_action(void)
     }
     int32_t direction = (f->direction >= DIRECTION_COUNT) ? f->previous_tile_direction : f->direction;
     int32_t dir = direction - map_info.orientation;
-    figure_image_direction = dir;
+    figure_image_direction_set(dir);
     if (f->action_state == FIGURE_ACTION_FISHING_BOAT_FISHING) {
         dir -= FISHING_BOAT_FISHING_TURN;
-        figure_image_direction = dir;
+        figure_image_direction_set(dir);
     }
     if (dir < 0) {
         dir += DIRECTION_COUNT;
-        figure_image_direction = dir;
+        figure_image_direction_set(dir);
     }
     switch (f->action_state) {
         case FIGURE_ACTION_FISHING_BOAT_GOING_TO_FISH:
@@ -422,7 +422,7 @@ void figure_fishing_boat_action(void)
 
 void figure_fishing_spot_action(void)
 {
-    int32_t figure_id = figure_current_id;
+    int32_t figure_id = figure_current_id_get();
     figure *f = figure_get(figure_id);
     f->is_ghost = 0;
     f->is_boat = FIGURE_BOAT_SHIP;
@@ -652,7 +652,7 @@ void ferry_move(int32_t figure_id, int32_t slowness)
 
 static void ferry_sink(int32_t path)
 {
-    figure *f = figure_get(figure_current_id);
+    figure *f = figure_get(figure_current_id_get());
     if (f->action_state != FIGURE_ACTION_CORPSE) {
         f->wait_ticks = -1;
     }
@@ -667,7 +667,7 @@ static int32_t queue_load_count(ring_queue *queue)
 
 void figure_ferry_boat_action(void)
 {
-    int32_t figure_id = figure_current_id;
+    int32_t figure_id = figure_current_id_get();
     figure *f = figure_get(figure_id);
     f->is_boat = FIGURE_BOAT_SHIP;
     int32_t home_id = f->building_id;
@@ -781,11 +781,11 @@ void figure_ferry_boat_action(void)
     if (f->action_state != FIGURE_ACTION_CORPSE) {
         if (f->action_state > FIGURE_ACTION_FERRY_BOAT_CREATED && f->action_state <= FIGURE_ACTION_FERRY_BOAT_CROSSING_BACK) {
             int32_t group = map_sweep_has_passed(f->x) ? IMAGE_GROUP_FIGURE_FERRY_BOAT_SWEPT : IMAGE_GROUP_FIGURE_FERRY_BOAT;
-            f->image_id = image_group(group) + (f->animation_frame / BOAT_TICKS_PER_IMAGE) * DIRECTION_COUNT + figure_image_direction;
+            f->image_id = image_group(group) + (f->animation_frame / BOAT_TICKS_PER_IMAGE) * DIRECTION_COUNT + figure_image_direction_get();
             return;
         }
         int32_t group = map_sweep_has_passed(f->x) ? IMAGE_GROUP_FIGURE_FERRY_BOAT_SWEPT_IDLE : IMAGE_GROUP_FIGURE_FERRY_BOAT_IDLE;
-        f->image_id = image_group(group) + figure_image_direction;
+        f->image_id = image_group(group) + figure_image_direction_get();
         return;
     }
     if (f->wait_ticks >= BOAT_SINKING_TICKS) {
@@ -797,7 +797,7 @@ void figure_ferry_boat_action(void)
         return;
     }
     int32_t group = map_sweep_has_passed(f->x) ? IMAGE_GROUP_FIGURE_FERRY_BOAT_SWEPT_SINKING : IMAGE_GROUP_FIGURE_FERRY_BOAT_SINKING;
-    f->image_id = (figure_image_direction / DIRECTION_COUNT) + image_group(group) + (f->wait_ticks / BOAT_TICKS_PER_IMAGE);
+    f->image_id = (figure_image_direction_get() / DIRECTION_COUNT) + image_group(group) + (f->wait_ticks / BOAT_TICKS_PER_IMAGE);
 }
 
 int32_t figure_route_find_ferry_on_path(int32_t figure_id, int32_t ferry_building_id)

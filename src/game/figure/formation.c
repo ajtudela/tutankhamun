@@ -1245,16 +1245,7 @@ void formation_change_all_enemy_morale(int32_t amount)
 
 uint8_t *formation_memory_past_records(int32_t offset)
 {
-    int32_t *const counters[] = { &figure_roaming_enabled, &figure_search_best_distance, &figure_highest_id, &figure_unused_counter };
-    int32_t counter_bytes = (int32_t) sizeof(counters) / (int32_t) sizeof(counters[0]) * (int32_t) sizeof(int32_t);
-    if (offset < counter_bytes) {
-        return (uint8_t *) counters[offset / (int32_t) sizeof(int32_t)] + (offset % (int32_t) sizeof(int32_t));
-    }
-    offset -= counter_bytes;
-    if (offset < (int32_t) sizeof(figure_table)) {
-        return (uint8_t *) figure_table_get() + offset;
-    }
-    return 0;
+    return figure_bytes_past_formations(offset);
 }
 
 int32_t formation_create_legion(int32_t building_id)

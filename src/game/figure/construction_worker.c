@@ -69,13 +69,13 @@ static int32_t image_direction(const figure *f)
     if (dir < 0) {
         dir += 8;
     }
-    figure_image_direction = dir;
+    figure_image_direction_set(dir);
     return dir;
 }
 
 static int32_t corpse_image(int32_t base, const figure *f)
 {
-    return base + figure_corpse_offsets[f->wait_ticks / 2];
+    return base + figure_corpse_offset(f->wait_ticks / 2);
 }
 
 static void decrease_guild_figure_count(const figure *f)
@@ -185,7 +185,7 @@ static void waiting_mason_image(figure *f, int32_t figure_id, int32_t base, int3
                         f->direction = (int8_t) ((f->direction - 1) & 7);
                         break;
                 }
-                f->image_id = base + figure_image_direction;
+                f->image_id = base + figure_image_direction_get();
             }
             break;
         case 3:
@@ -196,7 +196,7 @@ static void waiting_mason_image(figure *f, int32_t figure_id, int32_t base, int3
 
 void figure_carpenter_action(void)
 {
-    int32_t figure_id = figure_current_id;
+    int32_t figure_id = figure_current_id_get();
     figure *f = figure_get(figure_id);
     if (!worker_begin(f, BUILDING_CARPENTERS_GUILD)) {
         return;
@@ -367,7 +367,7 @@ void figure_carpenter_action(void)
 
 void figure_bricklayer_action(void)
 {
-    int32_t figure_id = figure_current_id;
+    int32_t figure_id = figure_current_id_get();
     figure *f = figure_get(figure_id);
     int32_t carries_block = 0;
     int32_t speed = figure_properties[f->type].speed;
@@ -525,7 +525,7 @@ void figure_bricklayer_action(void)
 
 void figure_stonemason_action(void)
 {
-    int32_t figure_id = figure_current_id;
+    int32_t figure_id = figure_current_id_get();
     figure *f = figure_get(figure_id);
     int32_t carries_block = 0;
     if (f->wait_ticks < 0) {
@@ -800,7 +800,7 @@ void figure_stonemason_action(void)
 
 void figure_tomb_artisan_action(void)
 {
-    int32_t figure_id = figure_current_id;
+    int32_t figure_id = figure_current_id_get();
     figure *f = figure_get(figure_id);
     if (!worker_begin(f, BUILDING_ARTISANS_GUILD)) {
         return;
@@ -1036,7 +1036,7 @@ static void guild_send_worker(int32_t figure_id, int16_t *stock)
     figure_get(figure_id)->action_state = FIGURE_ACTION_CARPENTER_GO_TO_SITE;
     figure_route_remove(figure_id);
     *stock -= (int16_t) guild_worker_rules[GUILD_WORKER_RULE_LOAD];
-    figure_get(figure_current_id)->roam_length = 0;
+    figure_get(figure_current_id_get())->roam_length = 0;
     if (*stock < 0) {
         *stock = 0;
     }

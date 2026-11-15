@@ -774,7 +774,7 @@ void figure_movement_roam_ticks(int32_t figure_id, int32_t num_ticks)
     int32_t attempts = 0;
     if (!f->roam_choose_destination) {
         figure_roaming_enabled = 1;
-        figure_movement_move_ticks(figure_current_id, figure_properties[f->type].speed);
+        figure_movement_move_ticks(figure_current_id_get(), figure_properties[f->type].speed);
         if (f->direction == DIRECTION_REROUTE || f->direction == DIRECTION_LOST) {
             f->roam_choose_destination = 1;
         } else if (f->direction == DIRECTION_AT_DESTINATION) {
@@ -798,7 +798,7 @@ void figure_movement_roam_ticks(int32_t figure_id, int32_t num_ticks)
             }
             int32_t roads = map_get_adjacent_road_tiles_for_roaming(f->grid_offset, figure_id);
             if (roads <= 0) {
-                figure *current = figure_get(figure_current_id);
+                figure *current = figure_get(figure_current_id_get());
                 current->roam_length = current->max_roam_length;
                 return;
             }

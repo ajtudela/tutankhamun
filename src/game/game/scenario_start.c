@@ -371,7 +371,7 @@ void figure_init_scenario(void)
     for (int32_t id = 0; id < MAX_FIGURES; id++) {
         memset(figure_get(id), 0, sizeof(figure));
     }
-    figure_highest_id = 0;
+    figure_highest_id_set(0);
     figure_unused_counter = 0;
 }
 

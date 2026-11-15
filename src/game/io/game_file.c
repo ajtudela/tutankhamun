@@ -106,6 +106,7 @@ enum game_file_chunk {
     SAVEGAME_CHUNK_FIGURES = 21,
     SAVEGAME_CHUNK_ROUTE_PATHS = 23,
     SAVEGAME_CHUNK_BUILDINGS = 32,
+    SAVEGAME_CHUNK_FIGURE_SEQUENCE = 86,
 };
 
 enum game_file_limit {
@@ -190,6 +191,7 @@ void game_file_init_save_chunk_table_ext(void)
     savegame_chunk_table[SAVEGAME_CHUNK_FIGURES].data = figure_table_get()->records;
     savegame_chunk_table[SAVEGAME_CHUNK_ROUTE_PATHS].data = figure_table_get()->route_paths;
     savegame_chunk_table[SAVEGAME_CHUNK_BUILDINGS].data = building_table_get()->records;
+    savegame_chunk_table[SAVEGAME_CHUNK_FIGURE_SEQUENCE].data = figure_created_sequence_ptr();
     init_table_ext(savegame_chunk_table, SAVEGAME_CHUNKS_STATIC, savegame_chunks_ext, SAVEGAME_CHUNKS - SAVEGAME_CHUNKS_STATIC);
 }
 

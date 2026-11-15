@@ -34,7 +34,7 @@ static const char *enemy_graphics_names[12] = { str_enemy_hyksos, str_enemy_seap
 int32_t enemy_find_soldier(int32_t x, int32_t y)
 {
     int32_t best_id = 0;
-    figure_search_best_distance = 10000;
+    figure_search_best_distance_set(10000);
     for (int32_t id = 1; id < MAX_FIGURES; id++) {
         figure *s = figure_get(id);
         if (s->state != FIGURE_STATE_ALIVE || s->action_state == FIGURE_ACTION_CORPSE || s->targeted_by_figure_id != 0 || s->type <= FIGURE_FIREMAN ||
@@ -42,8 +42,8 @@ int32_t enemy_find_soldier(int32_t x, int32_t y)
             continue;
         }
         int32_t distance = calc_maximum_distance(x, y, s->x, s->y);
-        if (distance < figure_search_best_distance) {
-            figure_search_best_distance = distance;
+        if (distance < figure_search_best_distance_get()) {
+            figure_search_best_distance_set(distance);
             best_id = id;
         }
     }
@@ -67,7 +67,7 @@ int32_t figure_combat_get_missile_target_for_enemy(int32_t figure_id, int32_t ma
     int32_t x = f->x;
     int32_t best_id = 0;
     uint32_t best_priority = 0;
-    figure_search_best_distance = max_distance;
+    figure_search_best_distance_set(max_distance);
     for (int32_t id = 1; id < MAX_FIGURES; id++) {
         figure *t = figure_get(id);
         if (t->state != FIGURE_STATE_ALIVE || t->action_state == FIGURE_ACTION_CORPSE) {
@@ -138,9 +138,9 @@ int32_t figure_combat_get_missile_target_for_enemy(int32_t figure_id, int32_t ma
                 priority = ENEMY_TARGET_OTHER;
                 break;
         }
-        if (best_priority < priority && distance < figure_search_best_distance && figure_movement_can_launch_cross_country_missile(x, y, t->x, t->y)) {
+        if (best_priority < priority && distance < figure_search_best_distance_get() && figure_movement_can_launch_cross_country_missile(x, y, t->x, t->y)) {
             best_id = id;
-            figure_search_best_distance = distance;
+            figure_search_best_distance_set(distance);
             best_priority = priority;
         }
     }
@@ -194,7 +194,7 @@ void figure_enemy_properties_init(void)
 
 void enemy_action(void)
 {
-    int32_t figure_id = figure_current_id;
+    int32_t figure_id = figure_current_id_get();
     figure *f = figure_get(figure_id);
     formation *m = formation_get(f->formation_id);
     city_player *player = city_player_current();
@@ -356,9 +356,9 @@ void enemy_action(void)
 
 static int32_t enemy_begin(int32_t drowns, int32_t speed_factor)
 {
-    figure *f = figure_get(figure_current_id);
+    figure *f = figure_get(figure_current_id_get());
     if (drowns && (map_grids.terrain[f->grid_offset] & (TERRAIN_WATER | TERRAIN_FLOODPLAIN)) == (TERRAIN_WATER | TERRAIN_FLOODPLAIN)) {
-        figure_set_state_dead(figure_current_id);
+        figure_set_state_dead(figure_current_id_get());
         return 0;
     }
     uint8_t frame = (uint8_t) (f->animation_frame + 1);
@@ -383,11 +383,11 @@ static int32_t enemy_image_direction(const figure *f, int32_t missiles, int32_t 
     } else {
         dir = f->previous_tile_direction;
     }
-    figure_image_direction = dir - map_info.orientation;
-    if (figure_image_direction < 0) {
-        figure_image_direction += DIRECTION_COUNT;
+    figure_image_direction_set(dir - map_info.orientation);
+    if (figure_image_direction_get() < 0) {
+        figure_image_direction_set(figure_image_direction_get() + (DIRECTION_COUNT));
     }
-    return figure_image_direction;
+    return figure_image_direction_get();
 }
 
 static int32_t enemy_attack_image(const figure *f, int32_t base, int32_t dir)
@@ -400,13 +400,13 @@ static int32_t enemy_attack_image(const figure *f, int32_t base, int32_t dir)
 
 static void enemy_images_foot(figure *f, int32_t attack, int32_t corpse, int32_t walk, int32_t missile_frames)
 {
-    int32_t dir = figure_image_direction;
+    int32_t dir = figure_image_direction_get();
     if (f->action_state == FIGURE_ACTION_ATTACK) {
         f->image_id = enemy_attack_image(f, attack, dir);
     } else if (missile_frames && f->action_state == FIGURE_ACTION_ENEMY_INITIAL) {
         f->image_id = (int32_t) (dir + figure_missile_frames[f->attack_image_offset >> 1] * 8u + attack);
     } else if (f->action_state == FIGURE_ACTION_CORPSE) {
-        f->image_id = (int32_t) (figure_corpse_offsets[f->wait_ticks / 2] + corpse);
+        f->image_id = (int32_t) (figure_corpse_offset(f->wait_ticks / 2) + corpse);
     } else if (f->direction == DIRECTION_ATTACK) {
         f->image_id = (int32_t) (dir + (f->animation_frame >> 1) * 8u + attack);
     } else {
@@ -434,7 +434,7 @@ static void enemy_set_cart(figure *f, int32_t dir)
 
 static void enemy_images_rider(figure *f, int32_t base)
 {
-    int32_t dir = figure_image_direction;
+    int32_t dir = figure_image_direction_get();
     if (f->direction != DIRECTION_ATTACK) {
         if (f->action_state == FIGURE_ACTION_ATTACK) {
             f->image_id = dir + base;
@@ -445,7 +445,7 @@ static void enemy_images_rider(figure *f, int32_t base)
             return;
         }
         if (f->action_state == FIGURE_ACTION_CORPSE) {
-            f->image_id = (int32_t) (figure_corpse_offsets[f->wait_ticks / 2] + ENEMY_IMAGE_RIDER_CORPSE + base);
+            f->image_id = (int32_t) (figure_corpse_offset(f->wait_ticks / 2) + ENEMY_IMAGE_RIDER_CORPSE + base);
             return;
         }
     }
@@ -544,7 +544,7 @@ static void enemy_foot_action(enum enemy_foot_kind kind)
 {
     const enemy_foot *t = &enemy_foot_types[kind];
     const enemy_foot_rule *rule = &enemy_foot_rules[kind];
-    figure *f = figure_get(figure_current_id);
+    figure *f = figure_get(figure_current_id_get());
     int32_t formation_id = f->formation_id;
     if (!enemy_begin(1, rule->speed_factor)) {
         return;
@@ -555,12 +555,12 @@ static void enemy_foot_action(enum enemy_foot_kind kind)
     enemy_action();
     int32_t plays_attack_sound = rule->attack_sound != ENEMY_NO_ATTACK_SOUND && f->action_state == FIGURE_ACTION_ATTACK;
     if (plays_attack_sound && t->sound_before_direction) {
-        sound_figure_play(figure_current_id, rule->attack_sound, 2);
+        sound_figure_play(figure_current_id_get(), rule->attack_sound, 2);
     }
     int32_t dir = enemy_image_direction(f, t->follows_missiles, formation_id);
     if (plays_attack_sound && !t->sound_before_direction) {
-        sound_figure_play(figure_current_id, rule->attack_sound, 2);
-        dir = figure_image_direction;
+        sound_figure_play(figure_current_id_get(), rule->attack_sound, 2);
+        dir = figure_image_direction_get();
     }
     int32_t attack = enemy_image(t->attack_alt_group, t->attack_group);
     int32_t corpse = enemy_image(t->corpse_alt_group, t->corpse_group);
@@ -572,7 +572,7 @@ static void enemy_foot_action(enum enemy_foot_kind kind)
 
 static void enemy_rider_action(int32_t drowns, int32_t speed_factor)
 {
-    figure *f = figure_get(figure_current_id);
+    figure *f = figure_get(figure_current_id_get());
     int32_t formation_id = f->formation_id;
     if (!enemy_begin(drowns, speed_factor)) {
         return;
@@ -586,10 +586,10 @@ void figure_enemy_elephant_action(void)
 {
     enemy_begin(0, 1);
     enemy_action();
-    figure *f = figure_get(figure_current_id);
+    figure *f = figure_get(figure_current_id_get());
     int32_t dir = enemy_image_direction(f, 0, 0);
     if (f->direction != DIRECTION_ATTACK && f->action_state == FIGURE_ACTION_CORPSE) {
-        f->image_id = (int32_t) (figure_corpse_offsets[f->wait_ticks / 2] + ENEMY_IMAGE_ELEPHANT_CORPSE + image_group(IMAGE_GROUP_FIGURE_ENEMY_ELEPHANT));
+        f->image_id = (int32_t) (figure_corpse_offset(f->wait_ticks / 2) + ENEMY_IMAGE_ELEPHANT_CORPSE + image_group(IMAGE_GROUP_FIGURE_ENEMY_ELEPHANT));
     } else {
         f->image_id = (int32_t) (dir + f->animation_frame * 8u + image_group(IMAGE_GROUP_FIGURE_ENEMY_ELEPHANT));
     }
@@ -599,13 +599,13 @@ void figure_enemy_barbarian_chariot_action(void)
 {
     enemy_begin(0, 3);
     enemy_action();
-    figure *f = figure_get(figure_current_id);
+    figure *f = figure_get(figure_current_id_get());
     int32_t dir = enemy_image_direction(f, 0, 0);
     int32_t base = image_group(IMAGE_GROUP_FIGURE_ENEMY_CHARIOT);
     if (f->direction == DIRECTION_ATTACK || f->action_state == FIGURE_ACTION_ATTACK) {
         f->image_id = (int32_t) (dir + ENEMY_IMAGE_CHARIOT_FIGHT + (f->animation_frame >> 1) * 8u + base);
     } else if (f->action_state == FIGURE_ACTION_CORPSE) {
-        f->image_id = (int32_t) (figure_corpse_offsets[f->wait_ticks / 2] + ENEMY_IMAGE_CHARIOT_CORPSE + base);
+        f->image_id = (int32_t) (figure_corpse_offset(f->wait_ticks / 2) + ENEMY_IMAGE_CHARIOT_CORPSE + base);
     } else {
         f->image_id = (int32_t) (dir + f->animation_frame * 8u + base);
     }
@@ -613,7 +613,7 @@ void figure_enemy_barbarian_chariot_action(void)
 
 static void enemy_plain_action(int32_t drowns, int32_t speed_factor, int32_t missiles)
 {
-    figure *f = figure_get(figure_current_id);
+    figure *f = figure_get(figure_current_id_get());
     int32_t formation_id = f->formation_id;
     if (!enemy_begin(drowns, speed_factor)) {
         return;
@@ -624,9 +624,9 @@ static void enemy_plain_action(int32_t drowns, int32_t speed_factor, int32_t mis
 
 void figure_kingdom_soldier_action(void)
 {
-    figure *f = figure_get(figure_current_id);
+    figure *f = figure_get(figure_current_id_get());
     if ((map_grids.terrain[f->grid_offset] & (TERRAIN_WATER | TERRAIN_FLOODPLAIN)) == (TERRAIN_WATER | TERRAIN_FLOODPLAIN)) {
-        figure_set_state_dead(figure_current_id);
+        figure_set_state_dead(figure_current_id_get());
         return;
     }
     city_player_current()->kingdom_soldiers++;
@@ -639,7 +639,7 @@ void figure_kingdom_soldier_action(void)
     } else if (f->action_state == FIGURE_ACTION_ENEMY_ATTACKING) {
         f->image_id = image_group(IMAGE_GROUP_FIGURE_ENEMY_ALT_CHARIOT) + dir;
     } else if (f->action_state == FIGURE_ACTION_CORPSE) {
-        f->image_id = (int32_t) (figure_corpse_offsets[f->wait_ticks / 2] + ENEMY_IMAGE_KINGDOM_SOLDIER_CORPSE + base);
+        f->image_id = (int32_t) (figure_corpse_offset(f->wait_ticks / 2) + ENEMY_IMAGE_KINGDOM_SOLDIER_CORPSE + base);
     } else {
         f->image_id = (int32_t) (base + ENEMY_IMAGE_KINGDOM_SOLDIER_WALK + f->animation_frame * 8u + dir);
     }

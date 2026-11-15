@@ -13,21 +13,21 @@
 
 void figure_protestor_action(void)
 {
-    figure *f = figure_get(figure_current_id);
+    figure *f = figure_get(figure_current_id_get());
     f->terrain_usage = TERRAIN_USAGE_ROADS;
     if (++f->animation_frame >= PROTESTOR_ANIMATION_FRAMES) {
         f->animation_frame = 0;
     }
     f->cart_image_id = 0;
     if (f->action_state == FIGURE_ACTION_CORPSE) {
-        figure_combat_handle_corpse(figure_current_id);
+        figure_combat_handle_corpse(figure_current_id_get());
     }
     if (++f->wait_ticks > PROTESTOR_LIFETIME_TICKS) {
         f->state = FIGURE_STATE_DEAD;
         f->animation_frame = 0;
     }
     if (f->action_state == FIGURE_ACTION_CORPSE) {
-        f->image_id = figure_corpse_offsets[f->wait_ticks / 2] + image_group(IMAGE_GROUP_FIGURE_PROTESTOR_DEATH);
+        f->image_id = figure_corpse_offset(f->wait_ticks / 2) + image_group(IMAGE_GROUP_FIGURE_PROTESTOR_DEATH);
         return;
     }
     f->image_id = image_group(IMAGE_GROUP_FIGURE_PROTESTOR) + (f->animation_frame * DIRECTION_COUNT);

@@ -12,7 +12,7 @@
 
 void figure_bubbles_action(void)
 {
-    figure *f = figure_get(figure_current_id);
+    figure *f = figure_get(figure_current_id_get());
     int16_t ticks = f->wait_ticks++;
     if (ticks > BUBBLES_LAST_TICK) {
         f->state = FIGURE_STATE_DEAD;
@@ -22,7 +22,7 @@ void figure_bubbles_action(void)
 
 void figure_shipwreck_action(void)
 {
-    int32_t figure_id = figure_current_id;
+    int32_t figure_id = figure_current_id_get();
     figure *f = figure_get(figure_id);
     f->is_ghost = 0;
     f->height_adjusted_ticks = 0;

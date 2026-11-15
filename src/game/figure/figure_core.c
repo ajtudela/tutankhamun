@@ -82,9 +82,9 @@ int32_t figure_create(int32_t player, int32_t type, int32_t x, int32_t y, int32_
         f->use_cross_country = 0;
         f->is_friendly = 1;
         f->request_event_id = -1;
-        f->created_sequence = (int16_t) figure_created_sequence;
+        f->created_sequence = (int16_t) figure_created_sequence_get();
         f->direction = (int8_t) direction;
-        figure_created_sequence++;
+        figure_created_sequence_set(figure_created_sequence_get() + 1);
         f->destination_x = f->previous_tile_x = f->x = f->source_x = (int16_t) x;
         f->destination_y = f->previous_tile_y = f->y = f->source_y = (int16_t) y;
         f->grid_offset = map_info.grid_start + (y * GRID_SIZE) + x;
@@ -100,8 +100,8 @@ int32_t figure_create(int32_t player, int32_t type, int32_t x, int32_t y, int32_
         if (type == FIGURE_TRADE_CARAVAN || type == FIGURE_TRADE_SHIP) {
             trader_create(id);
         }
-        if (id > figure_highest_id) {
-            figure_highest_id = id;
+        if (id > figure_highest_id_get()) {
+            figure_highest_id_set(id);
         }
         return id;
     }
@@ -196,7 +196,7 @@ static int32_t counts_carts(int32_t type)
 
 static void delete_cart(const figure *f)
 {
-    const figure *current = figure_get(figure_current_id);
+    const figure *current = figure_get(figure_current_id_get());
     building *own = building_get(f->destination_building_id);
     building *b = building_get(current->destination_building_id);
     if (counts_carts(own->type) && current->resource_amount) {

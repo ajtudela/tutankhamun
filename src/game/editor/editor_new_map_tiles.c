@@ -179,7 +179,7 @@ static int32_t flag_marker_image(figure *f)
 
 void figure_editor_flag_action(void)
 {
-    int32_t id = figure_current_id;
+    int32_t id = figure_current_id_get();
     figure *f = figure_get(id);
     uint8_t frame = (uint8_t) (f->animation_frame + 1);
     f->animation_frame = frame;

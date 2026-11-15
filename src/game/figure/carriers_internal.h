@@ -14,10 +14,10 @@
 static inline int32_t carrier_image_direction(int32_t direction)
 {
     int32_t dir = direction - map_info.orientation;
-    figure_image_direction = dir;
+    figure_image_direction_set(dir);
     if (dir < 0) {
         dir += DIRECTION_COUNT;
-        figure_image_direction = dir;
+        figure_image_direction_set(dir);
     }
     return dir;
 }

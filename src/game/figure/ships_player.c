@@ -178,7 +178,7 @@ void transport_legion_land(int32_t formation_id, int32_t x, int32_t y)
 
 void ship_go_to_best_dock(int32_t figure_id)
 {
-    int32_t dock_id = ship_find_best_dock(figure_current_id);
+    int32_t dock_id = ship_find_best_dock(figure_current_id_get());
     figure *f = figure_get(figure_id);
     if (dock_id > 0) {
         if (f->type == FIGURE_TRANSPORT_SHIP) {
@@ -386,7 +386,7 @@ void transport_sail_to_landing(int32_t figure_id, int32_t *moving)
 int32_t figure_find_enemy_warship_in_range(int32_t x, int32_t y, int32_t range)
 {
     int32_t best = 0;
-    figure_search_best_distance = range;
+    figure_search_best_distance_set(range);
     for (int32_t id = 1; id < MAX_FIGURES; id++) {
         const figure *e = figure_get(id);
         if (e->state != FIGURE_STATE_ALIVE || e->action_state == FIGURE_ACTION_CORPSE || e->type != FIGURE_ENEMY_WARSHIP) {
@@ -395,9 +395,9 @@ int32_t figure_find_enemy_warship_in_range(int32_t x, int32_t y, int32_t range)
         int32_t ex = e->x;
         int32_t ey = e->y;
         int32_t distance = calc_maximum_distance(ex, ey, x, y);
-        if (distance < figure_search_best_distance && figure_movement_can_launch_cross_country_missile(x, y, ex, ey)) {
+        if (distance < figure_search_best_distance_get() && figure_movement_can_launch_cross_country_missile(x, y, ex, ey)) {
             best = id;
-            figure_search_best_distance = distance;
+            figure_search_best_distance_set(distance);
         }
     }
     if (best == 0) {
@@ -704,7 +704,7 @@ int32_t figure_warship_find_enemy_at(int32_t x, int32_t y, int32_t range)
 {
     int32_t best = 0;
     int32_t best_score = 0;
-    figure_search_best_distance = range;
+    figure_search_best_distance_set(range);
     for (int32_t f = 1; f < MAX_FIGURES; f++) {
         const figure *candidate = figure_get(f);
         if (candidate->state != FIGURE_STATE_ALIVE || candidate->action_state == FIGURE_ACTION_CORPSE) {
@@ -723,7 +723,7 @@ int32_t figure_warship_find_enemy_at(int32_t x, int32_t y, int32_t range)
             case FIGURE_ENEMY_EGYPTIAN_CHARIOT:
             case FIGURE_BEDOUIN:
                 distance = chebyshev(x, y, fx, fy);
-                if (distance > figure_properties[figure_get(figure_current_id)->type].missile_range) {
+                if (distance > figure_properties[figure_get(figure_current_id_get())->type].missile_range) {
                     continue;
                 }
                 score = WARSHIP_SCORE_LAND_ENEMY;
@@ -741,8 +741,8 @@ int32_t figure_warship_find_enemy_at(int32_t x, int32_t y, int32_t range)
             default:
                 continue;
         }
-        if (score - distance > best_score - figure_search_best_distance) {
-            figure_search_best_distance = distance;
+        if (score - distance > best_score - figure_search_best_distance_get()) {
+            figure_search_best_distance_set(distance);
             best = f;
             best_score = score;
         }

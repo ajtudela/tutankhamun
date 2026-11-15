@@ -289,7 +289,7 @@ static void cart_update_image(int32_t figure_id)
     }
     int32_t dir = carrier_image_direction(direction);
     if (f->action_state == FIGURE_ACTION_CORPSE) {
-        f->image_id = image_group(IMAGE_GROUP_FIGURE_CART_PUSHER_DEATH) + figure_corpse_offsets[f->wait_ticks / 2];
+        f->image_id = image_group(IMAGE_GROUP_FIGURE_CART_PUSHER_DEATH) + figure_corpse_offset(f->wait_ticks / 2);
         f->cart_image_id = 0;
     } else if (f->action_state != FIGURE_ACTION_ON_FERRY) {
         f->image_id = image_group(IMAGE_GROUP_FIGURE_CART_PUSHER) + (f->animation_frame * DIRECTION_COUNT) + dir;
@@ -306,8 +306,8 @@ static void cart_update_image(int32_t figure_id)
             offset_dir = dir - (DIRECTION_COUNT / 2);
         }
     }
-    f->cart_offset_x = figure_cart_offsets[offset_dir * 2];
-    f->cart_offset_y = figure_cart_offsets[(offset_dir * 2) + 1];
+    f->cart_offset_x = figure_cart_offset(offset_dir * 2);
+    f->cart_offset_y = figure_cart_offset((offset_dir * 2) + 1);
 }
 
 int32_t cartpusher_determine_destination(int32_t figure_id, int32_t road_network)
@@ -388,14 +388,14 @@ void warehouseman_delivered(int32_t amount, int32_t figure_id, int32_t road_netw
 static int32_t cart_walk(int32_t figure_id, int32_t speed)
 {
     cart_image(figure_id);
-    figure_movement_move_ticks(figure_current_id, speed);
-    return figure_get(figure_current_id)->direction;
+    figure_movement_move_ticks(figure_current_id_get(), speed);
+    return figure_get(figure_current_id_get())->direction;
 }
 
 static void cart_reroute(int32_t figure_id)
 {
     figure_route_remove(figure_id);
-    figure *f = figure_get(figure_current_id);
+    figure *f = figure_get(figure_current_id_get());
     if (routing_grids.land_citizen[f->grid_offset] != ROUTING_CITIZEN_PASSABLE) {
         f->action_state = FIGURE_ACTION_CART_INITIAL;
     }
@@ -404,7 +404,7 @@ static void cart_reroute(int32_t figure_id)
 
 void figure_cartpusher_action(void)
 {
-    int32_t figure_id = figure_current_id;
+    int32_t figure_id = figure_current_id_get();
     figure *f = figure_get(figure_id);
     uint8_t frame = (uint8_t) (f->animation_frame + 1);
     f->animation_frame = frame;
@@ -551,7 +551,7 @@ void figure_cartpusher_action(void)
         case FIGURE_ACTION_WAIT_FOR_FERRY:
             f->animation_frame = 0;
             cart_image(figure_id);
-            f->image_id = image_group(IMAGE_GROUP_FIGURE_CART_PUSHER) + 1 + figure_image_direction;
+            f->image_id = image_group(IMAGE_GROUP_FIGURE_CART_PUSHER) + 1 + figure_image_direction_get();
             if (++f->wait_ticks > 100) {
                 f->wait_ticks = 0;
                 if (!figure_is_queued_for_ferry(figure_id)) {
@@ -574,17 +574,17 @@ void figure_cartpusher_action(void)
 
 static int32_t warehouseman_walk(int32_t speed)
 {
-    cart_image(figure_current_id);
-    figure_movement_move_ticks(figure_current_id, speed);
-    return figure_get(figure_current_id)->direction;
+    cart_image(figure_current_id_get());
+    figure_movement_move_ticks(figure_current_id_get(), speed);
+    return figure_get(figure_current_id_get())->direction;
 }
 
 static void warehouseman_walk_failed(int32_t dir)
 {
     if (dir == DIRECTION_REROUTE) {
-        figure_route_remove(figure_current_id);
+        figure_route_remove(figure_current_id_get());
     } else if (dir == DIRECTION_LOST) {
-        figure_get(figure_current_id)->state = FIGURE_STATE_DEAD;
+        figure_get(figure_current_id_get())->state = FIGURE_STATE_DEAD;
     }
 }
 
@@ -598,12 +598,12 @@ static int32_t warehouseman_fetch_amount(int32_t resource)
 
 static void warehouseman_took(int32_t amount, int32_t state)
 {
-    figure *f = figure_get(figure_current_id);
+    figure *f = figure_get(figure_current_id_get());
     f->resource_amount = (int16_t) amount;
     if (f->resource_amount == 0) {
         f->resource_id = RESOURCE_NONE;
         f->action_state = FIGURE_ACTION_STORAGE_CART_INITIAL;
-        figure_route_remove(figure_current_id);
+        figure_route_remove(figure_current_id_get());
         return;
     }
     f->resource_id = f->collecting_item_id;
@@ -611,12 +611,12 @@ static void warehouseman_took(int32_t amount, int32_t state)
     f->wait_ticks = 0;
     f->destination_x = f->source_x;
     f->destination_y = f->source_y;
-    figure_route_remove(figure_current_id);
+    figure_route_remove(figure_current_id_get());
 }
 
 static void warehouseman_initial_granary(int32_t home_id, int32_t road_network)
 {
-    figure *f = figure_get(figure_current_id);
+    figure *f = figure_get(figure_current_id_get());
     building *home = building_get(home_id);
     int32_t resource = f->resource_id;
     if (resource == RESOURCE_NONE) {
@@ -628,7 +628,7 @@ static void warehouseman_initial_granary(int32_t home_id, int32_t road_network)
             dest = building_storageyard_for_getting(home_id, f->collecting_item_id, 0);
             if (!dest) {
                 f->action_state = FIGURE_ACTION_STORAGE_CART_INITIAL;
-                cart_image(figure_current_id);
+                cart_image(figure_current_id_get());
                 return;
             }
             state = building_get(dest)->type == BUILDING_STORAGE_YARD ? FIGURE_ACTION_STORAGE_CART_TO_YARD_GETTING_FOOD
@@ -641,12 +641,12 @@ static void warehouseman_initial_granary(int32_t home_id, int32_t road_network)
         f->destination_y = map_result_y;
         return;
     }
-    int32_t dest = building_granary_for_storing(0, figure_current_id, resource, road_network);
+    int32_t dest = building_granary_for_storing(0, figure_current_id_get(), resource, road_network);
     if (!dest) {
-        dest = building_storageyard_for_storing(0, figure_current_id, f->resource_id, road_network);
+        dest = building_storageyard_for_storing(0, figure_current_id_get(), f->resource_id, road_network);
     }
     if (!dest) {
-        dest = building_granary_for_storing(1, figure_current_id, f->resource_id, road_network);
+        dest = building_granary_for_storing(1, figure_current_id_get(), f->resource_id, road_network);
     }
     if (dest) {
         f->destination_building_id = (int16_t) dest;
@@ -656,7 +656,7 @@ static void warehouseman_initial_granary(int32_t home_id, int32_t road_network)
         f->destination_y = map_result_y;
         return;
     }
-    cart_image(figure_current_id);
+    cart_image(figure_current_id_get());
     int32_t storage_state = storage_get(home->storage_id)->resource_state[f->resource_id];
     if (storage_state == STORAGE_STATE_EMPTY || storage_state == STORAGE_STATE_GET) {
         f->action_state = FIGURE_ACTION_STORAGE_CART_INITIAL;
@@ -671,7 +671,7 @@ static void warehouseman_initial_granary(int32_t home_id, int32_t road_network)
 
 static int32_t warehouseman_initial_yard(int32_t home_id, int32_t road_network)
 {
-    figure *f = figure_get(figure_current_id);
+    figure *f = figure_get(figure_current_id_get());
     building *home = building_get(home_id);
     if (f->resource_id == RESOURCE_NONE) {
         int32_t resource1 = RESOURCE_NONE;
@@ -682,7 +682,7 @@ static int32_t warehouseman_initial_yard(int32_t home_id, int32_t road_network)
         int32_t storage2 = 0;
         building_storage_wanted_resources(home_id, &resource1, &resource2, &percent1, &percent2, &storage1, &storage2);
         int32_t resource = resource1;
-        if (home->data.storage_yard.second_cart_id == figure_current_id && resource2 != RESOURCE_NONE) {
+        if (home->data.storage_yard.second_cart_id == figure_current_id_get() && resource2 != RESOURCE_NONE) {
             resource = resource2;
         }
         int32_t dest = building_storageyard_for_getting(home_id, resource, 0);
@@ -703,19 +703,19 @@ static int32_t warehouseman_initial_yard(int32_t home_id, int32_t road_network)
     }
     int32_t dest = building_recruiter_for_weapons(f->x, f->y, f->resource_id, road_network);
     if (!dest) {
-        dest = building_workshop_for_raw_material(figure_current_id, f->resource_id, road_network);
+        dest = building_workshop_for_raw_material(figure_current_id_get(), f->resource_id, road_network);
     }
     if (!dest) {
-        dest = building_granary_for_storing(0, figure_current_id, f->resource_id, road_network);
+        dest = building_granary_for_storing(0, figure_current_id_get(), f->resource_id, road_network);
     }
     if (!dest) {
-        dest = building_granary_getting_food(figure_current_id, f->resource_id, road_network);
+        dest = building_granary_getting_food(figure_current_id_get(), f->resource_id, road_network);
     }
     if (!dest) {
-        dest = building_storageyard_for_storing(home_id, figure_current_id, f->resource_id, road_network);
+        dest = building_storageyard_for_storing(home_id, figure_current_id_get(), f->resource_id, road_network);
     }
     if (!dest) {
-        dest = building_workshop_for_raw_material_any(figure_current_id, f->resource_id, road_network);
+        dest = building_workshop_for_raw_material_any(figure_current_id_get(), f->resource_id, road_network);
     }
     if (dest) {
         f->destination_building_id = (int16_t) dest;
@@ -725,14 +725,14 @@ static int32_t warehouseman_initial_yard(int32_t home_id, int32_t road_network)
         f->destination_y = map_result_y;
         return 1;
     }
-    cart_image(figure_current_id);
+    cart_image(figure_current_id_get());
     f->action_state = FIGURE_ACTION_STORAGE_CART_INITIAL;
     return 1;
 }
 
 void figure_warehouseman_action(void)
 {
-    int32_t figure_id = figure_current_id;
+    int32_t figure_id = figure_current_id_get();
     figure *f = figure_get(figure_id);
     f->terrain_usage = TERRAIN_USAGE_ROADS;
     uint8_t frame = (uint8_t) (f->animation_frame + 1);
@@ -928,7 +928,7 @@ void figure_warehouseman_action(void)
         case FIGURE_ACTION_WAIT_FOR_FERRY:
             f->animation_frame = 0;
             cart_image(figure_id);
-            f->image_id = image_group(IMAGE_GROUP_FIGURE_CART_PUSHER) + 1 + figure_image_direction;
+            f->image_id = image_group(IMAGE_GROUP_FIGURE_CART_PUSHER) + 1 + figure_image_direction_get();
             if (++f->wait_ticks > 100) {
                 f->wait_ticks = 0;
                 if (!figure_is_queued_for_ferry(figure_id)) {
@@ -1176,7 +1176,7 @@ int32_t buyer_take_food(int32_t figure_id, int32_t home_id, int32_t storage_id, 
 
 int32_t buyer_take_goods(int32_t figure_id, int32_t home_id, int32_t storage_id, int32_t index)
 {
-    figure *f = figure_get(figure_current_id);
+    figure *f = figure_get(figure_current_id_get());
     return buyer_buy_goods(figure_id, home_id, storage_id, f->buyer_resources[index], f->buyer_amounts_bought[index], index);
 }
 
@@ -1265,7 +1265,7 @@ void buyer_at_storage(int32_t figure_id, int32_t home_id, int32_t storage_id)
 {
     int32_t any_food = 0;
     for (int32_t i = 0; i < 4; i++) {
-        uint32_t item = (uint32_t) figure_get(figure_current_id)->buyer_resources[i];
+        uint32_t item = (uint32_t) figure_get(figure_current_id_get())->buyer_resources[i];
         if (item <= 7) {
             buyer_take_food(figure_id, home_id, storage_id, i);
             any_food = 1;
@@ -1409,7 +1409,7 @@ int32_t buyer_send_goods_boys(int32_t resource, int32_t loads, int32_t figure_id
 
 void figure_market_buyer_action(void)
 {
-    int32_t figure_id = figure_current_id;
+    int32_t figure_id = figure_current_id_get();
     figure *f = figure_get(figure_id);
     f->terrain_usage = TERRAIN_USAGE_ROADS;
     f->use_cross_country = 0;
@@ -1476,7 +1476,7 @@ void figure_market_buyer_action(void)
     }
     int32_t dir = carrier_image_direction(f->direction);
     if (f->action_state == FIGURE_ACTION_CORPSE) {
-        f->image_id = image_group(IMAGE_GROUP_FIGURE_MARKET_BUYER_DEATH) + figure_corpse_offsets[f->wait_ticks / 2];
+        f->image_id = image_group(IMAGE_GROUP_FIGURE_MARKET_BUYER_DEATH) + figure_corpse_offset(f->wait_ticks / 2);
     } else {
         f->image_id = image_group(IMAGE_GROUP_FIGURE_MARKET_BUYER) + (f->animation_frame * DIRECTION_COUNT) + dir;
     }
@@ -1497,11 +1497,11 @@ int32_t delivery_boy_find_buyer(int32_t figure_id)
 
 void figure_delivery_boy_action(void)
 {
-    figure *f = figure_get(figure_current_id);
+    figure *f = figure_get(figure_current_id_get());
     int32_t leader_id = f->leading_figure_id;
     int32_t home_id = f->building_id;
-    int32_t buyer_id = delivery_boy_find_buyer(figure_current_id);
-    int32_t figure_id = figure_current_id;
+    int32_t buyer_id = delivery_boy_find_buyer(figure_current_id_get());
+    int32_t figure_id = figure_current_id_get();
     f = figure_get(figure_id);
     f->is_ghost = 0;
     f->terrain_usage = TERRAIN_USAGE_ROADS;
@@ -1545,7 +1545,7 @@ void figure_delivery_boy_action(void)
     }
     int32_t dir = carrier_image_direction(direction);
     if (f->action_state == FIGURE_ACTION_CORPSE) {
-        f->image_id = image_group(IMAGE_GROUP_FIGURE_DELIVERY_BOY) + DELIVERY_BOY_DEATH_IMAGES + figure_corpse_offsets[f->wait_ticks / 2];
+        f->image_id = image_group(IMAGE_GROUP_FIGURE_DELIVERY_BOY) + DELIVERY_BOY_DEATH_IMAGES + figure_corpse_offset(f->wait_ticks / 2);
     } else {
         f->image_id = image_group(IMAGE_GROUP_FIGURE_DELIVERY_BOY) + (f->animation_frame * DIRECTION_COUNT) + dir;
     }
@@ -1558,7 +1558,7 @@ static int32_t migrant_is_swimming(const figure *f)
 
 static void migrant_swimming_image(int32_t dying)
 {
-    figure *f = figure_get(figure_current_id);
+    figure *f = figure_get(figure_current_id_get());
     if (dying) {
         if (f->wait_ticks >= MIGRANT_DROWNING_TICKS) {
             int32_t frame = f->wait_ticks - MIGRANT_DROWNING_TICKS;
@@ -1570,19 +1570,19 @@ static void migrant_swimming_image(int32_t dying)
             return;
         }
         int32_t group = map_sweep_has_passed(f->x) ? IMAGE_GROUP_FIGURE_EMIGRANT_SWEPT_DEATH : IMAGE_GROUP_FIGURE_FERRY_BOAT_SINKING;
-        f->image_id = (figure_image_direction / DIRECTION_COUNT) + image_group(group) + (f->wait_ticks / MIGRANT_SWIM_FRAME_TICKS);
+        f->image_id = (figure_image_direction_get() / DIRECTION_COUNT) + image_group(group) + (f->wait_ticks / MIGRANT_SWIM_FRAME_TICKS);
         f->cart_image_id = 0;
         return;
     }
     int32_t group = map_sweep_has_passed(f->x) ? IMAGE_GROUP_FIGURE_EMIGRANT_SWEPT : IMAGE_GROUP_FIGURE_FERRY_BOAT;
-    f->image_id = image_group(group) + ((f->animation_frame / MIGRANT_SWIM_FRAME_TICKS) * DIRECTION_COUNT) + figure_image_direction;
+    f->image_id = image_group(group) + ((f->animation_frame / MIGRANT_SWIM_FRAME_TICKS) * DIRECTION_COUNT) + figure_image_direction_get();
     f->cart_image_id = 0;
 }
 
 static void migrant_enter_house(int32_t house_id, int32_t homeless)
 {
     building *house = building_get(house_id);
-    figure *f = figure_get(figure_current_id);
+    figure *f = figure_get(figure_current_id_get());
     int32_t max_people = house_models[house->subtype].max_people;
     if (house->house_is_merged) {
         max_people <<= 2;
@@ -1612,7 +1612,7 @@ static void migrant_enter_house(int32_t house_id, int32_t homeless)
 
 void figure_immigrant_action(void)
 {
-    int32_t figure_id = figure_current_id;
+    int32_t figure_id = figure_current_id_get();
     figure *f = figure_get(figure_id);
     f->terrain_usage = TERRAIN_USAGE_ANY;
     f->cart_image_id = 0;
@@ -1688,7 +1688,7 @@ void figure_immigrant_action(void)
         if (swimming) {
             migrant_swimming_image(1);
         } else {
-            f->image_id = image_group(IMAGE_GROUP_FIGURE_IMMIGRANT_DEATH) + figure_corpse_offsets[f->wait_ticks / 2];
+            f->image_id = image_group(IMAGE_GROUP_FIGURE_IMMIGRANT_DEATH) + figure_corpse_offset(f->wait_ticks / 2);
         }
         return;
     }
@@ -1696,7 +1696,7 @@ void figure_immigrant_action(void)
         migrant_swimming_image(0);
         return;
     }
-    f->image_id = image_group(IMAGE_GROUP_FIGURE_IMMIGRANT) + (f->animation_frame * DIRECTION_COUNT) + figure_image_direction;
+    f->image_id = image_group(IMAGE_GROUP_FIGURE_IMMIGRANT) + (f->animation_frame * DIRECTION_COUNT) + figure_image_direction_get();
     f->cart_image_id = 0;
 }
 
@@ -1706,8 +1706,8 @@ static int32_t homeless_go_to_house(int32_t house_id)
     if (!map_closest_road_within_radius(house->x, house->y, house->size, 2)) {
         return 0;
     }
-    figure *f = figure_get(figure_current_id);
-    house->immigrant_figure_id = (int16_t) figure_current_id;
+    figure *f = figure_get(figure_current_id_get());
+    house->immigrant_figure_id = (int16_t) figure_current_id_get();
     f->immigrant_building_id = (int16_t) house_id;
     f->action_state = FIGURE_ACTION_HOMELESS_GOING_TO_HOUSE;
     f->destination_x = map_result_x;
@@ -1718,7 +1718,7 @@ static int32_t homeless_go_to_house(int32_t house_id)
 
 void figure_homeless_action(void)
 {
-    int32_t figure_id = figure_current_id;
+    int32_t figure_id = figure_current_id_get();
     figure *f = figure_get(figure_id);
     int32_t speed = figure_properties[f->type].speed;
     int32_t swimming = migrant_is_swimming(f);
@@ -1804,7 +1804,7 @@ void figure_homeless_action(void)
     }
     carrier_image_direction(f->direction);
     if (f->action_state == FIGURE_ACTION_CORPSE) {
-        f->image_id = image_group(IMAGE_GROUP_FIGURE_HOMELESS_DEATH) + figure_corpse_offsets[f->wait_ticks / 2];
+        f->image_id = image_group(IMAGE_GROUP_FIGURE_HOMELESS_DEATH) + figure_corpse_offset(f->wait_ticks / 2);
         if (swimming) {
             migrant_swimming_image(1);
         }
@@ -1814,7 +1814,7 @@ void figure_homeless_action(void)
         migrant_swimming_image(0);
         return;
     }
-    f->image_id = image_group(IMAGE_GROUP_FIGURE_HOMELESS) + (f->animation_frame * DIRECTION_COUNT) + figure_image_direction;
+    f->image_id = image_group(IMAGE_GROUP_FIGURE_HOMELESS) + (f->animation_frame * DIRECTION_COUNT) + figure_image_direction_get();
 }
 
 int32_t criminal_find_rich_building(int32_t figure_id)

@@ -98,7 +98,7 @@ formation_layout_spot enemy_formation_layout_offsets[FORMATION_LAYOUTS][FORMATIO
     },
 };
 
-uint8_t figure_corpse_offsets[256] = { 0, 1, 2, 3, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 6, 6, 6, 6,
+static const uint8_t figure_corpse_offsets[256] = { 0, 1, 2, 3, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 6, 6, 6, 6,
     6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7,
     7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 0, 1, 2, 3, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4,
     4 };
@@ -115,7 +115,7 @@ int32_t figure_type_coverage_tag[110] = { -1, -1, -1, -1, -1, 7, -1, 7, 2, -1, 1
     9, 9, -1, -1, -1, -1, 8, 3, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 6, -1, 8, -1, -1, -1, -1, -1, -1,
     -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 0, 3, 3, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 4, -1, -1, -1, -1 };
 
-int8_t figure_cart_offsets[16] = { 13, -7, 18, -1, 12, 7, 0, 11, -13, 6, -18, -1, -13, -7, 0, -12 };
+static const int8_t figure_cart_offsets[16] = { 13, -7, 18, -1, 12, 7, 0, 11, -13, 6, -18, -1, -13, -7, 0, -12 };
 
 uint8_t figure_ship_direction_table[64] = { 5, 3, 1, 2, 4, 2, 1, 3, 3, 5, 3, 1, 2, 4, 2, 1, 1, 3, 5, 3, 1, 2, 4, 2, 2, 1, 3, 5, 3, 1, 2, 4, 4, 2, 1, 3, 5, 3, 1,
     2, 2, 4, 2, 1, 3, 5, 3, 1, 1, 2, 4, 2, 1, 3, 4, 3, 3, 1, 2, 4, 3, 1, 3, 5 };
@@ -310,9 +310,9 @@ int32_t formation_move_result_x;
 
 int32_t figure_roaming_enabled;
 
-int32_t figure_search_best_distance;
+static int32_t figure_search_best_distance;
 
-int32_t figure_highest_id;
+static int32_t figure_highest_id;
 
 int32_t figure_unused_counter;
 
@@ -341,9 +341,9 @@ enemy_army_totals_record enemy_army_totals;
 
 int32_t figure_count_processed;
 
-int32_t figure_current_id;
+static int32_t figure_current_id;
 
-int32_t figure_created_sequence;
+static int32_t figure_created_sequence;
 
 uint8_t figure_profile_qpc_available;
 
@@ -358,8 +358,87 @@ int32_t distance_dy;
 
 int32_t distance_dx;
 
-int32_t figure_image_direction;
+static int32_t figure_image_direction;
 
 int32_t figure_phrase_id;
 
 phrase_weight_record phrase_weight_block;
+
+int32_t figure_current_id_get(void)
+{
+    return figure_current_id;
+}
+
+void figure_current_id_set(int32_t value)
+{
+    figure_current_id = value;
+}
+
+int32_t figure_highest_id_get(void)
+{
+    return figure_highest_id;
+}
+
+void figure_highest_id_set(int32_t value)
+{
+    figure_highest_id = value;
+}
+
+int32_t figure_image_direction_get(void)
+{
+    return figure_image_direction;
+}
+
+void figure_image_direction_set(int32_t value)
+{
+    figure_image_direction = value;
+}
+
+int32_t figure_created_sequence_get(void)
+{
+    return figure_created_sequence;
+}
+
+void figure_created_sequence_set(int32_t value)
+{
+    figure_created_sequence = value;
+}
+
+int32_t figure_search_best_distance_get(void)
+{
+    return figure_search_best_distance;
+}
+
+void figure_search_best_distance_set(int32_t value)
+{
+    figure_search_best_distance = value;
+}
+
+int32_t *figure_created_sequence_ptr(void)
+{
+    return &figure_created_sequence;
+}
+
+uint8_t figure_corpse_offset(int32_t index)
+{
+    return figure_corpse_offsets[index];
+}
+
+int8_t figure_cart_offset(int32_t index)
+{
+    return figure_cart_offsets[index];
+}
+
+uint8_t *figure_bytes_past_formations(int32_t offset)
+{
+    int32_t *const counters[] = { &figure_roaming_enabled, &figure_search_best_distance, &figure_highest_id, &figure_unused_counter };
+    int32_t counter_bytes = (int32_t) sizeof(counters) / (int32_t) sizeof(counters[0]) * (int32_t) sizeof(int32_t);
+    if (offset < counter_bytes) {
+        return (uint8_t *) counters[offset / (int32_t) sizeof(int32_t)] + (offset % (int32_t) sizeof(int32_t));
+    }
+    offset -= counter_bytes;
+    if (offset < (int32_t) sizeof(figure_table)) {
+        return (uint8_t *) &city_figures + offset;
+    }
+    return 0;
+}

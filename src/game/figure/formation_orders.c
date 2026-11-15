@@ -107,7 +107,7 @@ int32_t formation_legion_move_to(int32_t x, int32_t y, int32_t formation_id, boo
             soldier->charge.tile_x = soldier->x;
             soldier->charge.tile_y = soldier->y;
             soldier->action_state = FIGURE_ACTION_SOLDIER_ENGAGING;
-            figure_get(figure_current_id)->animation_frame = 0;
+            figure_get(figure_current_id_get())->animation_frame = 0;
         }
     }
     for (int32_t i = 0; i < FORMATION_MAX_FIGURES; i++) {
@@ -191,7 +191,7 @@ int32_t formation_legion_attack_near(int32_t x, int32_t y, int32_t formation_id,
             soldier->charge.tile_y = soldier->y;
             soldier->action_state = FIGURE_ACTION_SOLDIER_ATTACKING_FORMATION;
             soldier->target_figure_id = 0;
-            figure_get(figure_current_id)->animation_frame = 0;
+            figure_get(figure_current_id_get())->animation_frame = 0;
         }
     }
     for (int32_t n = 0; n < FORMATION_MAX_FIGURES; n++) {
@@ -373,7 +373,7 @@ void figure_warship_return_to_dock(int32_t figure_id)
     warship->destination_y = (int16_t) map_result_y;
     map_result_x = saved_x;
     map_result_y = saved_y;
-    figure_route_remove(figure_current_id);
+    figure_route_remove(figure_current_id_get());
 }
 
 int32_t formation_any_legion_with_soldiers(void)

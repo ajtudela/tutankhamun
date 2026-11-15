@@ -470,7 +470,7 @@ void debug_draw_figure_info(void)
     if (id == 0) {
         title("Not watching a figure", y + 24, image_group(IMAGE_GROUP_FONT_BLACK), DEBUG_COLOR_LABEL);
         num(figure_count_processed, " Figs", DEBUG_COLUMN_LEFT, y + 48, DEBUG_COLOR_VALUE);
-        num(figure_highest_id, " = ever", DEBUG_COLUMN_RIGHT_FAR, y + 48, DEBUG_COLOR_VALUE);
+        num(figure_highest_id_get(), " = ever", DEBUG_COLUMN_RIGHT_FAR, y + 48, DEBUG_COLOR_VALUE);
         num(figure_route_count_free(), " free route slots", DEBUG_COLUMN_LEFT, y + 60, DEBUG_COLOR_VALUE);
         return;
     }

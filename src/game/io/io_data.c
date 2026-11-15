@@ -2049,7 +2049,7 @@ chunk_entry savegame_chunk_table[SAVEGAME_CHUNKS] = {
     { 0, city_message_delay, 4, 20, NULL },
     { 0, &building_burning_total, 4, 1, NULL },
     { 0, &building_burning_size, 4, 1, NULL },
-    { 0, &figure_created_sequence, 4, 1, NULL },
+    { 0, NULL, 4, 1, NULL },
     { 0, &settings_data.starting_favor, 4, 1, NULL },
     { 0, &settings_data.personal_savings_last_mission, 4, 1, NULL },
     { 0, &settings_data.current_mission_id, 4, 1, NULL },

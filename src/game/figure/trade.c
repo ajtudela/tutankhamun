@@ -577,7 +577,7 @@ static void caravan_leave_city(figure *f)
 
 void figure_trade_caravan_action(void)
 {
-    int32_t figure_id = figure_current_id;
+    int32_t figure_id = figure_current_id_get();
     figure *f = figure_get(figure_id);
     f->is_ghost = 0;
     f->terrain_usage = TERRAIN_USAGE_PREFER_ROADS;
@@ -693,7 +693,7 @@ void figure_trade_caravan_action(void)
             break;
         case FIGURE_ACTION_WAIT_FOR_FERRY:
             f->animation_frame = 0;
-            f->image_id = image_group(IMAGE_GROUP_FIGURE_TRADE_CARAVAN) + 1 + figure_image_direction;
+            f->image_id = image_group(IMAGE_GROUP_FIGURE_TRADE_CARAVAN) + 1 + figure_image_direction_get();
             if (++f->wait_ticks > FERRY_QUEUE_CHECK_TICKS) {
                 f->wait_ticks = 0;
                 if (!figure_is_queued_for_ferry(figure_id)) {
@@ -711,7 +711,7 @@ void figure_trade_caravan_action(void)
     int32_t direction = (f->direction >= DIRECTION_COUNT) ? f->previous_tile_direction : f->direction;
     int32_t dir = carrier_image_direction(direction);
     if (f->action_state == FIGURE_ACTION_CORPSE) {
-        f->image_id = image_group(IMAGE_GROUP_FIGURE_TRADE_CARAVAN_DEATH) + figure_corpse_offsets[f->wait_ticks / 2];
+        f->image_id = image_group(IMAGE_GROUP_FIGURE_TRADE_CARAVAN_DEATH) + figure_corpse_offset(f->wait_ticks / 2);
     } else {
         f->image_id = image_group(IMAGE_GROUP_FIGURE_TRADE_CARAVAN) + (f->animation_frame * DIRECTION_COUNT) + dir;
     }
@@ -732,7 +732,7 @@ int32_t caravan_of_donkey(int32_t figure_id)
 
 void figure_trade_caravan_donkey_action(void)
 {
-    int32_t figure_id = figure_current_id;
+    int32_t figure_id = figure_current_id_get();
     figure *f = figure_get(figure_id);
     int32_t leader_id = f->leading_figure_id;
     int32_t caravan_id = caravan_of_donkey(figure_id);
@@ -772,7 +772,7 @@ void figure_trade_caravan_donkey_action(void)
         f->animation_frame = 0;
     }
     if (f->state == FIGURE_STATE_DEAD) {
-        f->image_id = image_group(IMAGE_GROUP_FIGURE_TRADE_CARAVAN_DONKEY_DEATH) + figure_corpse_offsets[f->wait_ticks / 2];
+        f->image_id = image_group(IMAGE_GROUP_FIGURE_TRADE_CARAVAN_DONKEY_DEATH) + figure_corpse_offset(f->wait_ticks / 2);
     } else {
         f->image_id = image_group(IMAGE_GROUP_FIGURE_TRADE_CARAVAN_DONKEY) + (f->animation_frame * DIRECTION_COUNT) + dir;
     }
@@ -790,7 +790,7 @@ int32_t docker_deliver_import_resource(int32_t dock_id)
     if (ship->action_state != FIGURE_ACTION_TRADE_SHIP_DOCKED || ship->resource_amount < 1 || trader_get(ship->trader_id)->sold_amount >= SHIP_MAX_LOADS) {
         return 0;
     }
-    figure *f = figure_get(figure_current_id);
+    figure *f = figure_get(figure_current_id_get());
     int32_t dest = figure_docker_get_closest_warehouse_for_import(f->x, f->y, ship->empire_city_id, dock->distance_from_entry, dock->road_network_id);
     if (!dest) {
         return 0;
@@ -816,7 +816,7 @@ int32_t docker_fetch_export_resource(int32_t dock_id)
     if (ship->action_state != FIGURE_ACTION_TRADE_SHIP_DOCKED || ship->trader_amount_bought >= SHIP_MAX_LOADS) {
         return 0;
     }
-    figure *f = figure_get(figure_current_id);
+    figure *f = figure_get(figure_current_id_get());
     int32_t dest = figure_docker_get_closest_warehouse_for_export(f->x, f->y, ship->empire_city_id, dock->distance_from_entry, dock->road_network_id);
     if (!dest) {
         return 0;
@@ -869,14 +869,14 @@ int32_t trade_ship_lost_dock(int32_t figure_id)
 
 static int32_t docker_walk(int32_t speed)
 {
-    cart_image(figure_current_id);
-    figure_movement_move_ticks(figure_current_id, speed);
-    return figure_get(figure_current_id)->direction;
+    cart_image(figure_current_id_get());
+    figure_movement_move_ticks(figure_current_id_get(), speed);
+    return figure_get(figure_current_id_get())->direction;
 }
 
 void figure_docker_action(void)
 {
-    int32_t figure_id = figure_current_id;
+    int32_t figure_id = figure_current_id_get();
     figure *f = figure_get(figure_id);
     uint8_t frame = (uint8_t) (f->animation_frame + 1);
     f->animation_frame = frame;
@@ -1058,7 +1058,7 @@ void figure_docker_action(void)
             break;
         }
         case FIGURE_ACTION_WAIT_FOR_FERRY:
-            f->image_id = image_group(IMAGE_GROUP_FIGURE_DOCKER) + 1 + figure_image_direction;
+            f->image_id = image_group(IMAGE_GROUP_FIGURE_DOCKER) + 1 + figure_image_direction_get();
             f->animation_frame = 0;
             cart_image(figure_id);
             if (++f->wait_ticks > FERRY_QUEUE_CHECK_TICKS) {
@@ -1081,7 +1081,7 @@ void figure_docker_action(void)
     int32_t direction = (f->direction >= DIRECTION_COUNT) ? f->previous_tile_direction : f->direction;
     int32_t dir = carrier_image_direction(direction);
     if (f->action_state == FIGURE_ACTION_CORPSE) {
-        f->image_id = image_group(IMAGE_GROUP_FIGURE_DOCKER_DEATH) + figure_corpse_offsets[f->wait_ticks / 2];
+        f->image_id = image_group(IMAGE_GROUP_FIGURE_DOCKER_DEATH) + figure_corpse_offset(f->wait_ticks / 2);
         f->cart_image_id = 0;
     } else if (f->action_state != FIGURE_ACTION_ON_FERRY) {
         f->image_id = image_group(IMAGE_GROUP_FIGURE_DOCKER) + (f->animation_frame * DIRECTION_COUNT) + dir;
@@ -1098,14 +1098,14 @@ void figure_docker_action(void)
             offset_dir = dir - (DIRECTION_COUNT / 2);
         }
     }
-    f->cart_offset_x = figure_cart_offsets[offset_dir * 2];
-    f->cart_offset_y = figure_cart_offsets[(offset_dir * 2) + 1];
+    f->cart_offset_x = figure_cart_offset(offset_dir * 2);
+    f->cart_offset_y = figure_cart_offset((offset_dir * 2) + 1);
 }
 
 static void trade_ship_next_dock(int32_t dock_id, int32_t clear_dock)
 {
     uint8_t index = (uint8_t) (building_dock_index(dock_id) + 1);
-    figure *f = figure_get(figure_current_id);
+    figure *f = figure_get(figure_current_id_get());
     f->ship_dock_index = index;
     if (index < CITY_DOCKS) {
         f->action_state = FIGURE_ACTION_TRADE_SHIP_CREATED;
@@ -1123,7 +1123,7 @@ static void trade_ship_next_dock(int32_t dock_id, int32_t clear_dock)
 
 void figure_trade_ship_action(void)
 {
-    int32_t figure_id = figure_current_id;
+    int32_t figure_id = figure_current_id_get();
     figure *f = figure_get(figure_id);
     int32_t speed = figure_properties[f->type].speed;
     int32_t moving = 1;
@@ -1211,7 +1211,7 @@ void figure_trade_ship_action(void)
                     f->destination_x = (int16_t) map_result_x;
                     f->destination_y = (int16_t) map_result_y;
                 } else {
-                    if (map_grids.figure_ids[f->grid_offset] != figure_current_id && building_dock_get_queue_destination(figure_id)) {
+                    if (map_grids.figure_ids[f->grid_offset] != figure_current_id_get() && building_dock_get_queue_destination(figure_id)) {
                         f->action_state = FIGURE_ACTION_TRADE_SHIP_GOING_TO_DOCK_QUEUE;
                         f->destination_x = (int16_t) map_result_x;
                         f->destination_y = (int16_t) map_result_y;
@@ -1288,14 +1288,14 @@ void figure_trade_ship_action(void)
             return;
         }
         int32_t group = map_sweep_has_passed(f->x) ? IMAGE_GROUP_FIGURE_TRADE_SHIP_SWEPT_SINKING : IMAGE_GROUP_FIGURE_TRADE_SHIP_SINKING;
-        f->image_id = (figure_image_direction / DIRECTION_COUNT) + image_group(group) + (f->wait_ticks / BOAT_TICKS_PER_IMAGE);
+        f->image_id = (figure_image_direction_get() / DIRECTION_COUNT) + image_group(group) + (f->wait_ticks / BOAT_TICKS_PER_IMAGE);
         return;
     }
     if (moving) {
         int32_t group = map_sweep_has_passed(f->x) ? IMAGE_GROUP_FIGURE_TRADE_SHIP_SWEPT : IMAGE_GROUP_FIGURE_TRADE_SHIP;
-        f->image_id = image_group(group) + ((f->animation_frame / BOAT_TICKS_PER_IMAGE) * DIRECTION_COUNT) + figure_image_direction;
+        f->image_id = image_group(group) + ((f->animation_frame / BOAT_TICKS_PER_IMAGE) * DIRECTION_COUNT) + figure_image_direction_get();
         return;
     }
     int32_t group = map_sweep_has_passed(f->x) ? IMAGE_GROUP_FIGURE_TRADE_SHIP_SWEPT_IDLE : IMAGE_GROUP_FIGURE_TRADE_SHIP_IDLE;
-    f->image_id = image_group(group) + figure_image_direction;
+    f->image_id = image_group(group) + figure_image_direction_get();
 }

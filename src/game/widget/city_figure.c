@@ -213,9 +213,9 @@ void city_draw_figure(int32_t figure_id, int32_t x, int32_t y, int32_t highlight
     int32_t cart_image_id = f->cart_image_id;
     int32_t px = FIGURE_PIXEL_X;
     int32_t py = figure_base_y(f);
-    figure_image_direction = figure_draw_direction(f) - map_info.orientation;
-    if (figure_image_direction < 0) {
-        figure_image_direction += DIRECTIONS;
+    figure_image_direction_set(figure_draw_direction(f) - map_info.orientation);
+    if (figure_image_direction_get() < 0) {
+        figure_image_direction_set(figure_image_direction_get() + (DIRECTIONS));
     }
     int32_t image_id = f->image_id;
     if (g_skip_draw_figures == 1) {
@@ -224,7 +224,7 @@ void city_draw_figure(int32_t figure_id, int32_t x, int32_t y, int32_t highlight
 
     if (f->use_cross_country == 0) {
         if (f->pyramid_walk_mode < 1) {
-            int32_t step = (figure_image_direction * FIGURE_PROGRESS_STEPS) + f->progress_on_tile;
+            int32_t step = (figure_image_direction_get() * FIGURE_PROGRESS_STEPS) + f->progress_on_tile;
             px = tbl_progress_x[step] + FIGURE_PIXEL_X;
             py += tbl_progress_y[step] - f->current_height;
         } else {

@@ -208,8 +208,8 @@ void figure_action_handle(void)
     if (player->security_breach_duration > 0) {
         player->security_breach_duration--;
     }
-    for (figure_current_id = 1; figure_current_id < MAX_FIGURES; figure_current_id++) {
-        int32_t id = figure_current_id;
+    for (figure_current_id_set(1); figure_current_id_get() < MAX_FIGURES; figure_current_id_set(figure_current_id_get() + 1)) {
+        int32_t id = figure_current_id_get();
         figure *f = figure_get(id);
         if (f->state == FIGURE_STATE_NONE) {
             continue;
@@ -228,8 +228,8 @@ void figure_action_handle(void)
         figure_action_profile_begin(f->type);
         figure_action_table[f->type]();
         figure_action_profile_end();
-        if (figure_get(figure_current_id)->state == FIGURE_STATE_DEAD) {
-            figure_delete(figure_current_id);
+        if (figure_get(figure_current_id_get())->state == FIGURE_STATE_DEAD) {
+            figure_delete(figure_current_id_get());
         }
     }
 }

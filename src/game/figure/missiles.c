@@ -101,29 +101,29 @@ static int32_t experience_bonus(int32_t formation_id)
 
 static void missile_set_image(int32_t offset)
 {
-    figure *f = figure_get(figure_current_id);
-    figure_image_direction = f->direction - map_info.orientation * 2;
-    if (figure_image_direction < 0) {
-        figure_image_direction += MISSILE_IMAGE_DIRECTIONS;
+    figure *f = figure_get(figure_current_id_get());
+    figure_image_direction_set(f->direction - map_info.orientation * 2);
+    if (figure_image_direction_get() < 0) {
+        figure_image_direction_set(figure_image_direction_get() + (MISSILE_IMAGE_DIRECTIONS));
     }
-    f->image_id = image_group(IMAGE_GROUP_FIGURE_MISSILES) + offset + figure_image_direction;
+    f->image_id = image_group(IMAGE_GROUP_FIGURE_MISSILES) + offset + figure_image_direction_get();
 }
 
 static int32_t missile_fly(void)
 {
-    figure *f = figure_get(figure_current_id);
+    figure *f = figure_get(figure_current_id_get());
     f->use_cross_country = 1;
     if (++f->progress_on_tile > MISSILE_FLIGHT_TICKS) {
         f->state = FIGURE_STATE_DEAD;
     }
-    return figure_movement_move_ticks_cross_country(figure_current_id, MISSILE_SPEED);
+    return figure_movement_move_ticks_cross_country(figure_current_id_get(), MISSILE_SPEED);
 }
 
 void figure_arrow_action(void)
 {
     int32_t ended = missile_fly();
-    int32_t target_id = missile_hit_target(figure_current_id);
-    figure *arrow = figure_get(figure_current_id);
+    int32_t target_id = missile_hit_target(figure_current_id_get());
+    figure *arrow = figure_get(figure_current_id_get());
     if (target_id == 0) {
         if (ended) {
             arrow->state = FIGURE_STATE_DEAD;
@@ -150,8 +150,8 @@ void figure_arrow_action(void)
 void figure_bolt_action(void)
 {
     int32_t ended = missile_fly();
-    int32_t target_id = map_figure_find_target(figure_current_id);
-    figure *bolt = figure_get(figure_current_id);
+    int32_t target_id = map_figure_find_target(figure_current_id_get());
+    figure *bolt = figure_get(figure_current_id_get());
     if (target_id == 0) {
         if (ended) {
             bolt->state = FIGURE_STATE_DEAD;
@@ -230,24 +230,24 @@ static void spear_hit(figure *spear, int32_t target_id, int32_t shooter_id, int3
 
 static void spear_set_image(figure *spear, int32_t shooter_formation)
 {
-    figure_image_direction = spear->direction - map_info.orientation * 4;
-    if (figure_image_direction < 0) {
-        figure_image_direction += SPEAR_IMAGE_DIRECTIONS;
+    figure_image_direction_set(spear->direction - map_info.orientation * 4);
+    if (figure_image_direction_get() < 0) {
+        figure_image_direction_set(figure_image_direction_get() + (SPEAR_IMAGE_DIRECTIONS));
     }
     if (spear->type == FIGURE_ENEMY_ARCHER && formation_get(shooter_formation)->enemy_type == 4) {
-        spear->image_id = image_group(IMAGE_GROUP_FIGURE_ENEMY_SPEAR) + figure_image_direction;
-        spear->cart_image_id = image_group(IMAGE_GROUP_FIGURE_ENEMY_SPEAR_SHADOW) + figure_image_direction;
+        spear->image_id = image_group(IMAGE_GROUP_FIGURE_ENEMY_SPEAR) + figure_image_direction_get();
+        spear->cart_image_id = image_group(IMAGE_GROUP_FIGURE_ENEMY_SPEAR_SHADOW) + figure_image_direction_get();
         return;
     }
-    spear->image_id = image_group(IMAGE_GROUP_FIGURE_HUNTER_SPEAR) + figure_image_direction;
-    spear->cart_image_id = image_group(IMAGE_GROUP_FIGURE_HUNTER_SPEAR_SHADOW) + figure_image_direction;
+    spear->image_id = image_group(IMAGE_GROUP_FIGURE_HUNTER_SPEAR) + figure_image_direction_get();
+    spear->cart_image_id = image_group(IMAGE_GROUP_FIGURE_HUNTER_SPEAR_SHADOW) + figure_image_direction_get();
 }
 
 void figure_spear_action(void)
 {
     int32_t ended = missile_fly();
-    int32_t target_id = missile_hit_target(figure_current_id);
-    figure *spear = figure_get(figure_current_id);
+    int32_t target_id = missile_hit_target(figure_current_id_get());
+    figure *spear = figure_get(figure_current_id_get());
     int32_t shooter_id = spear->building_id;
     int32_t shooter_formation = figure_get(shooter_id)->formation_id;
     if (target_id != 0) {
@@ -262,7 +262,7 @@ int32_t soldier_find_enemy(int32_t x, int32_t y, int32_t max_distance, int32_t f
 {
     int32_t result = 0;
     int32_t attack_formation = formation_get(figure_get(figure_id)->formation_id)->attack_formation_id;
-    figure_search_best_distance = 10000;
+    figure_search_best_distance_set(10000);
     for (int32_t id = 1; id < MAX_FIGURES; id++) {
         const figure *f = figure_get(id);
         if (f->state != FIGURE_STATE_ALIVE || f->action_state == FIGURE_ACTION_CORPSE) {
@@ -284,8 +284,8 @@ int32_t soldier_find_enemy(int32_t x, int32_t y, int32_t max_distance, int32_t f
         if (f->targeted_by_figure_id != 0) {
             distance *= 2;
         }
-        if (distance < figure_search_best_distance) {
-            figure_search_best_distance = distance;
+        if (distance < figure_search_best_distance_get()) {
+            figure_search_best_distance_set(distance);
             result = id;
         }
     }

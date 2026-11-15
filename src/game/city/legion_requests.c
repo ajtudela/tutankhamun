@@ -69,11 +69,11 @@ int32_t figure_find_legion_transport_ship(int32_t formation_id)
     for (int32_t id = 1; id < MAX_FIGURES; id++) {
         const figure *ship = figure_get(id);
         if (ship->state && ship->type == FIGURE_TRANSPORT_SHIP && ship->ship_formation_id == (uint32_t) formation_id) {
-            figure_current_id = id;
+            figure_current_id_set(id);
             return id;
         }
     }
-    figure_current_id = MAX_FIGURES;
+    figure_current_id_set(MAX_FIGURES);
     return 0;
 }
 
@@ -100,9 +100,9 @@ void formation_legions_dispatch_to_request(int32_t event_id)
         f->request_event_id = (int16_t) event_id;
         f->is_at_fort = 0;
         if (on_ship) {
-            figure_current_id = figure_find_legion_transport_ship(id);
-            if (figure_current_id != 0) {
-                figure_get(figure_current_id)->action_state = FIGURE_ACTION_TRANSPORT_SHIP_GOING_TO_REQUEST;
+            figure_current_id_set(figure_find_legion_transport_ship(id));
+            if (figure_current_id_get() != 0) {
+                figure_get(figure_current_id_get())->action_state = FIGURE_ACTION_TRANSPORT_SHIP_GOING_TO_REQUEST;
             }
             continue;
         }
@@ -120,7 +120,7 @@ void formation_legions_dispatch_to_request(int32_t event_id)
         return;
     }
     uint32_t faction = (uint32_t) city_current_player;
-    figure_current_id = MAX_FIGURES;
+    figure_current_id_set(MAX_FIGURES);
     for (int32_t id = 1; id < MAX_FIGURES; id++) {
         figure *warship = figure_get(id);
         if (warship->state && warship->type == FIGURE_WARSHIP && warship->faction_id == faction && warship->answers_requests && warship->request_event_id < 0) {
@@ -205,9 +205,9 @@ void formation_legions_request_losses(int32_t percentage, int32_t event_id)
         int32_t lost = calc_adjust_with_percentage(alive, percentage);
         if (lost >= alive) {
             if (formation_legion_is_on_ship(id)) {
-                figure_current_id = figure_find_legion_transport_ship(id);
-                if (figure_current_id != 0) {
-                    figure *ship = figure_get(figure_current_id);
+                figure_current_id_set(figure_find_legion_transport_ship(id));
+                if (figure_current_id_get() != 0) {
+                    figure *ship = figure_get(figure_current_id_get());
                     ship->ship_hit_points = 0;
                     ship->state = FIGURE_STATE_SUNK;
                     ship->request_event_id = -1;
@@ -235,7 +235,7 @@ void formation_legions_request_losses(int32_t percentage, int32_t event_id)
         }
         int32_t strength = warship->ship_hit_points;
         if (strength >= damage && percentage != REQUEST_LOSSES_ALL) {
-            figure_current_id = id;
+            figure_current_id_set(id);
             warship->ship_hit_points = strength - damage;
             return;
         }
@@ -244,5 +244,5 @@ void formation_legions_request_losses(int32_t percentage, int32_t event_id)
         damage -= strength;
         warship->request_event_id = -1;
     }
-    figure_current_id = id;
+    figure_current_id_set(id);
 }

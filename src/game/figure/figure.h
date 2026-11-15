@@ -12,13 +12,21 @@
 #include <stddef.h>
 #include <stdint.h>
 
-extern int32_t figure_current_id;
-extern int32_t figure_highest_id;
-extern int32_t figure_image_direction;
-extern int32_t figure_created_sequence;
-extern uint8_t figure_corpse_offsets[256];
-extern int32_t figure_search_best_distance;
-extern int8_t figure_cart_offsets[16];
+int32_t figure_current_id_get(void);
+void figure_current_id_set(int32_t value);
+int32_t figure_highest_id_get(void);
+void figure_highest_id_set(int32_t value);
+int32_t figure_image_direction_get(void);
+void figure_image_direction_set(int32_t value);
+int32_t figure_created_sequence_get(void);
+void figure_created_sequence_set(int32_t value);
+int32_t *figure_created_sequence_ptr(void);
+int32_t figure_search_best_distance_get(void);
+void figure_search_best_distance_set(int32_t value);
+uint8_t figure_corpse_offset(int32_t index);
+int8_t figure_cart_offset(int32_t index);
+// the bytes the original lays after the formations: four figure counters, then the figure table; 0 past those
+uint8_t *figure_bytes_past_formations(int32_t offset);
 
 // the whole table (the records, then the route paths), for the readers by byte offset and the saved game's chunks
 figure_table *figure_table_get(void);

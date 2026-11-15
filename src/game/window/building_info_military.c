@@ -185,7 +185,7 @@ static int32_t charioteers_charging(const formation *legion)
 static void end_charge(int32_t legion_id)
 {
     formation *legion = formation_get(legion_id);
-    int32_t current = figure_current_id;
+    int32_t current = figure_current_id_get();
     for (int32_t i = 0; i < FORMATION_MAX_FIGURES; i++) {
         int32_t soldier_id = legion->figures[i];
         if (soldier_id == 0) {
@@ -197,7 +197,7 @@ static void end_charge(int32_t legion_id)
         }
         if (legion->months_low_morale == 1) {
             formation_change_morale(legion_id, LEGION_CHARGE_END_MORALE);
-            current = figure_current_id;
+            current = figure_current_id_get();
         }
         soldier->alternative_location_index = 0;
         soldier->charge.steps = 0;
@@ -328,7 +328,7 @@ static void transport_ship_return(figure *ship)
     ship->destination_y = (int16_t) map_result_y;
     map_result_x = old_x;
     map_result_y = old_y;
-    figure_route_remove(figure_current_id);
+    figure_route_remove(figure_current_id_get());
 }
 
 void transport_ship_order_button(void)

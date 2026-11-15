@@ -44,7 +44,7 @@ static int32_t facing_direction(const figure *f)
 
 void enemy_ship_reroute_tick(void)
 {
-    int32_t id = figure_current_id;
+    int32_t id = figure_current_id_get();
     figure *f = figure_get(id);
     if (++f->reroute_ticks > ENEMY_SHIP_REROUTE_LAST_TICK) {
         f->reroute_ticks = 0;
@@ -459,7 +459,7 @@ void enemy_transport_evade(int32_t figure_id, int32_t *moving)
 
 static void ship_set_image(int32_t sinking_group, int32_t moving_group, int32_t still_group, int32_t moving, int32_t keep_direction)
 {
-    figure *f = figure_get(figure_current_id);
+    figure *f = figure_get(figure_current_id_get());
     int32_t direction = facing_direction(f) - map_info.orientation;
     if (direction < 0) {
         direction += DIRECTION_COUNT;
@@ -480,14 +480,14 @@ static void ship_set_image(int32_t sinking_group, int32_t moving_group, int32_t 
         f->image_id = image_group(still_group) + direction;
     }
     if (keep_direction) {
-        figure_image_direction = direction;
+        figure_image_direction_set(direction);
     }
 }
 
 static void ship_action_start(int32_t damaged_state)
 {
     city_player_current()->enemies++;
-    figure *f = figure_get(figure_current_id);
+    figure *f = figure_get(figure_current_id_get());
     f->is_boat = 1;
     if (++f->animation_frame >= ENEMY_SHIP_ANIMATION_FRAMES) {
         f->animation_frame = 0;
@@ -510,7 +510,7 @@ void figure_enemy_transport_action(void)
     int32_t moving = 1;
     ship_action_start(FIGURE_ACTION_ENEMY_TRANSPORT_EVADING);
     enemy_ship_reroute_tick();
-    int32_t id = figure_current_id;
+    int32_t id = figure_current_id_get();
     figure *f = figure_get(id);
     switch (f->action_state) {
         case FIGURE_ACTION_CORPSE:
@@ -565,7 +565,7 @@ int32_t enemy_warship_find_target_at(int32_t x, int32_t y, int32_t range)
 {
     int32_t best_id = 0;
     int32_t best_score = 0;
-    figure_search_best_distance = range;
+    figure_search_best_distance_set(range);
     for (int32_t id = 1; id < MAX_FIGURES; id++) {
         const figure *f = figure_get(id);
         if (f->state != FIGURE_STATE_ALIVE || figure_military_is_away_on_mission(id) || f->action_state == FIGURE_ACTION_CORPSE) {
@@ -578,7 +578,7 @@ int32_t enemy_warship_find_target_at(int32_t x, int32_t y, int32_t range)
             case FIGURE_INFANTRY:
             case FIGURE_CHARIOTEER:
                 distance = calc_maximum_distance(x, y, f->x, f->y);
-                if (distance > figure_properties[figure_get(figure_current_id)->type].missile_range) {
+                if (distance > figure_properties[figure_get(figure_current_id_get())->type].missile_range) {
                     continue;
                 }
                 score = WARSHIP_SCORE_LAND_ENEMY;
@@ -599,9 +599,9 @@ int32_t enemy_warship_find_target_at(int32_t x, int32_t y, int32_t range)
             default:
                 continue;
         }
-        if (score - distance > best_score - figure_search_best_distance && figure_movement_can_launch_cross_country_missile(x, y, f->x, f->y)) {
+        if (score - distance > best_score - figure_search_best_distance_get() && figure_movement_can_launch_cross_country_missile(x, y, f->x, f->y)) {
             best_id = id;
-            figure_search_best_distance = distance;
+            figure_search_best_distance_set(distance);
             best_score = score;
         }
     }
@@ -917,9 +917,9 @@ void enemy_warship_leave(int32_t figure_id, int32_t *moving)
 {
     ship_move(figure_id, SHIP_MOVE_STRAIGHT);
     *moving = 1;
-    figure *f = figure_get(figure_current_id);
+    figure *f = figure_get(figure_current_id_get());
     if (f->direction == DIRECTION_REROUTE) {
-        figure_route_remove(figure_current_id);
+        figure_route_remove(figure_current_id_get());
         return;
     }
     if (f->direction == DIRECTION_LOST || f->direction == DIRECTION_AT_DESTINATION) {
@@ -931,7 +931,7 @@ void figure_enemy_warship_action(void)
 {
     int32_t moving = 0;
     ship_action_start(FIGURE_ACTION_ENEMY_WARSHIP_EVADING);
-    int32_t id = figure_current_id;
+    int32_t id = figure_current_id_get();
     figure *f = figure_get(id);
     if ((f->ship_leave_month + ENEMY_WARSHIP_STAY_MONTHS) % MONTHS_PER_YEAR == game_time_month) {
         f->action_state = FIGURE_ACTION_ENEMY_WARSHIP_LEAVING;
@@ -1005,7 +1005,7 @@ static int32_t egyptian_ship_start(figure *f)
 void figure_egyptian_warship_action(void)
 {
     int32_t moving = 0;
-    int32_t id = figure_current_id;
+    int32_t id = figure_current_id_get();
     figure *f = figure_get(id);
     int32_t health = egyptian_ship_start(f);
     if (health <= ENEMY_SHIP_DAMAGED_PERCENT && health > 0) {
@@ -1066,7 +1066,7 @@ void figure_egyptian_warship_action(void)
 void figure_egyptian_transport_action(void)
 {
     int32_t moving = 1;
-    int32_t id = figure_current_id;
+    int32_t id = figure_current_id_get();
     figure *f = figure_get(id);
     int32_t health = egyptian_ship_start(f);
     if (health <= ENEMY_SHIP_DAMAGED_PERCENT && health > 0) {
@@ -1100,20 +1100,20 @@ void figure_egyptian_transport_action(void)
             f->action_state = FIGURE_ACTION_ENEMY_TRANSPORT_LEAVING;
             break;
     }
-    figure_image_direction = facing_direction(f) - map_info.orientation;
-    if (figure_image_direction < 0) {
-        figure_image_direction += DIRECTION_COUNT;
+    figure_image_direction_set(facing_direction(f) - map_info.orientation);
+    if (figure_image_direction_get() < 0) {
+        figure_image_direction_set(figure_image_direction_get() + (DIRECTION_COUNT));
     }
     if (f->action_state == FIGURE_ACTION_CORPSE) {
-        egyptian_ship_sinking_image(f, image_group(IMAGE_GROUP_FIGURE_ENEMY_EGYPTIAN_TRANSPORT_SINKING), figure_image_direction);
+        egyptian_ship_sinking_image(f, image_group(IMAGE_GROUP_FIGURE_ENEMY_EGYPTIAN_TRANSPORT_SINKING), figure_image_direction_get());
         return;
     }
     if (moving) {
         int32_t frame = f->animation_frame / ENEMY_SHIP_FRAME_TICKS;
-        f->image_id = image_group(IMAGE_GROUP_FIGURE_ENEMY_EGYPTIAN_TRANSPORT_MOVING) + (frame * DIRECTION_COUNT) + figure_image_direction;
+        f->image_id = image_group(IMAGE_GROUP_FIGURE_ENEMY_EGYPTIAN_TRANSPORT_MOVING) + (frame * DIRECTION_COUNT) + figure_image_direction_get();
         return;
     }
-    f->image_id = image_group(IMAGE_GROUP_FIGURE_ENEMY_EGYPTIAN_TRANSPORT_STILL) + figure_image_direction;
+    f->image_id = image_group(IMAGE_GROUP_FIGURE_ENEMY_EGYPTIAN_TRANSPORT_STILL) + figure_image_direction_get();
 }
 
 int32_t formation_create(int32_t figure_type, int32_t layout, int32_t orientation, int32_t x, int32_t y)

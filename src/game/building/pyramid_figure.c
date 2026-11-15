@@ -245,7 +245,7 @@ void pyramid_figure_walk_on_ramp(int32_t figure_id, int32_t mode, uint8_t fail_a
     int32_t part_id = map_grids.building_ids[f->destination_grid_offset];
     const building *part = building_get(part_id);
     if (part->type != BUILDING_PYRAMID) {
-        figure_get(figure_current_id)->state = FIGURE_STATE_DEAD;
+        figure_get(figure_current_id_get())->state = FIGURE_STATE_DEAD;
         return;
     }
     if (pyramid_figure_climb_step(figure_id, 1) != 1) {
@@ -457,7 +457,7 @@ int32_t pyramid_figure_climb_step(int32_t figure_id, int32_t step)
     } else {
         int32_t kind = rotated_tile_kind(prev);
         int32_t corner = 0;
-        int32_t facing = (int8_t) figure_get(figure_current_id)->direction - map_info.orientation + 1;
+        int32_t facing = (int8_t) figure_get(figure_current_id_get())->direction - map_info.orientation + 1;
         if (facing < 0) {
             facing += 8;
         }
@@ -550,7 +550,7 @@ void pyramid_figure_snap_to_part(int32_t figure_id)
 {
     figure *f = figure_get(figure_id);
     map_figure_delete(figure_id);
-    const figure *current = figure_get(figure_current_id);
+    const figure *current = figure_get(figure_current_id_get());
     f->x = current->destination_x;
     f->y = current->destination_y;
     f->grid_offset = current->destination_grid_offset;

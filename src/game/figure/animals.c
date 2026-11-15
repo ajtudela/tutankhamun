@@ -581,7 +581,7 @@ void crocodile_choose_next_action(int32_t figure_id)
 
 void figure_seagulls_action(void)
 {
-    figure *f = figure_get(figure_current_id);
+    figure *f = figure_get(figure_current_id_get());
     f->terrain_usage = TERRAIN_USAGE_ANY;
     f->is_ghost = 1;
     f->use_cross_country = 1;
@@ -592,7 +592,7 @@ int32_t hunter_find_prey_target(int32_t x, int32_t y, int32_t max_path_length)
     int32_t grid_offsets[HUNTER_PREY_CANDIDATES];
     int32_t ids[HUNTER_PREY_CANDIDATES];
     int32_t count = 0;
-    figure *hunter = figure_get(figure_current_id);
+    figure *hunter = figure_get(figure_current_id_get());
     for (int32_t id = 1; id < MAX_FIGURES; id++) {
         figure *f = figure_get(id);
         if (f->state == FIGURE_STATE_ALIVE && figure_is_herd_animal(f->type) && f->action_state != FIGURE_ACTION_CORPSE &&
@@ -607,7 +607,7 @@ int32_t hunter_find_prey_target(int32_t x, int32_t y, int32_t max_path_length)
     if (count) {
         int32_t index = map_routing_citizen_find_first_of_prefer_roads(x, y, grid_offsets, count);
         if (index && hunter->routing_path_length <= max_path_length) {
-            figure_route_remove(figure_current_id);
+            figure_route_remove(figure_current_id_get());
             return ids[index - 1];
         }
     }
@@ -620,7 +620,7 @@ static void hunter_spear_set_image(figure *f)
     if (dir < 0) {
         dir += 32;
     }
-    figure_image_direction = dir;
+    figure_image_direction_set(dir);
     if (scenario_data.climate_type == CLIMATE_CENTRAL) {
         f->image_id = f->animation_frame + image_group(IMAGE_GROUP_FIGURE_HUNTER_SPEAR_CENTRAL);
         f->cart_image_id = 0;
@@ -632,7 +632,7 @@ static void hunter_spear_set_image(figure *f)
 
 void figure_hunter_spear_action(void)
 {
-    int32_t figure_id = figure_current_id;
+    int32_t figure_id = figure_current_id_get();
     figure *f = figure_get(figure_id);
     f->use_cross_country = 1;
     if (++f->progress_on_tile > HUNTER_SPEAR_FLIGHT_TICKS) {
@@ -689,7 +689,7 @@ static void hunter_target(figure *f, int32_t prey_id, int32_t set_action)
     f->destination_x = prey->x;
     f->destination_y = prey->y;
     f->prey_figure_id = (int16_t) prey_id;
-    figure_route_remove(figure_current_id);
+    figure_route_remove(figure_current_id_get());
     if (prey->action_state != FIGURE_ACTION_HERD_HUNTED) {
         prey->animal.hunter_building_id = f->building_id;
         if (set_action) {
@@ -700,7 +700,7 @@ static void hunter_target(figure *f, int32_t prey_id, int32_t set_action)
 
 void figure_hunter_action(void)
 {
-    int32_t figure_id = figure_current_id;
+    int32_t figure_id = figure_current_id_get();
     figure *f = figure_get(figure_id);
     int32_t shoot_frame = 0;
     f->terrain_usage = TERRAIN_USAGE_PREFER_ROADS;
@@ -886,9 +886,9 @@ void figure_hunter_action(void)
             f->action_state = FIGURE_ACTION_HUNTER_LOOK_FOR_PREY;
             break;
     }
-    figure_image_direction = f->direction - map_info.orientation;
-    if (figure_image_direction < 0) {
-        figure_image_direction += 8;
+    figure_image_direction_set(f->direction - map_info.orientation);
+    if (figure_image_direction_get() < 0) {
+        figure_image_direction_set(figure_image_direction_get() + (8));
     }
     int32_t walk, corpse, attack, attack_hunt, shoot, take, carry, carry_still;
     switch (scenario_data.climate_type) {
@@ -923,10 +923,10 @@ void figure_hunter_action(void)
             carry_still = IMAGE_GROUP_FIGURE_HUNTER_DESERT_CARRY;
             break;
     }
-    int32_t dir = figure_image_direction;
+    int32_t dir = figure_image_direction_get();
     switch (f->action_state) {
         case FIGURE_ACTION_CORPSE:
-            f->image_id = figure_corpse_offsets[f->wait_ticks / 2] + image_group(corpse);
+            f->image_id = figure_corpse_offset(f->wait_ticks / 2) + image_group(corpse);
             return;
         case FIGURE_ACTION_ATTACK:
             if (f->action_state_before_attack != FIGURE_ACTION_HUNTER_RETURN_WITH_PREY) {
@@ -971,7 +971,7 @@ static int32_t gatherer_can_cut_here(const figure *f)
 
 void figure_lumberjack_action(void)
 {
-    int32_t figure_id = figure_current_id;
+    int32_t figure_id = figure_current_id_get();
     figure *f = figure_get(figure_id);
     f->terrain_usage = TERRAIN_USAGE_PREFER_ROADS;
     f->is_ghost = 0;
@@ -996,7 +996,7 @@ void figure_lumberjack_action(void)
             break;
         case FIGURE_ACTION_WAIT_FOR_FERRY:
             f->animation_frame = 0;
-            f->image_id = image_group(IMAGE_GROUP_FIGURE_LUMBERJACK) + figure_image_direction;
+            f->image_id = image_group(IMAGE_GROUP_FIGURE_LUMBERJACK) + figure_image_direction_get();
             if (++f->wait_ticks > animal_rules[ANIMAL_RULE_FERRY_WAIT_TICKS]) {
                 f->wait_ticks = 0;
                 if (!figure_is_queued_for_ferry(figure_id)) {
@@ -1056,32 +1056,32 @@ void figure_lumberjack_action(void)
             f->wait_ticks = 10;
             break;
     }
-    figure_image_direction = f->direction - map_info.orientation;
-    if (figure_image_direction < 0) {
-        figure_image_direction += 8;
+    figure_image_direction_set(f->direction - map_info.orientation);
+    if (figure_image_direction_get() < 0) {
+        figure_image_direction_set(figure_image_direction_get() + (8));
     }
     switch (f->action_state) {
         case FIGURE_ACTION_CORPSE:
-            f->image_id = figure_corpse_offsets[f->wait_ticks / 2] + image_group(IMAGE_GROUP_FIGURE_LUMBERJACK_DEATH);
+            f->image_id = figure_corpse_offset(f->wait_ticks / 2) + image_group(IMAGE_GROUP_FIGURE_LUMBERJACK_DEATH);
             break;
         case FIGURE_ACTION_LUMBERJACK_CUT_TREE:
-            f->image_id = image_group(IMAGE_GROUP_FIGURE_LUMBERJACK_CUT) + f->animation_frame * 8 + figure_image_direction;
+            f->image_id = image_group(IMAGE_GROUP_FIGURE_LUMBERJACK_CUT) + f->animation_frame * 8 + figure_image_direction_get();
             break;
         case FIGURE_ACTION_LUMBERJACK_FIND_TREE:
-            f->image_id = image_group(IMAGE_GROUP_FIGURE_LUMBERJACK) + figure_image_direction;
+            f->image_id = image_group(IMAGE_GROUP_FIGURE_LUMBERJACK) + figure_image_direction_get();
             break;
         case FIGURE_ACTION_LUMBERJACK_RETURN_HOME:
-            f->image_id = image_group(IMAGE_GROUP_FIGURE_LUMBERJACK_CARRY) + f->animation_frame * 8 + figure_image_direction;
+            f->image_id = image_group(IMAGE_GROUP_FIGURE_LUMBERJACK_CARRY) + f->animation_frame * 8 + figure_image_direction_get();
             break;
         default:
-            f->image_id = image_group(IMAGE_GROUP_FIGURE_LUMBERJACK) + f->animation_frame * 8 + figure_image_direction;
+            f->image_id = image_group(IMAGE_GROUP_FIGURE_LUMBERJACK) + f->animation_frame * 8 + figure_image_direction_get();
             break;
     }
 }
 
 void figure_reed_gatherer_action(void)
 {
-    int32_t figure_id = figure_current_id;
+    int32_t figure_id = figure_current_id_get();
     figure *f = figure_get(figure_id);
     f->terrain_usage = TERRAIN_USAGE_PREFER_ROADS;
     f->is_ghost = 0;
@@ -1101,7 +1101,7 @@ void figure_reed_gatherer_action(void)
             break;
         case FIGURE_ACTION_WAIT_FOR_FERRY:
             f->animation_frame = 0;
-            f->image_id = image_group(IMAGE_GROUP_FIGURE_REED_GATHERER) + figure_image_direction;
+            f->image_id = image_group(IMAGE_GROUP_FIGURE_REED_GATHERER) + figure_image_direction_get();
             if (++f->wait_ticks > animal_rules[ANIMAL_RULE_FERRY_WAIT_TICKS]) {
                 f->wait_ticks = 0;
                 if (!figure_is_queued_for_ferry(figure_id)) {
@@ -1168,26 +1168,26 @@ void figure_reed_gatherer_action(void)
     if (++f->animation_frame >= (f->action_state != FIGURE_ACTION_REED_GATHERER_CUT_REEDS ? 12 : 15)) {
         f->animation_frame = 0;
     }
-    figure_image_direction = f->direction - map_info.orientation;
-    if (figure_image_direction < 0) {
-        figure_image_direction += 8;
+    figure_image_direction_set(f->direction - map_info.orientation);
+    if (figure_image_direction_get() < 0) {
+        figure_image_direction_set(figure_image_direction_get() + (8));
     }
     switch (f->action_state) {
         case FIGURE_ACTION_REED_GATHERER_CUT_REEDS:
-            f->image_id = image_group(IMAGE_GROUP_FIGURE_REED_GATHERER_CUT) + f->animation_frame * 8 + figure_image_direction;
+            f->image_id = image_group(IMAGE_GROUP_FIGURE_REED_GATHERER_CUT) + f->animation_frame * 8 + figure_image_direction_get();
             break;
         case FIGURE_ACTION_REED_GATHERER_FIND_REEDS:
         case FIGURE_ACTION_ATTACK:
-            f->image_id = image_group(IMAGE_GROUP_FIGURE_REED_GATHERER) + figure_image_direction;
+            f->image_id = image_group(IMAGE_GROUP_FIGURE_REED_GATHERER) + figure_image_direction_get();
             break;
         case FIGURE_ACTION_REED_GATHERER_RETURN_HOME:
-            f->image_id = image_group(IMAGE_GROUP_FIGURE_REED_GATHERER_CARRY) + f->animation_frame * 8 + figure_image_direction;
+            f->image_id = image_group(IMAGE_GROUP_FIGURE_REED_GATHERER_CARRY) + f->animation_frame * 8 + figure_image_direction_get();
             break;
         case FIGURE_ACTION_CORPSE:
             f->image_id = image_group(IMAGE_GROUP_FIGURE_REED_GATHERER_DEATH) + (f->wait_ticks < 8 ? f->wait_ticks : 7);
             break;
         default:
-            f->image_id = image_group(IMAGE_GROUP_FIGURE_REED_GATHERER) + f->animation_frame * 8 + figure_image_direction;
+            f->image_id = image_group(IMAGE_GROUP_FIGURE_REED_GATHERER) + f->animation_frame * 8 + figure_image_direction_get();
             break;
     }
 }
@@ -1202,7 +1202,7 @@ static void herd_animal_check_hunter(figure *f)
 
 static void herd_animal_walk_near(int32_t center_x, int32_t center_y)
 {
-    figure *f = figure_get(figure_current_id);
+    figure *f = figure_get(figure_current_id_get());
     random_generate_next();
     int32_t dir = animal_find_free_neighbour_direction(center_x, center_y, random_generator_state.random1_15bit % 16, f->x, f->y, 1);
     if (dir < 0 || dir > 15) {
@@ -1216,7 +1216,7 @@ static void herd_animal_walk_near(int32_t center_x, int32_t center_y)
 
 void figure_birds_action(void)
 {
-    int32_t figure_id = figure_current_id;
+    int32_t figure_id = figure_current_id_get();
     figure *f = figure_get(figure_id);
     f->animal.frame++;
     int32_t speed = figure_properties[f->type].speed;
@@ -1294,9 +1294,9 @@ void figure_birds_action(void)
             f->image_id = 0;
             return;
     }
-    figure_image_direction = f->direction - map_info.orientation;
-    if (figure_image_direction < 0) {
-        figure_image_direction += 8;
+    figure_image_direction_set(f->direction - map_info.orientation);
+    if (figure_image_direction_get() < 0) {
+        figure_image_direction_set(figure_image_direction_get() + (8));
     }
     if (f->action_state == FIGURE_ACTION_CORPSE || f->action_state == FIGURE_ACTION_HERD_HUNTED) {
         if (f->wait_ticks < 25) {
@@ -1312,18 +1312,18 @@ void figure_birds_action(void)
 static int32_t animal_image_direction(const figure *f)
 {
     int32_t dir = f->direction - map_info.orientation;
-    figure_image_direction = dir;
+    figure_image_direction_set(dir);
     if (dir < 0) {
         dir += 8;
-        figure_image_direction = dir;
+        figure_image_direction_set(dir);
         if (dir < 0) {
             dir += ((uint32_t) (7 - dir) >> 3) * 8;
-            figure_image_direction = dir;
+            figure_image_direction_set(dir);
         }
     }
     if (dir >= 8) {
         dir -= ((uint32_t) dir >> 3) * 8;
-        figure_image_direction = dir;
+        figure_image_direction_set(dir);
     }
     return dir;
 }
@@ -1354,7 +1354,7 @@ static void herd_animal_rest(figure *f)
 
 void figure_ostrich_action(void)
 {
-    int32_t figure_id = figure_current_id;
+    int32_t figure_id = figure_current_id_get();
     figure *f = figure_get(figure_id);
     int32_t speed = figure_properties[f->type].speed;
     const formation *herd = formation_get(f->formation_id);
@@ -1521,7 +1521,7 @@ void figure_ostrich_action(void)
 
 void figure_antelope_action(void)
 {
-    int32_t figure_id = figure_current_id;
+    int32_t figure_id = figure_current_id_get();
     figure *f = figure_get(figure_id);
     int32_t speed = figure_properties[f->type].speed;
     const formation *herd = formation_get(f->formation_id);
@@ -1647,11 +1647,11 @@ void figure_antelope_action(void)
             f->action_state = FIGURE_ACTION_HERD_CHOOSE;
             break;
     }
-    figure_image_direction = f->direction - map_info.orientation;
-    if (figure_image_direction < 0) {
-        figure_image_direction += 8;
+    figure_image_direction_set(f->direction - map_info.orientation);
+    if (figure_image_direction_get() < 0) {
+        figure_image_direction_set(figure_image_direction_get() + (8));
     }
-    int32_t dir = figure_image_direction;
+    int32_t dir = figure_image_direction_get();
     int32_t frame = f->animal.frame;
     switch (f->action_state) {
         case FIGURE_ACTION_CORPSE:
@@ -1697,12 +1697,12 @@ static int32_t animal_in_deep_water(const figure *f)
 
 static int32_t predator_walk_near(int32_t center_x, int32_t center_y, int32_t random_dir)
 {
-    figure *f = figure_get(figure_current_id);
+    figure *f = figure_get(figure_current_id_get());
     int32_t dir = animal_find_free_neighbour_direction(center_x, center_y, random_dir, f->x, f->y, 0);
     if (dir < 0 || dir >= HERD_OFFSET_COUNT) {
         return 0;
     }
-    figure_route_remove(figure_current_id);
+    figure_route_remove(figure_current_id_get());
     f->destination_x = (int16_t) (herd_spawn_offsets()[dir].x + center_x);
     f->destination_y = (int16_t) (herd_spawn_offsets()[dir].y + center_y);
     f->action_state = FIGURE_ACTION_PREDATOR_WALK;
@@ -1718,7 +1718,7 @@ static void predator_end_chase(figure *f)
 
 void figure_crocodile_action(void)
 {
-    int32_t figure_id = figure_current_id;
+    int32_t figure_id = figure_current_id_get();
     figure *f = figure_get(figure_id);
     int32_t speed = figure_properties[f->type].speed;
     f->animal.frame++;
@@ -1850,11 +1850,11 @@ void figure_crocodile_action(void)
             f->action_state = FIGURE_ACTION_PREDATOR_CHOOSE;
             break;
     }
-    figure_image_direction = f->direction - map_info.orientation;
-    if (figure_image_direction < 0) {
-        figure_image_direction += 8;
+    figure_image_direction_set(f->direction - map_info.orientation);
+    if (figure_image_direction_get() < 0) {
+        figure_image_direction_set(figure_image_direction_get() + (8));
     }
-    int32_t dir = figure_image_direction;
+    int32_t dir = figure_image_direction_get();
     int32_t frame = f->animal.frame;
     switch (f->action_state) {
         case FIGURE_ACTION_CORPSE:
@@ -1891,7 +1891,7 @@ void figure_crocodile_action(void)
 
 void figure_hippo_action(void)
 {
-    int32_t figure_id = figure_current_id;
+    int32_t figure_id = figure_current_id_get();
     figure *f = figure_get(figure_id);
     int32_t speed = figure_properties[f->type].speed;
     int32_t frame_advanced = 0;
@@ -2074,11 +2074,11 @@ void figure_hippo_action(void)
         }
         return;
     }
-    figure_image_direction = f->direction - map_info.orientation;
-    if (figure_image_direction < 0) {
-        figure_image_direction += 8;
+    figure_image_direction_set(f->direction - map_info.orientation);
+    if (figure_image_direction_get() < 0) {
+        figure_image_direction_set(figure_image_direction_get() + (8));
     }
-    int32_t dir = figure_image_direction;
+    int32_t dir = figure_image_direction_get();
     int32_t frame = f->animal.frame;
     switch (f->action_state) {
         case FIGURE_ACTION_CORPSE:
@@ -2118,14 +2118,14 @@ void figure_hippo_action(void)
 static int32_t asp_walk_near(const formation *herd)
 {
     random_generate_next();
-    figure *f = figure_get(figure_current_id);
+    figure *f = figure_get(figure_current_id_get());
     int32_t center_x = herd->destination_x;
     int32_t center_y = herd->destination_y;
     int32_t dir = animal_find_free_neighbour_direction(center_x, center_y, random_generator_state.random1_15bit % 16, f->x, f->y, 0);
     if (dir < 0 || dir >= HERD_OFFSET_COUNT) {
         return 0;
     }
-    figure_route_remove(figure_current_id);
+    figure_route_remove(figure_current_id_get());
     f->destination_x = (int16_t) (herd_roaming_offsets()[dir].x + center_x);
     f->destination_y = (int16_t) (herd_roaming_offsets()[dir].y + center_y);
     f->action_state = FIGURE_ACTION_PREDATOR_WALK;
@@ -2134,7 +2134,7 @@ static int32_t asp_walk_near(const formation *herd)
 
 void figure_asp_action(void)
 {
-    int32_t figure_id = figure_current_id;
+    int32_t figure_id = figure_current_id_get();
     figure *f = figure_get(figure_id);
     int32_t speed = figure_properties[f->type].speed;
     int32_t frame_advanced = 0;
@@ -2280,11 +2280,11 @@ void figure_asp_action(void)
     if (f->animal.frame >= f->animal.frame_count || f->animal.frame < 0) {
         f->animal.frame = 0;
     }
-    figure_image_direction = f->direction - map_info.orientation;
-    if (figure_image_direction < 0) {
-        figure_image_direction += 8;
+    figure_image_direction_set(f->direction - map_info.orientation);
+    if (figure_image_direction_get() < 0) {
+        figure_image_direction_set(figure_image_direction_get() + (8));
     }
-    int32_t dir = figure_image_direction;
+    int32_t dir = figure_image_direction_get();
     int32_t frame = f->animal.frame;
     switch (f->action_state) {
         case FIGURE_ACTION_CORPSE:

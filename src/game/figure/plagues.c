@@ -27,16 +27,16 @@ static int32_t image_direction_of(const figure *f)
     if (direction > DIRECTION_TOP_LEFT) {
         direction = f->previous_tile_direction;
     }
-    figure_image_direction = direction - map_info.orientation;
-    if (figure_image_direction < 0) {
-        figure_image_direction += DIRECTION_COUNT;
+    figure_image_direction_set(direction - map_info.orientation);
+    if (figure_image_direction_get() < 0) {
+        figure_image_direction_set(figure_image_direction_get() + (DIRECTION_COUNT));
     }
-    return figure_image_direction;
+    return figure_image_direction_get();
 }
 
 void figure_plague_citizen_action(void)
 {
-    int32_t figure_id = figure_current_id;
+    int32_t figure_id = figure_current_id_get();
     figure *f = figure_get(figure_id);
     f->cart_image_id = image_group(IMAGE_GROUP_FIGURE_PLAGUE_SHADOW);
     f->terrain_usage = TERRAIN_USAGE_ROADS;
@@ -86,15 +86,15 @@ void figure_plague_citizen_action(void)
     }
     image_direction_of(f);
     if (f->action_state != FIGURE_ACTION_CORPSE) {
-        f->image_id = image_group(IMAGE_GROUP_FIGURE_PLAGUE_CITIZEN) + f->animation_frame * 8 + figure_image_direction;
+        f->image_id = image_group(IMAGE_GROUP_FIGURE_PLAGUE_CITIZEN) + f->animation_frame * 8 + figure_image_direction_get();
         return;
     }
-    f->image_id = figure_corpse_offsets[f->wait_ticks / 2] + image_group(IMAGE_GROUP_FIGURE_PLAGUE_CITIZEN_DEATH);
+    f->image_id = figure_corpse_offset(f->wait_ticks / 2) + image_group(IMAGE_GROUP_FIGURE_PLAGUE_CITIZEN_DEATH);
 }
 
 void figure_locust_action(void)
 {
-    int32_t figure_id = figure_current_id;
+    int32_t figure_id = figure_current_id_get();
     figure *f = figure_get(figure_id);
     f->terrain_usage = TERRAIN_USAGE_ANYWHERE;
     f->cart_image_id = 0;
@@ -181,7 +181,7 @@ void figure_locust_action(void)
 
 void figure_mummy_action(void)
 {
-    int32_t figure_id = figure_current_id;
+    int32_t figure_id = figure_current_id_get();
     figure *f = figure_get(figure_id);
     f->terrain_usage = TERRAIN_USAGE_AMPHIBIA;
     f->cart_image_id = 0;
@@ -222,22 +222,22 @@ void figure_mummy_action(void)
             figure_movement_roam_ticks(figure_id, 1);
         }
     }
-    figure_image_direction = f->direction - map_info.orientation;
-    if (figure_image_direction < 0) {
-        figure_image_direction += DIRECTION_COUNT;
+    figure_image_direction_set(f->direction - map_info.orientation);
+    if (figure_image_direction_get() < 0) {
+        figure_image_direction_set(figure_image_direction_get() + (DIRECTION_COUNT));
     }
     switch (f->action_state) {
         case FIGURE_ACTION_CORPSE: {
             int32_t index = (f->wait_ticks < (2 * MUMMY_CORPSE_IMAGES)) ? (f->wait_ticks / 2) : (MUMMY_CORPSE_IMAGES - 1);
-            f->image_id = image_group(IMAGE_GROUP_FIGURE_MUMMY_DEATH) + index * 8 + figure_image_direction;
+            f->image_id = image_group(IMAGE_GROUP_FIGURE_MUMMY_DEATH) + index * 8 + figure_image_direction_get();
             break;
         }
         case FIGURE_ACTION_ATTACK:
-            figure_image_direction = f->attack_direction - map_info.orientation;
-            f->image_id = image_group(IMAGE_GROUP_FIGURE_MUMMY_ATTACK) + (f->animation_frame >> 1) * 8 + figure_image_direction;
+            figure_image_direction_set(f->attack_direction - map_info.orientation);
+            f->image_id = image_group(IMAGE_GROUP_FIGURE_MUMMY_ATTACK) + (f->animation_frame >> 1) * 8 + figure_image_direction_get();
             break;
         case FIGURE_ACTION_MUMMY_ROAMING:
-            f->image_id = image_group(IMAGE_GROUP_FIGURE_MUMMY) + (f->animation_frame >> 1) * 8 + figure_image_direction;
+            f->image_id = image_group(IMAGE_GROUP_FIGURE_MUMMY) + (f->animation_frame >> 1) * 8 + figure_image_direction_get();
             break;
     }
 }

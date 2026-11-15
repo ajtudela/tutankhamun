@@ -666,10 +666,10 @@ static void update_image(figure *f)
     if (direction < 0) {
         direction += DIRECTION_COUNT;
     }
-    figure_image_direction = direction;
+    figure_image_direction_set(direction);
     switch (f->action_state) {
         case FIGURE_ACTION_CORPSE:
-            f->image_id = image_group(IMAGE_GROUP_FIGURE_LABORER_DEATH) + figure_corpse_offsets[f->wait_ticks / 2];
+            f->image_id = image_group(IMAGE_GROUP_FIGURE_LABORER_DEATH) + figure_corpse_offset(f->wait_ticks / 2);
             return;
         case FIGURE_ACTION_LABORER_LEVEL_WORK:
         case FIGURE_ACTION_LABORER_SUN_TEMPLE_WORK:
@@ -685,7 +685,7 @@ static void update_image(figure *f)
 
 void figure_laborer_action(void)
 {
-    int32_t figure_id = figure_current_id;
+    int32_t figure_id = figure_current_id_get();
     figure *f = figure_get(figure_id);
     int32_t speed = figure_properties[f->type].speed;
     f->terrain_usage = TERRAIN_USAGE_ROADS;
@@ -1049,7 +1049,7 @@ static int32_t sled_image_group(const figure *sled)
 
 void figure_sled_action(void)
 {
-    int32_t figure_id = figure_current_id;
+    int32_t figure_id = figure_current_id_get();
     train_follow(figure_id, 1);
     figure *f = figure_get(figure_id);
     f->image_id = image_group(sled_image_group(f)) + train_direction(f);
@@ -1057,7 +1057,7 @@ void figure_sled_action(void)
 
 void figure_sled_puller_action(void)
 {
-    int32_t figure_id = figure_current_id;
+    int32_t figure_id = figure_current_id_get();
     train_follow(figure_id, 0);
     figure *f = figure_get(figure_id);
     int32_t group = f->resource_id != RESOURCE_NONE ? IMAGE_GROUP_FIGURE_LABORER_PULLING : IMAGE_GROUP_FIGURE_SLED_PULLER_FRONT;
@@ -1355,7 +1355,7 @@ static int32_t assign_farm(figure *f, int32_t figure_id, building *farm, int32_t
     f->destination_building_id = (int16_t) farm_id;
     f->action_state = FIGURE_ACTION_LABORER_TO_FARM;
     f->destination_x = (int16_t) map_result_x;
-    figure_get(figure_current_id)->destination_y = (int16_t) map_result_y;
+    figure_get(figure_current_id_get())->destination_y = (int16_t) map_result_y;
     f->roam_length = 0;
     return 1;
 }

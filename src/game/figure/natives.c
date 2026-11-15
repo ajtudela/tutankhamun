@@ -53,14 +53,14 @@ static void emigrant_set_cart_offset(figure *f, int32_t dir)
         if (emigrant_cart_direction > DIRECTION_TOP_LEFT) {
             emigrant_cart_direction = dir - (DIRECTION_COUNT / 2);
         }
-        f->cart_offset_x = figure_cart_offsets[emigrant_cart_direction * 2];
-        f->cart_offset_y = figure_cart_offsets[emigrant_cart_direction * 2 + 1];
+        f->cart_offset_x = figure_cart_offset(emigrant_cart_direction * 2);
+        f->cart_offset_y = figure_cart_offset(emigrant_cart_direction * 2 + 1);
     }
 }
 
 void figure_emigrant_action(void)
 {
-    int32_t figure_id = figure_current_id;
+    int32_t figure_id = figure_current_id_get();
     figure *f = figure_get(figure_id);
     f->terrain_usage = TERRAIN_USAGE_ANY;
     f->cart_image_id = 0;
@@ -119,17 +119,17 @@ void figure_emigrant_action(void)
     if (dir < 0) {
         dir += DIRECTION_COUNT;
     }
-    figure_image_direction = dir;
+    figure_image_direction_set(dir);
     if (f->action_state == FIGURE_ACTION_CORPSE) {
         if (!on_building) {
-            f->image_id = (int32_t) (figure_corpse_offsets[f->wait_ticks / 2] + image_group(IMAGE_GROUP_FIGURE_EMIGRANT_DEATH));
+            f->image_id = (int32_t) (figure_corpse_offset(f->wait_ticks / 2) + image_group(IMAGE_GROUP_FIGURE_EMIGRANT_DEATH));
             emigrant_set_cart_offset(f, dir);
             return;
         }
         if (f->wait_ticks < EMIGRANT_DROWNING_TICKS) {
             int32_t swept = map_sweep_has_passed(f->x);
             int32_t death = swept ? image_group(IMAGE_GROUP_FIGURE_FERRY_BOAT_SWEPT_SINKING) : image_group(IMAGE_GROUP_FIGURE_FERRY_BOAT_SINKING);
-            f->image_id = (figure_image_direction / DIRECTION_COUNT) + death + (f->wait_ticks / 3);
+            f->image_id = (figure_image_direction_get() / DIRECTION_COUNT) + death + (f->wait_ticks / 3);
         } else {
             int32_t frame = f->wait_ticks - EMIGRANT_DROWNING_TICKS;
             if (frame > EMIGRANT_BUBBLES_LAST_FRAME) {
@@ -145,7 +145,7 @@ void figure_emigrant_action(void)
         }
         int32_t swept = map_sweep_has_passed(f->x);
         int32_t base = swept ? image_group(IMAGE_GROUP_FIGURE_FERRY_BOAT_SWEPT) : image_group(IMAGE_GROUP_FIGURE_FERRY_BOAT);
-        f->image_id = (int32_t) (base + (f->animation_frame / 3) * 8u + figure_image_direction);
+        f->image_id = (int32_t) (base + (f->animation_frame / 3) * 8u + figure_image_direction_get());
     }
     f->cart_image_id = 0;
     emigrant_set_cart_offset(f, dir);
@@ -153,7 +153,7 @@ void figure_emigrant_action(void)
 
 void figure_indigenous_native_action(void)
 {
-    int32_t figure_id = figure_current_id;
+    int32_t figure_id = figure_current_id_get();
     figure *f = figure_get(figure_id);
     if ((map_grids.terrain[f->grid_offset] & (TERRAIN_WATER | TERRAIN_FLOODPLAIN)) == (TERRAIN_WATER | TERRAIN_FLOODPLAIN)) {
         figure_set_state_dead(figure_id);
@@ -241,25 +241,25 @@ void figure_indigenous_native_action(void)
     } else {
         dir = f->previous_tile_direction;
     }
-    figure_image_direction = dir - map_info.orientation;
-    if (figure_image_direction < 0) {
-        figure_image_direction += DIRECTION_COUNT;
+    figure_image_direction_set(dir - map_info.orientation);
+    if (figure_image_direction_get() < 0) {
+        figure_image_direction_set(figure_image_direction_get() + (DIRECTION_COUNT));
     }
     int32_t base = image_group(IMAGE_GROUP_FIGURE_NATIVE);
     if (f->action_state == FIGURE_ACTION_ATTACK) {
         if (f->attack_image_offset < NATIVE_FIGHT_WINDUP) {
-            f->image_id = figure_image_direction + NATIVE_IMAGE_FIGHT + base;
+            f->image_id = figure_image_direction_get() + NATIVE_IMAGE_FIGHT + base;
         } else {
-            f->image_id = figure_image_direction + NATIVE_IMAGE_FIGHT + (((int32_t) (f->attack_image_offset - NATIVE_FIGHT_WINDUP) / 2) * 8) + base;
+            f->image_id = figure_image_direction_get() + NATIVE_IMAGE_FIGHT + (((int32_t) (f->attack_image_offset - NATIVE_FIGHT_WINDUP) / 2) * 8) + base;
         }
     } else if (f->action_state == FIGURE_ACTION_CORPSE) {
-        f->image_id = (int32_t) (figure_corpse_offsets[f->wait_ticks / 2] + NATIVE_IMAGE_CORPSE + base);
+        f->image_id = (int32_t) (figure_corpse_offset(f->wait_ticks / 2) + NATIVE_IMAGE_CORPSE + base);
     } else if (f->direction == DIRECTION_ATTACK) {
-        f->image_id = (int32_t) (figure_image_direction + NATIVE_IMAGE_FIGHT + (f->animation_frame >> 1) * 8u + base);
+        f->image_id = (int32_t) (figure_image_direction_get() + NATIVE_IMAGE_FIGHT + (f->animation_frame >> 1) * 8u + base);
     } else if (f->action_state == FIGURE_ACTION_NATIVE_ATTACKING) {
-        f->image_id = (int32_t) (figure_image_direction + NATIVE_IMAGE_MARCH + f->animation_frame * 8u + base);
+        f->image_id = (int32_t) (figure_image_direction_get() + NATIVE_IMAGE_MARCH + f->animation_frame * 8u + base);
     } else {
-        f->image_id = (int32_t) (figure_image_direction + f->animation_frame * 8u + base);
+        f->image_id = (int32_t) (figure_image_direction_get() + f->animation_frame * 8u + base);
     }
 }
 
@@ -281,7 +281,7 @@ static int32_t native_trader_go_to_storage(int32_t figure_id)
 
 void figure_native_trader_action(void)
 {
-    int32_t figure_id = figure_current_id;
+    int32_t figure_id = figure_current_id_get();
     figure *f = figure_get(figure_id);
     f->is_ghost = 0;
     f->terrain_usage = TERRAIN_USAGE_ANY;
@@ -360,9 +360,9 @@ void figure_native_trader_action(void)
     if (dir < 0) {
         dir += DIRECTION_COUNT;
     }
-    figure_image_direction = dir;
+    figure_image_direction_set(dir);
     if (f->action_state == FIGURE_ACTION_CORPSE) {
-        f->image_id = (int32_t) (figure_corpse_offsets[f->wait_ticks / 2] + image_group(IMAGE_GROUP_FIGURE_NATIVE_TRADER_DEATH));
+        f->image_id = (int32_t) (figure_corpse_offset(f->wait_ticks / 2) + image_group(IMAGE_GROUP_FIGURE_NATIVE_TRADER_DEATH));
         f->cart_image_id = 0;
     } else {
         f->image_id = (int32_t) (image_group(IMAGE_GROUP_FIGURE_NATIVE_TRADER) + f->animation_frame * 8u + dir);
@@ -371,8 +371,8 @@ void figure_native_trader_action(void)
     f->cart_image_id = cart;
     if (cart != 0) {
         f->cart_image_id = cart + dir;
-        f->cart_offset_x = figure_cart_offsets[dir * 2];
-        f->cart_offset_y = figure_cart_offsets[dir * 2 + 1];
+        f->cart_offset_x = figure_cart_offset(dir * 2);
+        f->cart_offset_y = figure_cart_offset(dir * 2 + 1);
     }
 }
 
@@ -398,7 +398,7 @@ static int32_t flotsam_restart_wait_ticks(int16_t floated)
 
 void figure_flotsam_action(void)
 {
-    int32_t figure_id = figure_current_id;
+    int32_t figure_id = figure_current_id_get();
     figure *f = figure_get(figure_id);
     f->is_boat = FIGURE_BOAT_FLOTSAM;
     int32_t speed = figure_properties[f->type].speed;
@@ -517,7 +517,7 @@ void figure_create_flotsam(int32_t x, int32_t y, int32_t create)
             figure *point = figure_get(point_id);
             point->animation_frame = (uint8_t) (crt_rand() & 0x1F);
             point->progress_on_tile = (int8_t) (crt_rand() & 7);
-            int32_t current = figure_current_id;
+            int32_t current = figure_current_id_get();
             figure *c = figure_get(current);
             figure_movement_set_cross_country_direction(current, c->cross_country.x, c->cross_country.y, c->destination_x * 15, c->destination_y * 15, 0);
         }

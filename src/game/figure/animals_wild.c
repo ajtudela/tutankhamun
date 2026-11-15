@@ -103,7 +103,7 @@ static void wild_set_no_tile_wait(figure *f, const wild_predator *p)
 
 static int32_t wild_walk_near_herd(int32_t formation_id)
 {
-    figure *f = figure_get(figure_current_id);
+    figure *f = figure_get(figure_current_id_get());
     const formation *herd = formation_get(formation_id);
     random_generate_next();
     int32_t dir = animal_find_free_neighbour_direction(
@@ -111,7 +111,7 @@ static int32_t wild_walk_near_herd(int32_t formation_id)
     if (dir < 0 || dir >= HERD_OFFSET_COUNT) {
         return 0;
     }
-    figure_route_remove(figure_current_id);
+    figure_route_remove(figure_current_id_get());
     f->destination_x = (int16_t) (herd_roaming_offsets()[dir].x + herd->destination_x);
     f->destination_y = (int16_t) (herd_roaming_offsets()[dir].y + herd->destination_y);
     f->action_state = FIGURE_ACTION_PREDATOR_WALK;
@@ -127,7 +127,7 @@ static void wild_end_chase(figure *f)
 
 static void wild_image(figure *f, int32_t kind)
 {
-    int32_t dir = figure_image_direction;
+    int32_t dir = figure_image_direction_get();
     int32_t frame = f->animal.frame;
     int32_t corpse = (f->wait_ticks > WILD_CORPSE_LAST_FRAME) ? WILD_CORPSE_LAST_FRAME : f->wait_ticks;
     switch (kind) {
@@ -225,7 +225,7 @@ static void wild_image(figure *f, int32_t kind)
 static void wild_predator_action(int32_t kind)
 {
     const wild_predator *p = &wild_predators[kind];
-    int32_t figure_id = figure_current_id;
+    int32_t figure_id = figure_current_id_get();
     figure *f = figure_get(figure_id);
     int32_t speed = figure_properties[f->type].speed;
     int32_t step_advanced = 0;
@@ -252,7 +252,7 @@ static void wild_predator_action(int32_t kind)
             break;
         case FIGURE_ACTION_ATTACK:
             sound_figure_play(figure_id, p->attack_sound, 2);
-            figure_combat_handle_attack(figure_current_id);
+            figure_combat_handle_attack(figure_current_id_get());
             break;
         case FIGURE_ACTION_PREDATOR_CHOOSE:
             f->direction = f->previous_tile_direction;
@@ -264,7 +264,7 @@ static void wild_predator_action(int32_t kind)
         case FIGURE_ACTION_PREDATOR_MOVE:
             figure_movement_move_ticks(figure_id, speed);
             if (f->direction == DIRECTION_REROUTE) {
-                figure_route_remove(figure_current_id);
+                figure_route_remove(figure_current_id_get());
             } else if (f->direction == DIRECTION_LOST) {
                 f->direction = f->previous_tile_direction;
                 f->action_state = FIGURE_ACTION_PREDATOR_CHOOSE;
@@ -300,12 +300,12 @@ static void wild_predator_action(int32_t kind)
         case FIGURE_ACTION_PREDATOR_PROWL:
             figure_movement_move_ticks(figure_id, speed * WILD_PROWL_SPEED_FACTOR);
             if (f->direction == DIRECTION_REROUTE) {
-                figure_route_remove(figure_current_id);
+                figure_route_remove(figure_current_id_get());
             } else if (f->direction == DIRECTION_LOST || f->direction == DIRECTION_AT_DESTINATION) {
                 wild_end_chase(f);
             }
             if (step_advanced) {
-                predator_find_prey_nearby(figure_current_id);
+                predator_find_prey_nearby(figure_current_id_get());
             }
             break;
         case FIGURE_ACTION_PREDATOR_REST:
@@ -318,7 +318,7 @@ static void wild_predator_action(int32_t kind)
                     wild_set_no_tile_wait(f, p);
                 }
             }
-            predator_find_prey_nearby(figure_current_id);
+            predator_find_prey_nearby(figure_current_id_get());
             break;
         case FIGURE_ACTION_PREDATOR_IDLE:
             if (--f->wait_ticks <= 0) {
@@ -342,9 +342,9 @@ static void wild_predator_action(int32_t kind)
                 f->destination_x = prey->x;
                 f->destination_y = prey->y;
             }
-            figure_movement_move_ticks(figure_current_id, speed);
+            figure_movement_move_ticks(figure_current_id_get(), speed);
             if (f->direction == DIRECTION_REROUTE) {
-                figure_route_remove(figure_current_id);
+                figure_route_remove(figure_current_id_get());
             } else if (f->direction == DIRECTION_LOST || f->direction == DIRECTION_AT_DESTINATION) {
                 wild_end_chase(f);
             }
@@ -372,9 +372,9 @@ static void wild_predator_action(int32_t kind)
     if (f->animal.frame >= f->animal.frame_count || f->animal.frame < 0) {
         f->animal.frame = 0;
     }
-    figure_image_direction = f->direction - map_info.orientation;
-    if (figure_image_direction < 0) {
-        figure_image_direction += DIRECTION_COUNT;
+    figure_image_direction_set(f->direction - map_info.orientation);
+    if (figure_image_direction_get() < 0) {
+        figure_image_direction_set(figure_image_direction_get() + (DIRECTION_COUNT));
     }
     wild_image(f, kind);
 }
@@ -396,7 +396,7 @@ void figure_scorpion_action(void)
 
 void figure_frog_action(void)
 {
-    int32_t figure_id = figure_current_id;
+    int32_t figure_id = figure_current_id_get();
     figure *f = figure_get(figure_id);
     f->terrain_usage = TERRAIN_USAGE_AMPHIBIA;
     f->cart_image_id = 0;
@@ -437,7 +437,7 @@ void figure_frog_action(void)
             if (f->direction == DIRECTION_REROUTE) {
                 f->action_state = FIGURE_ACTION_FROG_CREATED;
                 f->wait_ticks = 1;
-                figure_route_remove(figure_current_id);
+                figure_route_remove(figure_current_id_get());
             } else if (f->direction == DIRECTION_LOST) {
                 b->immigrant_figure_id = 0;
                 b->distance_from_entry = 0;
@@ -447,7 +447,7 @@ void figure_frog_action(void)
                 f->destination_x = b->x;
                 f->destination_y = b->y;
                 figure_movement_set_cross_country_direction(
-                    figure_current_id, f->cross_country.x, f->cross_country.y, f->destination_x * 15, f->destination_y * 15, 0);
+                    figure_current_id_get(), f->cross_country.x, f->cross_country.y, f->destination_x * 15, f->destination_y * 15, 0);
                 f->roam_length = 0;
             }
             break;
@@ -470,14 +470,14 @@ void figure_frog_action(void)
             f->action_state = FIGURE_ACTION_FROG_CREATED;
             break;
     }
-    figure_image_direction = f->direction - map_info.orientation;
-    if (figure_image_direction < 0) {
-        figure_image_direction += DIRECTION_COUNT;
+    figure_image_direction_set(f->direction - map_info.orientation);
+    if (figure_image_direction_get() < 0) {
+        figure_image_direction_set(figure_image_direction_get() + (DIRECTION_COUNT));
     }
     if (f->action_state == FIGURE_ACTION_CORPSE) {
-        f->image_id = figure_corpse_offsets[f->wait_ticks / 2] + image_group(IMAGE_GROUP_FIGURE_FROG_DEATH);
+        f->image_id = figure_corpse_offset(f->wait_ticks / 2) + image_group(IMAGE_GROUP_FIGURE_FROG_DEATH);
     } else {
-        f->image_id = image_group(IMAGE_GROUP_FIGURE_FROG) + (f->animation_frame * DIRECTION_COUNT) + figure_image_direction;
+        f->image_id = image_group(IMAGE_GROUP_FIGURE_FROG) + (f->animation_frame * DIRECTION_COUNT) + figure_image_direction_get();
     }
 }
 
@@ -560,5 +560,5 @@ void figure_create_herds(void)
 
 void figure_creature_action(void)
 {
-    figure_get(figure_current_id)->image_id = image_group(IMAGE_GROUP_FIGURE_CROCODILE);
+    figure_get(figure_current_id_get())->image_id = image_group(IMAGE_GROUP_FIGURE_CROCODILE);
 }
