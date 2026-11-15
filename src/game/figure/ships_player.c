@@ -723,7 +723,7 @@ int32_t figure_warship_find_enemy_at(int32_t x, int32_t y, int32_t range)
             case FIGURE_ENEMY_EGYPTIAN_CHARIOT:
             case FIGURE_BEDOUIN:
                 distance = chebyshev(x, y, fx, fy);
-                if (distance > figure_properties[figure_get(figure_current_id_get())->type].missile_range) {
+                if (distance > figure_properties[figure_current()->type].missile_range) {
                     continue;
                 }
                 score = WARSHIP_SCORE_LAND_ENEMY;

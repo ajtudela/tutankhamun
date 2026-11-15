@@ -581,7 +581,7 @@ void crocodile_choose_next_action(int32_t figure_id)
 
 void figure_seagulls_action(void)
 {
-    figure *f = figure_get(figure_current_id_get());
+    figure *f = figure_current();
     f->terrain_usage = TERRAIN_USAGE_ANY;
     f->is_ghost = 1;
     f->use_cross_country = 1;
@@ -592,7 +592,7 @@ int32_t hunter_find_prey_target(int32_t x, int32_t y, int32_t max_path_length)
     int32_t grid_offsets[HUNTER_PREY_CANDIDATES];
     int32_t ids[HUNTER_PREY_CANDIDATES];
     int32_t count = 0;
-    figure *hunter = figure_get(figure_current_id_get());
+    figure *hunter = figure_current();
     for (int32_t id = 1; id < MAX_FIGURES; id++) {
         figure *f = figure_get(id);
         if (f->state == FIGURE_STATE_ALIVE && figure_is_herd_animal(f->type) && f->action_state != FIGURE_ACTION_CORPSE &&
@@ -1202,7 +1202,7 @@ static void herd_animal_check_hunter(figure *f)
 
 static void herd_animal_walk_near(int32_t center_x, int32_t center_y)
 {
-    figure *f = figure_get(figure_current_id_get());
+    figure *f = figure_current();
     random_generate_next();
     int32_t dir = animal_find_free_neighbour_direction(center_x, center_y, random_generator_state.random1_15bit % 16, f->x, f->y, 1);
     if (dir < 0 || dir > 15) {
@@ -1697,7 +1697,7 @@ static int32_t animal_in_deep_water(const figure *f)
 
 static int32_t predator_walk_near(int32_t center_x, int32_t center_y, int32_t random_dir)
 {
-    figure *f = figure_get(figure_current_id_get());
+    figure *f = figure_current();
     int32_t dir = animal_find_free_neighbour_direction(center_x, center_y, random_dir, f->x, f->y, 0);
     if (dir < 0 || dir >= HERD_OFFSET_COUNT) {
         return 0;
@@ -2118,7 +2118,7 @@ void figure_hippo_action(void)
 static int32_t asp_walk_near(const formation *herd)
 {
     random_generate_next();
-    figure *f = figure_get(figure_current_id_get());
+    figure *f = figure_current();
     int32_t center_x = herd->destination_x;
     int32_t center_y = herd->destination_y;
     int32_t dir = animal_find_free_neighbour_direction(center_x, center_y, random_generator_state.random1_15bit % 16, f->x, f->y, 0);

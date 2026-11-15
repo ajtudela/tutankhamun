@@ -364,6 +364,11 @@ int32_t figure_phrase_id;
 
 phrase_weight_record phrase_weight_block;
 
+figure *figure_current(void)
+{
+    return &city_figures.records[figure_current_id];
+}
+
 int32_t figure_current_id_get(void)
 {
     return figure_current_id;

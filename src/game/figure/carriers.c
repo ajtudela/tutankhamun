@@ -389,13 +389,13 @@ static int32_t cart_walk(int32_t figure_id, int32_t speed)
 {
     cart_image(figure_id);
     figure_movement_move_ticks(figure_current_id_get(), speed);
-    return figure_get(figure_current_id_get())->direction;
+    return figure_current()->direction;
 }
 
 static void cart_reroute(int32_t figure_id)
 {
     figure_route_remove(figure_id);
-    figure *f = figure_get(figure_current_id_get());
+    figure *f = figure_current();
     if (routing_grids.land_citizen[f->grid_offset] != ROUTING_CITIZEN_PASSABLE) {
         f->action_state = FIGURE_ACTION_CART_INITIAL;
     }
@@ -576,7 +576,7 @@ static int32_t warehouseman_walk(int32_t speed)
 {
     cart_image(figure_current_id_get());
     figure_movement_move_ticks(figure_current_id_get(), speed);
-    return figure_get(figure_current_id_get())->direction;
+    return figure_current()->direction;
 }
 
 static void warehouseman_walk_failed(int32_t dir)
@@ -584,7 +584,7 @@ static void warehouseman_walk_failed(int32_t dir)
     if (dir == DIRECTION_REROUTE) {
         figure_route_remove(figure_current_id_get());
     } else if (dir == DIRECTION_LOST) {
-        figure_get(figure_current_id_get())->state = FIGURE_STATE_DEAD;
+        figure_current()->state = FIGURE_STATE_DEAD;
     }
 }
 
@@ -598,7 +598,7 @@ static int32_t warehouseman_fetch_amount(int32_t resource)
 
 static void warehouseman_took(int32_t amount, int32_t state)
 {
-    figure *f = figure_get(figure_current_id_get());
+    figure *f = figure_current();
     f->resource_amount = (int16_t) amount;
     if (f->resource_amount == 0) {
         f->resource_id = RESOURCE_NONE;
@@ -616,7 +616,7 @@ static void warehouseman_took(int32_t amount, int32_t state)
 
 static void warehouseman_initial_granary(int32_t home_id, int32_t road_network)
 {
-    figure *f = figure_get(figure_current_id_get());
+    figure *f = figure_current();
     building *home = building_get(home_id);
     int32_t resource = f->resource_id;
     if (resource == RESOURCE_NONE) {
@@ -671,7 +671,7 @@ static void warehouseman_initial_granary(int32_t home_id, int32_t road_network)
 
 static int32_t warehouseman_initial_yard(int32_t home_id, int32_t road_network)
 {
-    figure *f = figure_get(figure_current_id_get());
+    figure *f = figure_current();
     building *home = building_get(home_id);
     if (f->resource_id == RESOURCE_NONE) {
         int32_t resource1 = RESOURCE_NONE;
@@ -1176,7 +1176,7 @@ int32_t buyer_take_food(int32_t figure_id, int32_t home_id, int32_t storage_id, 
 
 int32_t buyer_take_goods(int32_t figure_id, int32_t home_id, int32_t storage_id, int32_t index)
 {
-    figure *f = figure_get(figure_current_id_get());
+    figure *f = figure_current();
     return buyer_buy_goods(figure_id, home_id, storage_id, f->buyer_resources[index], f->buyer_amounts_bought[index], index);
 }
 
@@ -1265,7 +1265,7 @@ void buyer_at_storage(int32_t figure_id, int32_t home_id, int32_t storage_id)
 {
     int32_t any_food = 0;
     for (int32_t i = 0; i < 4; i++) {
-        uint32_t item = (uint32_t) figure_get(figure_current_id_get())->buyer_resources[i];
+        uint32_t item = (uint32_t) figure_current()->buyer_resources[i];
         if (item <= 7) {
             buyer_take_food(figure_id, home_id, storage_id, i);
             any_food = 1;
@@ -1497,7 +1497,7 @@ int32_t delivery_boy_find_buyer(int32_t figure_id)
 
 void figure_delivery_boy_action(void)
 {
-    figure *f = figure_get(figure_current_id_get());
+    figure *f = figure_current();
     int32_t leader_id = f->leading_figure_id;
     int32_t home_id = f->building_id;
     int32_t buyer_id = delivery_boy_find_buyer(figure_current_id_get());
@@ -1558,7 +1558,7 @@ static int32_t migrant_is_swimming(const figure *f)
 
 static void migrant_swimming_image(int32_t dying)
 {
-    figure *f = figure_get(figure_current_id_get());
+    figure *f = figure_current();
     if (dying) {
         if (f->wait_ticks >= MIGRANT_DROWNING_TICKS) {
             int32_t frame = f->wait_ticks - MIGRANT_DROWNING_TICKS;
@@ -1582,7 +1582,7 @@ static void migrant_swimming_image(int32_t dying)
 static void migrant_enter_house(int32_t house_id, int32_t homeless)
 {
     building *house = building_get(house_id);
-    figure *f = figure_get(figure_current_id_get());
+    figure *f = figure_current();
     int32_t max_people = house_models[house->subtype].max_people;
     if (house->house_is_merged) {
         max_people <<= 2;
@@ -1706,7 +1706,7 @@ static int32_t homeless_go_to_house(int32_t house_id)
     if (!map_closest_road_within_radius(house->x, house->y, house->size, 2)) {
         return 0;
     }
-    figure *f = figure_get(figure_current_id_get());
+    figure *f = figure_current();
     house->immigrant_figure_id = (int16_t) figure_current_id_get();
     f->immigrant_building_id = (int16_t) house_id;
     f->action_state = FIGURE_ACTION_HOMELESS_GOING_TO_HOUSE;

@@ -2329,7 +2329,7 @@ static int32_t soldier_reload_and_look(int32_t figure_id, int32_t extra_range, i
 
 static void soldier_throw(int32_t formation_id, int32_t target_id)
 {
-    figure *f = figure_get(figure_current_id_get());
+    figure *f = figure_current();
     if (f->attack_image_offset == 7) {
         const figure *target = figure_get(target_id);
         figure_create_missile(figure_current_id_get(), f->x, f->y, target->x, target->y, FIGURE_JAVELIN);
@@ -2339,7 +2339,7 @@ static void soldier_throw(int32_t formation_id, int32_t target_id)
 
 static void soldier_advance_attack_frame(void)
 {
-    figure *f = figure_get(figure_current_id_get());
+    figure *f = figure_current();
     if (++f->attack_image_offset > 100) {
         f->attack_image_offset = 0;
     }
@@ -2347,7 +2347,7 @@ static void soldier_advance_attack_frame(void)
 
 static int32_t soldier_engage(int32_t formation_id, int32_t target_id, int32_t speed)
 {
-    figure *f = figure_get(figure_current_id_get());
+    figure *f = figure_current();
     int32_t in_range = 0;
     if (f->type == FIGURE_ARCHER || f->type == FIGURE_CHARIOTEER) {
         const figure *target = figure_get(target_id);

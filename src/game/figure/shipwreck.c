@@ -12,7 +12,7 @@
 
 void figure_bubbles_action(void)
 {
-    figure *f = figure_get(figure_current_id_get());
+    figure *f = figure_current();
     int16_t ticks = f->wait_ticks++;
     if (ticks > BUBBLES_LAST_TICK) {
         f->state = FIGURE_STATE_DEAD;

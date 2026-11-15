@@ -96,7 +96,7 @@ static void send_sentry_onto_wall(figure *f, int32_t id)
     f->cross_country.y = (int16_t) (y * CROSS_COUNTRY_STEPS_PER_TILE);
     f->grid_offset = x + (y * GRID_SIZE) + map_info.grid_start;
     map_figure_add(id);
-    figure *current = figure_get(figure_current_id_get());
+    figure *current = figure_current();
     current->action_state = FIGURE_ACTION_TOWER_SENTRY_RETURNING;
     current->destination_x = current->source_x;
     current->destination_y = current->source_y;

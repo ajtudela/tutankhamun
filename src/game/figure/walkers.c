@@ -163,7 +163,7 @@ void figure_roamer_action(void)
 
 static figure *roamer_begin(int32_t max_roam)
 {
-    figure *f = figure_get(figure_current_id_get());
+    figure *f = figure_current();
     f->terrain_usage = TERRAIN_USAGE_ROADS;
     f->use_cross_country = 0;
     f->max_roam_length = (int16_t) max_roam;
@@ -613,7 +613,7 @@ void figure_missionary_action(void)
 
 void figure_showman_action(void)
 {
-    figure_get(figure_current_id_get())->state = FIGURE_STATE_DEAD;
+    figure_current()->state = FIGURE_STATE_DEAD;
 }
 
 void figure_entertainer_action(void)

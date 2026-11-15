@@ -31,6 +31,8 @@ uint8_t *figure_bytes_past_formations(int32_t offset);
 // the whole table (the records, then the route paths), for the readers by byte offset and the saved game's chunks
 figure_table *figure_table_get(void);
 figure *figure_get(int32_t id);
+// the figure at figure_current_id, the one the figure loop is at
+figure *figure_current(void);
 // MAX_PATHS paths of MAX_PATH_LENGTH directions
 uint8_t *figure_route_paths(void);
 

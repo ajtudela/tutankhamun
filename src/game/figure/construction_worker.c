@@ -1036,7 +1036,7 @@ static void guild_send_worker(int32_t figure_id, int16_t *stock)
     figure_get(figure_id)->action_state = FIGURE_ACTION_CARPENTER_GO_TO_SITE;
     figure_route_remove(figure_id);
     *stock -= (int16_t) guild_worker_rules[GUILD_WORKER_RULE_LOAD];
-    figure_get(figure_current_id_get())->roam_length = 0;
+    figure_current()->roam_length = 0;
     if (*stock < 0) {
         *stock = 0;
     }

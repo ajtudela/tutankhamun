@@ -356,7 +356,7 @@ void enemy_action(void)
 
 static int32_t enemy_begin(int32_t drowns, int32_t speed_factor)
 {
-    figure *f = figure_get(figure_current_id_get());
+    figure *f = figure_current();
     if (drowns && (map_grids.terrain[f->grid_offset] & (TERRAIN_WATER | TERRAIN_FLOODPLAIN)) == (TERRAIN_WATER | TERRAIN_FLOODPLAIN)) {
         figure_set_state_dead(figure_current_id_get());
         return 0;
@@ -544,7 +544,7 @@ static void enemy_foot_action(enum enemy_foot_kind kind)
 {
     const enemy_foot *t = &enemy_foot_types[kind];
     const enemy_foot_rule *rule = &enemy_foot_rules[kind];
-    figure *f = figure_get(figure_current_id_get());
+    figure *f = figure_current();
     int32_t formation_id = f->formation_id;
     if (!enemy_begin(1, rule->speed_factor)) {
         return;
@@ -572,7 +572,7 @@ static void enemy_foot_action(enum enemy_foot_kind kind)
 
 static void enemy_rider_action(int32_t drowns, int32_t speed_factor)
 {
-    figure *f = figure_get(figure_current_id_get());
+    figure *f = figure_current();
     int32_t formation_id = f->formation_id;
     if (!enemy_begin(drowns, speed_factor)) {
         return;
@@ -586,7 +586,7 @@ void figure_enemy_elephant_action(void)
 {
     enemy_begin(0, 1);
     enemy_action();
-    figure *f = figure_get(figure_current_id_get());
+    figure *f = figure_current();
     int32_t dir = enemy_image_direction(f, 0, 0);
     if (f->direction != DIRECTION_ATTACK && f->action_state == FIGURE_ACTION_CORPSE) {
         f->image_id = (int32_t) (figure_corpse_offset(f->wait_ticks / 2) + ENEMY_IMAGE_ELEPHANT_CORPSE + image_group(IMAGE_GROUP_FIGURE_ENEMY_ELEPHANT));
@@ -599,7 +599,7 @@ void figure_enemy_barbarian_chariot_action(void)
 {
     enemy_begin(0, 3);
     enemy_action();
-    figure *f = figure_get(figure_current_id_get());
+    figure *f = figure_current();
     int32_t dir = enemy_image_direction(f, 0, 0);
     int32_t base = image_group(IMAGE_GROUP_FIGURE_ENEMY_CHARIOT);
     if (f->direction == DIRECTION_ATTACK || f->action_state == FIGURE_ACTION_ATTACK) {
@@ -613,7 +613,7 @@ void figure_enemy_barbarian_chariot_action(void)
 
 static void enemy_plain_action(int32_t drowns, int32_t speed_factor, int32_t missiles)
 {
-    figure *f = figure_get(figure_current_id_get());
+    figure *f = figure_current();
     int32_t formation_id = f->formation_id;
     if (!enemy_begin(drowns, speed_factor)) {
         return;
@@ -624,7 +624,7 @@ static void enemy_plain_action(int32_t drowns, int32_t speed_factor, int32_t mis
 
 void figure_kingdom_soldier_action(void)
 {
-    figure *f = figure_get(figure_current_id_get());
+    figure *f = figure_current();
     if ((map_grids.terrain[f->grid_offset] & (TERRAIN_WATER | TERRAIN_FLOODPLAIN)) == (TERRAIN_WATER | TERRAIN_FLOODPLAIN)) {
         figure_set_state_dead(figure_current_id_get());
         return;

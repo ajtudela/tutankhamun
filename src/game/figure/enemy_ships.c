@@ -459,7 +459,7 @@ void enemy_transport_evade(int32_t figure_id, int32_t *moving)
 
 static void ship_set_image(int32_t sinking_group, int32_t moving_group, int32_t still_group, int32_t moving, int32_t keep_direction)
 {
-    figure *f = figure_get(figure_current_id_get());
+    figure *f = figure_current();
     int32_t direction = facing_direction(f) - map_info.orientation;
     if (direction < 0) {
         direction += DIRECTION_COUNT;
@@ -487,7 +487,7 @@ static void ship_set_image(int32_t sinking_group, int32_t moving_group, int32_t 
 static void ship_action_start(int32_t damaged_state)
 {
     city_player_current()->enemies++;
-    figure *f = figure_get(figure_current_id_get());
+    figure *f = figure_current();
     f->is_boat = 1;
     if (++f->animation_frame >= ENEMY_SHIP_ANIMATION_FRAMES) {
         f->animation_frame = 0;
@@ -578,7 +578,7 @@ int32_t enemy_warship_find_target_at(int32_t x, int32_t y, int32_t range)
             case FIGURE_INFANTRY:
             case FIGURE_CHARIOTEER:
                 distance = calc_maximum_distance(x, y, f->x, f->y);
-                if (distance > figure_properties[figure_get(figure_current_id_get())->type].missile_range) {
+                if (distance > figure_properties[figure_current()->type].missile_range) {
                     continue;
                 }
                 score = WARSHIP_SCORE_LAND_ENEMY;
@@ -917,7 +917,7 @@ void enemy_warship_leave(int32_t figure_id, int32_t *moving)
 {
     ship_move(figure_id, SHIP_MOVE_STRAIGHT);
     *moving = 1;
-    figure *f = figure_get(figure_current_id_get());
+    figure *f = figure_current();
     if (f->direction == DIRECTION_REROUTE) {
         figure_route_remove(figure_current_id_get());
         return;

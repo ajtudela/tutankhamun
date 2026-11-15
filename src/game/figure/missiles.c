@@ -101,7 +101,7 @@ static int32_t experience_bonus(int32_t formation_id)
 
 static void missile_set_image(int32_t offset)
 {
-    figure *f = figure_get(figure_current_id_get());
+    figure *f = figure_current();
     figure_image_direction_set(f->direction - map_info.orientation * 2);
     if (figure_image_direction_get() < 0) {
         figure_image_direction_set(figure_image_direction_get() + (MISSILE_IMAGE_DIRECTIONS));
@@ -111,7 +111,7 @@ static void missile_set_image(int32_t offset)
 
 static int32_t missile_fly(void)
 {
-    figure *f = figure_get(figure_current_id_get());
+    figure *f = figure_current();
     f->use_cross_country = 1;
     if (++f->progress_on_tile > MISSILE_FLIGHT_TICKS) {
         f->state = FIGURE_STATE_DEAD;
@@ -123,7 +123,7 @@ void figure_arrow_action(void)
 {
     int32_t ended = missile_fly();
     int32_t target_id = missile_hit_target(figure_current_id_get());
-    figure *arrow = figure_get(figure_current_id_get());
+    figure *arrow = figure_current();
     if (target_id == 0) {
         if (ended) {
             arrow->state = FIGURE_STATE_DEAD;
@@ -151,7 +151,7 @@ void figure_bolt_action(void)
 {
     int32_t ended = missile_fly();
     int32_t target_id = map_figure_find_target(figure_current_id_get());
-    figure *bolt = figure_get(figure_current_id_get());
+    figure *bolt = figure_current();
     if (target_id == 0) {
         if (ended) {
             bolt->state = FIGURE_STATE_DEAD;
@@ -247,7 +247,7 @@ void figure_spear_action(void)
 {
     int32_t ended = missile_fly();
     int32_t target_id = missile_hit_target(figure_current_id_get());
-    figure *spear = figure_get(figure_current_id_get());
+    figure *spear = figure_current();
     int32_t shooter_id = spear->building_id;
     int32_t shooter_formation = figure_get(shooter_id)->formation_id;
     if (target_id != 0) {

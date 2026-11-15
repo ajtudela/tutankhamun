@@ -240,7 +240,7 @@ static void fishing_boat_go_to_wharf(int32_t wharf_id)
 {
     const building *wharf = building_get(wharf_id);
     map_water_tile_next_to(wharf->x, wharf->y, wharf->size);
-    figure *f = figure_get(figure_current_id_get());
+    figure *f = figure_current();
     f->destination_x = (int16_t) map_result_x;
     f->destination_y = (int16_t) map_result_y;
     f->source_x = (int16_t) map_result_x;
@@ -652,7 +652,7 @@ void ferry_move(int32_t figure_id, int32_t slowness)
 
 static void ferry_sink(int32_t path)
 {
-    figure *f = figure_get(figure_current_id_get());
+    figure *f = figure_current();
     if (f->action_state != FIGURE_ACTION_CORPSE) {
         f->wait_ticks = -1;
     }

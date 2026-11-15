@@ -701,7 +701,7 @@ void mausoleum_part_update_position(int32_t building_id)
                     f->destination_grid_offset = b->grid_offset;
                     map_figure_add(worker_id);
                     if (f->action_state == FIGURE_ACTION_STONEMASON_WAIT_FOR_BLOCK) {
-                        int32_t partner_id = figure_get(figure_current_id_get())->leading_figure_id;
+                        int32_t partner_id = figure_current()->leading_figure_id;
                         if (partner_id) {
                             figure *partner = figure_get(partner_id);
                             if (partner->type == FIGURE_LABORER && partner->action_state == FIGURE_ACTION_LABORER_SLED_TO_MAUSOLEUM) {

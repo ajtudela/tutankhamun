@@ -228,7 +228,7 @@ void figure_action_handle(void)
         figure_action_profile_begin(f->type);
         figure_action_table[f->type]();
         figure_action_profile_end();
-        if (figure_get(figure_current_id_get())->state == FIGURE_STATE_DEAD) {
+        if (figure_current()->state == FIGURE_STATE_DEAD) {
             figure_delete(figure_current_id_get());
         }
     }

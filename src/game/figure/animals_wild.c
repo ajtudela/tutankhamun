@@ -103,7 +103,7 @@ static void wild_set_no_tile_wait(figure *f, const wild_predator *p)
 
 static int32_t wild_walk_near_herd(int32_t formation_id)
 {
-    figure *f = figure_get(figure_current_id_get());
+    figure *f = figure_current();
     const formation *herd = formation_get(formation_id);
     random_generate_next();
     int32_t dir = animal_find_free_neighbour_direction(
@@ -560,5 +560,5 @@ void figure_create_herds(void)
 
 void figure_creature_action(void)
 {
-    figure_get(figure_current_id_get())->image_id = image_group(IMAGE_GROUP_FIGURE_CROCODILE);
+    figure_current()->image_id = image_group(IMAGE_GROUP_FIGURE_CROCODILE);
 }

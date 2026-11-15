@@ -13,7 +13,7 @@
 
 void figure_protestor_action(void)
 {
-    figure *f = figure_get(figure_current_id_get());
+    figure *f = figure_current();
     f->terrain_usage = TERRAIN_USAGE_ROADS;
     if (++f->animation_frame >= PROTESTOR_ANIMATION_FRAMES) {
         f->animation_frame = 0;

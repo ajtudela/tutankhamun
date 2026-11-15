@@ -798,7 +798,7 @@ void figure_movement_roam_ticks(int32_t figure_id, int32_t num_ticks)
             }
             int32_t roads = map_get_adjacent_road_tiles_for_roaming(f->grid_offset, figure_id);
             if (roads <= 0) {
-                figure *current = figure_get(figure_current_id_get());
+                figure *current = figure_current();
                 current->roam_length = current->max_roam_length;
                 return;
             }

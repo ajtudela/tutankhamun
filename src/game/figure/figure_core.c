@@ -196,7 +196,7 @@ static int32_t counts_carts(int32_t type)
 
 static void delete_cart(const figure *f)
 {
-    const figure *current = figure_get(figure_current_id_get());
+    const figure *current = figure_current();
     building *own = building_get(f->destination_building_id);
     building *b = building_get(current->destination_building_id);
     if (counts_carts(own->type) && current->resource_amount) {

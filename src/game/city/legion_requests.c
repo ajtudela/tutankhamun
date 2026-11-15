@@ -102,7 +102,7 @@ void formation_legions_dispatch_to_request(int32_t event_id)
         if (on_ship) {
             figure_current_id_set(figure_find_legion_transport_ship(id));
             if (figure_current_id_get() != 0) {
-                figure_get(figure_current_id_get())->action_state = FIGURE_ACTION_TRANSPORT_SHIP_GOING_TO_REQUEST;
+                figure_current()->action_state = FIGURE_ACTION_TRANSPORT_SHIP_GOING_TO_REQUEST;
             }
             continue;
         }
@@ -207,7 +207,7 @@ void formation_legions_request_losses(int32_t percentage, int32_t event_id)
             if (formation_legion_is_on_ship(id)) {
                 figure_current_id_set(figure_find_legion_transport_ship(id));
                 if (figure_current_id_get() != 0) {
-                    figure *ship = figure_get(figure_current_id_get());
+                    figure *ship = figure_current();
                     ship->ship_hit_points = 0;
                     ship->state = FIGURE_STATE_SUNK;
                     ship->request_event_id = -1;

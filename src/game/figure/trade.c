@@ -790,7 +790,7 @@ int32_t docker_deliver_import_resource(int32_t dock_id)
     if (ship->action_state != FIGURE_ACTION_TRADE_SHIP_DOCKED || ship->resource_amount < 1 || trader_get(ship->trader_id)->sold_amount >= SHIP_MAX_LOADS) {
         return 0;
     }
-    figure *f = figure_get(figure_current_id_get());
+    figure *f = figure_current();
     int32_t dest = figure_docker_get_closest_warehouse_for_import(f->x, f->y, ship->empire_city_id, dock->distance_from_entry, dock->road_network_id);
     if (!dest) {
         return 0;
@@ -816,7 +816,7 @@ int32_t docker_fetch_export_resource(int32_t dock_id)
     if (ship->action_state != FIGURE_ACTION_TRADE_SHIP_DOCKED || ship->trader_amount_bought >= SHIP_MAX_LOADS) {
         return 0;
     }
-    figure *f = figure_get(figure_current_id_get());
+    figure *f = figure_current();
     int32_t dest = figure_docker_get_closest_warehouse_for_export(f->x, f->y, ship->empire_city_id, dock->distance_from_entry, dock->road_network_id);
     if (!dest) {
         return 0;
@@ -871,7 +871,7 @@ static int32_t docker_walk(int32_t speed)
 {
     cart_image(figure_current_id_get());
     figure_movement_move_ticks(figure_current_id_get(), speed);
-    return figure_get(figure_current_id_get())->direction;
+    return figure_current()->direction;
 }
 
 void figure_docker_action(void)
@@ -1105,7 +1105,7 @@ void figure_docker_action(void)
 static void trade_ship_next_dock(int32_t dock_id, int32_t clear_dock)
 {
     uint8_t index = (uint8_t) (building_dock_index(dock_id) + 1);
-    figure *f = figure_get(figure_current_id_get());
+    figure *f = figure_current();
     f->ship_dock_index = index;
     if (index < CITY_DOCKS) {
         f->action_state = FIGURE_ACTION_TRADE_SHIP_CREATED;

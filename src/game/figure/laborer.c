@@ -1355,7 +1355,7 @@ static int32_t assign_farm(figure *f, int32_t figure_id, building *farm, int32_t
     f->destination_building_id = (int16_t) farm_id;
     f->action_state = FIGURE_ACTION_LABORER_TO_FARM;
     f->destination_x = (int16_t) map_result_x;
-    figure_get(figure_current_id_get())->destination_y = (int16_t) map_result_y;
+    figure_current()->destination_y = (int16_t) map_result_y;
     f->roam_length = 0;
     return 1;
 }
