@@ -62,10 +62,6 @@ typedef struct flotsam_restart_wait {
     int32_t base;
 } flotsam_restart_wait;
 
-extern int32_t flotsam_debris_frames[FLOTSAM_DEBRIS_FRAMES];
-extern int32_t flotsam_debris_frames[FLOTSAM_DEBRIS_FRAMES];
-extern int32_t flotsam_sinking_frames[FLOTSAM_DEBRIS_FRAMES];
-
 void figure_emigrant_action(void);
 void figure_indigenous_native_action(void);
 void figure_native_trader_action(void);
