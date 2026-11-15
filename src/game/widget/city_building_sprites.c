@@ -12,6 +12,7 @@
 #include "building/building_type.h"
 #include "graphics/image_collection.h"
 #include "graphics/image_draw.h"
+#include "map/grid.h"
 #include <stdint.h>
 #include <string.h>
 

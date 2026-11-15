@@ -18,6 +18,7 @@
 #include "figure/figure.h"
 #include "figure/figure_action.h"
 #include "figure/figure_type.h"
+#include "map/grid.h"
 #include <stdbool.h>
 #include <stdint.h>
 #include <string.h>

@@ -23,6 +23,7 @@
 #include "graphics/panel_draw.h"
 #include "graphics/text_draw.h"
 #include "graphics/ui_layout.h"
+#include "map/grid.h"
 #include "scenario/event_manager.h"
 #include "scenario/requests.h"
 #include "scenario/scenario_internal.h"

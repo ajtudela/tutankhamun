@@ -17,6 +17,7 @@
 #include "graphics/image_collection.h"
 #include "graphics/text_draw.h"
 #include "input/input_data.h"
+#include "map/grid.h"
 #include "text/lang.h"
 #include "widget/widget_data.h"
 #include "window/hotkeys.h"

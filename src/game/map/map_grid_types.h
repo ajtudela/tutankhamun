@@ -1,5 +1,6 @@
 // The map's grids, one record (map_grids) with GRID_CELLS entries per grid: images, vegetation, moisture, fertility,
-// road networks, desirability, terrain, bitfields, figure and building ids, edges and the rest.
+// road networks, desirability, terrain, bitfields, figure and building ids, edges and the rest; and the map info
+// record (map_info, Pharaohmap.inf's regions).
 //
 // The grids lie in a fixed order, so a tile offset past the end of one grid reads the start of the next.
 
@@ -41,5 +42,32 @@ static_assert(offsetof(map_grid_set, vegetation_growth) == 0x32C40 && offsetof(m
                   offsetof(map_grid_set, canals) == 0xD7C10 && offsetof(map_grid_set, terrain) == 0xE4720 && offsetof(map_grid_set, bitfields) == 0x117360 &&
                   offsetof(map_grid_set, figure_ids) == 0x123E70 && offsetof(map_grid_set, building_ids) == 0x13D490 &&
                   offsetof(map_grid_set, edge) == 0x156AB0 && offsetof(map_grid_set, images) == 0x1635C0, "map_grid_set is the savegame's layout");
+
+typedef struct {
+    int32_t map_id;
+    int32_t camera_x;
+    int32_t camera_y;
+    int32_t selected_grid;
+    int32_t cursor_tile_x;
+    int32_t cursor_tile_y;
+    int32_t grid_width;
+    int32_t grid_height;
+    int32_t grid_start;
+    int32_t grid_border_size;
+    int32_t orientation;
+    int32_t last_hover;
+    int32_t diamond_x_min;
+    int32_t diamond_y_min;
+    int32_t diamond_x_max;
+    int32_t diamond_y_max;
+    int32_t diamond_x_center;
+    int32_t diamond_y_center;
+    int32_t hover_offset;
+    int32_t hover_x;
+    int32_t hover_y;
+} pharaohmap_info;
+
+static_assert(sizeof(pharaohmap_info) == 0x54, "pharaohmap_info is a savegame and scenario record of 84 bytes");
+static_assert(offsetof(pharaohmap_info, grid_width) == 0x18, "pharaohmap_info is the savegame and scenario layout");
 
 #endif

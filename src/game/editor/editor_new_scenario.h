@@ -5,6 +5,8 @@
 #ifndef EDITOR_EDITOR_NEW_SCENARIO_H
 #define EDITOR_EDITOR_NEW_SCENARIO_H
 
+#include "map/map_grid_types.h"
+
 #include <assert.h>
 #include <stddef.h>
 #include <stdint.h>
@@ -20,33 +22,6 @@ typedef struct {
     int32_t grid_start;
     int32_t grid_border_size;
 } new_map_size;
-
-typedef struct {
-    int32_t map_id;
-    int32_t camera_x;
-    int32_t camera_y;
-    int32_t selected_grid;
-    int32_t cursor_tile_x;
-    int32_t cursor_tile_y;
-    int32_t grid_width;
-    int32_t grid_height;
-    int32_t grid_start;
-    int32_t grid_border_size;
-    int32_t orientation;
-    int32_t last_hover;
-    int32_t diamond_x_min;
-    int32_t diamond_y_min;
-    int32_t diamond_x_max;
-    int32_t diamond_y_max;
-    int32_t diamond_x_center;
-    int32_t diamond_y_center;
-    int32_t hover_offset;
-    int32_t hover_x;
-    int32_t hover_y;
-} pharaohmap_info;
-
-static_assert(sizeof(pharaohmap_info) == 0x54, "pharaohmap_info is a savegame and scenario record of 84 bytes");
-static_assert(offsetof(pharaohmap_info, grid_width) == 0x18, "pharaohmap_info is the savegame and scenario layout");
 
 typedef struct {
     int32_t x;

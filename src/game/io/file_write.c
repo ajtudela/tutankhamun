@@ -11,6 +11,7 @@
 #include "game/game_data.h"
 #include "graphics/graphics_data.h"
 #include "io/io_data.h"
+#include "map/grid.h"
 #include "platform/platform_file.h"
 #include "host/status_log.h"
 #include "text/lang.h"

@@ -11,6 +11,7 @@
 #include "city/culture.h"
 #include "city/gods.h"
 #include "map/building_tiles.h"
+#include "map/grid.h"
 #include <stdint.h>
 
 int32_t house_service_rules[HOUSE_SERVICE_RULE_COUNT] = {

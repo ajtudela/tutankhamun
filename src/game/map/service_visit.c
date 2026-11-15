@@ -6,6 +6,7 @@
 #include "map/service_visit.h"
 
 #include "building/building_data.h"
+#include "map/grid.h"
 #include "map/map_data.h"
 
 #include <stdint.h>

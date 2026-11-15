@@ -11,6 +11,7 @@
 #include "core/crt_compat.h"
 #include "figure/figure.h"
 #include "graphics/image_collection.h"
+#include "map/grid.h"
 #include <string.h>
 
 static int32_t pick_choice(const anim_script *script, int32_t transition, monument_spot *spot)

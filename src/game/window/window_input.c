@@ -26,6 +26,7 @@
 #include "graphics/image_buttons.h"
 #include "graphics/layout_buttons.h"
 #include "input/input_data.h"
+#include "map/grid.h"
 #include "platform/log.h"
 #include "platform/platform_time.h"
 #include "host/host_window.h"

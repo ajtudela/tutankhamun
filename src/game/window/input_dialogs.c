@@ -24,6 +24,7 @@
 #include "graphics/ui_layout.h"
 #include "io/empire_file.h"
 #include "io/game_file_internal.h"
+#include "map/grid.h"
 #include "text/lang.h"
 #include "window/window_image_group.h"
 #include <stdint.h>

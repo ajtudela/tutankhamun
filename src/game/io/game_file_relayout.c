@@ -11,6 +11,7 @@
 #include "city/city_player.h"
 #include "empire/empire_data.h"
 #include "empire/empire_types.h"
+#include "map/grid.h"
 #include "map/soil.h"
 
 #include <stddef.h>

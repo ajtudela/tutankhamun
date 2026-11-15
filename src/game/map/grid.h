@@ -5,11 +5,15 @@
 #ifndef MAP_GRID_H
 #define MAP_GRID_H
 
-#include "building/building_data.h"
 #include "map/grid_size.h"
+#include "map/map_grid_types.h"
 #include "map/terrain.h"
 
 #include <stdint.h>
+
+extern map_grid_set map_grids;
+
+extern pharaohmap_info map_info;
 
 enum direction {
     DIRECTION_TOP = 0,

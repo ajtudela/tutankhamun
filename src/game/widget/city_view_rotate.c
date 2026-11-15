@@ -5,6 +5,7 @@
 #include "city/message.h"
 #include "figure/figure_data.h"
 #include "game/game_internal.h"
+#include "map/grid.h"
 #include "map/grid_size.h"
 #include "map/map_data.h"
 #include "map/orientation.h"

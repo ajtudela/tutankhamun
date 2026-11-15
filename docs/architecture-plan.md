@@ -144,7 +144,8 @@ move, each into the header of the module that owns the data (`extern int32_t far
 
 - [x] 3.1. `core/` includes only `core/`, the platform, parson and the standard headers: `random_generator_state`
   and `string_number_buffer` are declared in `core/`, `static_init` and `config_names.c` moved into `game/`.
-- [ ] 3.2. `map/grid.h` without `building/building_data.h`: what the grid uses moves into `map/map_grid_types.h`.
+- [x] 3.2. `map/grid.h` without `building/building_data.h`: `pharaohmap_info` moves into `map/map_grid_types.h`,
+  `map_info` and `map_grids` are declared in `map/grid.h`; 126 files include `building_data.h`, 130 `window_data.h`.
 - [ ] 3.3. `building/building.h` without `building_data.h`.
 - [ ] 3.4. One owner per commit: `figure_data.h`, `widget_data.h`, `graphics_data.h`, then `window_data.h`,
   `building_data.h` and `monument_data.h` in series by subsystem (pyramids, tombs, temple complexes, ...).
@@ -167,6 +168,20 @@ Phase 3 starts only with the regression of phase 1 in place.
 - [ ] 4.3. The fixed-size string globals of `io/io_data.c` that are neither saved nor reached by offset become
   literals.
 
+### Phase 5: fewer `extern`s
+
+A global that only its own module uses needs no `extern` at all. Where the saved games and the original's layout allow
+it, the global leaves the shared tables:
+
+- [ ] 5.1. A global used by one file becomes `static` in that file.
+- [ ] 5.2. A global used by one module becomes the module's own state, `static` in its `.c`, read and changed by the
+  module's functions.
+- [ ] 5.3. A table only read becomes `static const` beside its reader.
+
+A global stays where it is, with its `extern`, when a saved chunk points at it (`io/io_data.c`'s chunk tables), when it
+is read by offset or past its end (the reason is in its file's header), or when moving it changes the regression.
+`tools/extern_owners.py` lists the candidates: the `extern`s with one using file or one using module.
+
 | phase | commits | after |
 |---|---|---|
 | 0. CI | 2 | |
@@ -174,3 +189,4 @@ Phase 3 starts only with the regression of phase 1 in place.
 | 2. layers | 4 | 1 |
 | 3. declarations by module | 15-30 | 1, 2 |
 | 4. the rest | 3-5 | 1 |
+| 5. fewer `extern`s | by module | 3 |

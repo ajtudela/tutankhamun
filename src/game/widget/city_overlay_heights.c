@@ -16,6 +16,7 @@
 #include "city/resource_type.h"
 #include "core/calc.h"
 #include "game/game_internal.h"
+#include "map/grid.h"
 #include "map/terrain.h"
 #include "widget/city_building_tiles.h"
 #include "widget/city_view_rotate.h"

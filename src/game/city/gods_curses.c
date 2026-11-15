@@ -23,6 +23,7 @@
 #include "figure/figure.h"
 #include "figure/formation.h"
 #include "graphics/image_collection.h"
+#include "map/grid.h"
 #include "map/routing_terrain.h"
 #include "sound/sound_play.h"
 #include <stddef.h>

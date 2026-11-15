@@ -12,6 +12,7 @@
 #include "core/crt_compat.h"
 #include "figure/figure_type.h"
 #include "graphics/graphics_data.h"
+#include "map/grid.h"
 #include "map/terrain.h"
 #include "sound/ambient.h"
 #include "sound/city_channel_types.h"

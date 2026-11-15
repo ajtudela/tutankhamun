@@ -18,6 +18,7 @@
 #include "figure/figure_type.h"
 #include "game/game_data.h"
 #include "map/building_tiles.h"
+#include "map/grid.h"
 #include "map/map_data.h"
 #include "map/road_access.h"
 #include "map/routing_terrain.h"

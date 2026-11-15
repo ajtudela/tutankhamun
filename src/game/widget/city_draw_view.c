@@ -3,6 +3,7 @@
 
 #include "widget/city_draw_view.h"
 #include "building/building_data.h"
+#include "map/grid.h"
 #include "widget/city_draw.h"
 #include <stdint.h>
 

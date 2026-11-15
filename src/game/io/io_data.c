@@ -9,6 +9,7 @@
 #include "editor/editor_data.h"
 #include "game/game_data.h"
 #include "io/io_data.h"
+#include "map/grid.h"
 #include "map/map_data.h"
 #include "widget/widget_data.h"
 #include "window/window_data.h"

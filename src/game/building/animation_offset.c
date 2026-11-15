@@ -16,6 +16,7 @@
 #include "figure/figure_type.h"
 #include "game/game_data.h"
 #include "graphics/image_collection.h"
+#include "map/grid.h"
 #include "map/water_supply.h"
 #include <stdint.h>
 

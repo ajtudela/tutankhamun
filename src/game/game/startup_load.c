@@ -23,6 +23,7 @@
 #include "io/file.h"
 #include "io/file_read_all.h"
 #include "io/io_data.h"
+#include "map/grid.h"
 #include "map/ring.h"
 #include "host/loading_text.h"
 #include "platform/platform_file.h"

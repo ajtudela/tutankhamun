@@ -38,6 +38,7 @@
 #include "graphics/image_collection.h"
 #include "io/io_data.h"
 #include "map/building_tiles.h"
+#include "map/grid.h"
 #include "map/map_data.h"
 #include "map/natives.h"
 #include "map/road_access.h"

@@ -565,8 +565,6 @@ extern uint8_t map_canals_backup[51984];
 
 extern uint32_t map_terrain_backup[51984];
 
-extern map_grid_set map_grids;
-
 extern int32_t undo_cost;
 
 extern int32_t undo_mode;
@@ -596,8 +594,6 @@ extern int32_t construction_cost;
 extern int32_t construction_place_cost;
 
 extern int32_t construction_ferry_first;
-
-extern pharaohmap_info map_info;
 
 extern int32_t construction_ferry_state;
 

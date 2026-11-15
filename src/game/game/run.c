@@ -25,6 +25,7 @@
 #include "graphics/ui_layout.h"
 #include "input/mouse.h"
 #include "io/game_file.h"
+#include "map/grid.h"
 #include "platform/platform_message.h"
 #include "platform/platform_time.h"
 #include "sound/ambient.h"

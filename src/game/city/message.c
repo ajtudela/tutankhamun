@@ -18,6 +18,7 @@
 #include "graphics/label_animation_slots.h"
 #include "graphics/text_draw.h"
 #include "io/file.h"
+#include "map/grid.h"
 #include "platform/platform_time.h"
 #include "scenario/requests.h"
 #include "sound/sound_play.h"
