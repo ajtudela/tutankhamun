@@ -130,8 +130,9 @@ after the changes of phase 1: the file itself is damaged (1.6).
 - [x] 2.3. `src/game/platform` becomes `src/game/host` (`"host/host_window.h"`, ...), `platform_rect.h`, a type of
   `platform/platform_window.h`, moves into `src/platform`; the function prefixes stay for
   now.
-- [ ] 2.4. `PRIVATE src/game` out of `tutankhamun_platform`: an include of the game's headers in `src/platform` is
-  then a build error.
+- [x] 2.4. All of `src/platform` built as `tutankhamun_platform` (it held only `screen.c` and `sound_device.c`, the
+  rest was built with the program), without `PRIVATE src/game`: an include of the game's headers in `src/platform` is
+  a build error.
 
 Done when `grep -rE '#include "(building|window|graphics|figure|map|city|app)/' src/platform` finds nothing.
 

@@ -57,7 +57,7 @@ add_library(tutankhamun_platform STATIC EXCLUDE_FROM_ALL
     src/platform/screen.c
     src/platform/sound_device.c
 )
-target_include_directories(tutankhamun_platform PUBLIC src PRIVATE src/game)
+target_include_directories(tutankhamun_platform PUBLIC src)
 
 if(EMSCRIPTEN)
     # the browser: SDL2 and SDL2_mixer are Emscripten's own ports (as in Julius), WAV and MP3 as on the other systems
@@ -129,11 +129,14 @@ set_target_properties(parson PROPERTIES POSITION_INDEPENDENT_CODE ON)
 target_compile_options(parson PRIVATE ${TUTANKHAMUN_THIRD_PARTY_WARNINGS})
 
 if(WIN32)
-    set(TUTANKHAMUN_SYSTEM_SOURCES res/tutankhamun.rc src/app/port.c src/platform/platform_win32.c)
+    set(TUTANKHAMUN_SYSTEM_SOURCES res/tutankhamun.rc src/app/port.c)
+    set(TUTANKHAMUN_PLATFORM_SYSTEM_SOURCES src/platform/platform_win32.c)
 elseif(ANDROID)
-    set(TUTANKHAMUN_SYSTEM_SOURCES src/app/port_posix.c src/platform/platform_posix.c src/platform/platform_android.c)
+    set(TUTANKHAMUN_SYSTEM_SOURCES src/app/port_posix.c)
+    set(TUTANKHAMUN_PLATFORM_SYSTEM_SOURCES src/platform/platform_posix.c src/platform/platform_android.c)
 else()
-    set(TUTANKHAMUN_SYSTEM_SOURCES src/app/port_posix.c src/platform/platform_posix.c)
+    set(TUTANKHAMUN_SYSTEM_SOURCES src/app/port_posix.c)
+    set(TUTANKHAMUN_PLATFORM_SYSTEM_SOURCES src/platform/platform_posix.c)
 endif()
 # Discord's presence talks to the Discord client over a local pipe: a browser, an iPhone or an iPad has none
 if(EMSCRIPTEN OR IOS)
@@ -141,6 +144,18 @@ if(EMSCRIPTEN OR IOS)
 else()
     set(TUTANKHAMUN_DISCORD_SOURCE src/platform/discord_rpc.c)
 endif()
+target_sources(tutankhamun_platform PRIVATE
+    ${TUTANKHAMUN_PLATFORM_SYSTEM_SOURCES}
+    ${TUTANKHAMUN_DISCORD_SOURCE}
+    src/platform/cursor.c
+    src/platform/http.c
+    src/platform/log.c
+    src/platform/platform_display.c
+    src/platform/platform_file.c
+    src/platform/report.c
+    src/platform/updater.c
+    src/platform/version.c
+)
 
 set(TUTANKHAMUN_SOURCES
     ${TUTANKHAMUN_SYSTEM_SOURCES}
@@ -157,15 +172,6 @@ set(TUTANKHAMUN_SOURCES
     src/app/play_cursors.c
     src/app/startup.c
     src/app/video_bink.c
-    src/platform/cursor.c
-    ${TUTANKHAMUN_DISCORD_SOURCE}
-    src/platform/log.c
-    src/platform/platform_display.c
-    src/platform/platform_file.c
-    src/platform/http.c
-    src/platform/report.c
-    src/platform/updater.c
-    src/platform/version.c
 )
 
 # a call that does not match its prototype, or a call without one, is an error (the game and the program)
@@ -182,6 +188,13 @@ add_library(tutankhamun_game STATIC ${GAME_SOURCES})
 target_include_directories(tutankhamun_game PUBLIC src src/game)
 target_compile_options(tutankhamun_game PRIVATE ${TUTANKHAMUN_STRICT_CALLS})
 target_link_libraries(tutankhamun_game PUBLIC parson tutankhamun_platform)
+target_compile_options(tutankhamun_platform PRIVATE ${TUTANKHAMUN_STRICT_CALLS})
+if(NOT IOS)
+    target_compile_definitions(tutankhamun_platform PRIVATE SDL_MAIN_HANDLED)
+endif()
+if(MSVC)
+    target_link_libraries(tutankhamun_platform PUBLIC winhttp)
+endif()
 
 # The build's version (src/platform/version.c, the front menu): 0.1.<the number of commits>, the commit and the day,
 # read at configure time as in Akhenaten; the CI checks out the whole history for the count.
