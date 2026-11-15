@@ -22,7 +22,12 @@
 #include <string.h>
 #include <sys/types.h>
 #if defined(__APPLE__)
+#include <TargetConditionals.h>
 #include <sys/sysctl.h>
+#endif
+// the iPhone and iPad start no other program: a link opens through SDL, as on Android
+#if defined(__ANDROID__) || (defined(__APPLE__) && TARGET_OS_IPHONE)
+#define PLATFORM_OPENS_URL_WITH_SDL 1
 #endif
 #include <sys/wait.h>
 #include <time.h>
@@ -288,6 +293,7 @@ void platform_desktop_text_end(void *dc)
 {
 }
 
+#if !defined(PLATFORM_OPENS_URL_WITH_SDL)
 static void run_detached(const char *program, const char *argument)
 {
     pid_t child = fork();
@@ -301,10 +307,11 @@ static void run_detached(const char *program, const char *argument)
         waitpid(child, NULL, 0);
     }
 }
+#endif
 
 void platform_shell_open(void *window, const char *operation, const char *file)
 {
-#if defined(__ANDROID__)
+#if defined(PLATFORM_OPENS_URL_WITH_SDL)
     SDL_OpenURL(file);
 #elif defined(__APPLE__)
     run_detached("open", file);

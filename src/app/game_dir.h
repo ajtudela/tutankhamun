@@ -36,5 +36,8 @@ int32_t game_dir_remember(const char *ini, const char *dir);
 void game_dir_report_not_found(const char *tried, int32_t box);
 int32_t game_dir_probe_main(int32_t argc, char **argv);
 int32_t game_dir_pick_android(const char *ini, game_dir_choice *choice);
+// iOS: the folder remembered in the ini, else the app's Documents or one of its folders (the Files app puts the game
+// folder there)
+int32_t game_dir_find_ios(const game_dir_sources *sources, game_dir_choice *choice, char *tried, size_t tried_size);
 
 #endif

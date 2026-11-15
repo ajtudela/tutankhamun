@@ -13,8 +13,14 @@
 #define TUTANKHAMUN_BUILD_DATE "?"
 #endif
 
+#if defined(__APPLE__)
+#include <TargetConditionals.h>
+#endif
+
 #if defined(__ANDROID__)
 #define VERSION_SYSTEM "Android"
+#elif defined(__APPLE__) && TARGET_OS_IPHONE
+#define VERSION_SYSTEM "iOS"
 #elif defined(_WIN64)
 #define VERSION_SYSTEM "Windows x64"
 #elif defined(_WIN32)

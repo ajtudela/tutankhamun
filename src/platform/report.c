@@ -23,8 +23,14 @@ enum report_limits {
 
 static const char report_url[] = "https://playshhhit.com/tutankhamun";
 
+#if defined(__APPLE__)
+#include <TargetConditionals.h>
+#endif
+
 #if defined(__ANDROID__)
 #define REPORT_SYSTEM "android"
+#elif defined(__APPLE__) && TARGET_OS_IPHONE
+#define REPORT_SYSTEM "ios"
 #elif defined(_WIN64)
 #define REPORT_SYSTEM "windows-x64"
 #elif defined(_WIN32)

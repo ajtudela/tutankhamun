@@ -4,11 +4,14 @@
 // On Windows the Steam and GOG installs come from the registry and the picker is the shell's folder dialog; elsewhere
 // Steam is looked for in its usual folders (native, Flatpak, Snap), GOG in the usual folders of its Linux installers,
 // Heroic and Wine, and the picker is zenity or kdialog when one of them is installed; on macOS Steam is also looked for
-// in ~/Library/Application Support/Steam and the picker is the Finder's folder dialog through osascript.
+// in ~/Library/Application Support/Steam and the picker is the Finder's folder dialog through osascript. On the iPhone
+// and iPad the game folder is copied into the app's Documents with the Files app (game_dir_find_ios): Documents itself
+// or one of its folders.
 
 #include "app/game_dir.h"
 
 #include "app/app_files.h"
+#include "app/app_platform.h"
 #include "platform/log.h"
 #include "platform/platform_dialog.h"
 #include "platform/platform_file.h"
@@ -21,6 +24,7 @@
 #include <windows.h>
 #include <shlobj.h>
 #else
+#include <dirent.h>
 #include <unistd.h>
 #endif
 #include <stdarg.h>
@@ -342,6 +346,13 @@ static int32_t pick_folder(char *folder)
     }
     return picked;
 }
+#elif defined(APP_IOS)
+// no other program can be started on iOS: the game folder is found in the app's Documents (game_dir_find_ios)
+static int32_t pick_folder(char *folder)
+{
+    folder[0] = 0;
+    return 0;
+}
 #else
 static int32_t pick_folder(char *folder)
 {
@@ -434,6 +445,50 @@ int32_t game_dir_find(const game_dir_sources *sources, game_dir_choice *choice, 
     }
     return 0;
 }
+
+#if defined(APP_IOS)
+static int32_t try_documents(game_dir_search *search)
+{
+    const char *home = getenv("HOME");
+    char documents[GAME_DIR_PATH_SIZE];
+    if (!home || !*home || !join_path(documents, home, "Documents")) {
+        return 0;
+    }
+    if (try_candidate(search, "the app's Documents", documents, 0)) {
+        return 1;
+    }
+    DIR *dir = opendir(documents);
+    if (!dir) {
+        search_note(search, "  the app's Documents: %s cannot be read\n", documents);
+        return 0;
+    }
+    int32_t found = 0;
+    struct dirent *entry;
+    while (!found && (entry = readdir(dir)) != NULL) {
+        char folder[GAME_DIR_PATH_SIZE];
+        if (entry->d_name[0] == '.' || !join_path(folder, documents, entry->d_name) || !path_is_directory(folder)) {
+            continue;
+        }
+        found = try_candidate(search, "a folder in the app's Documents", folder, 0);
+    }
+    closedir(dir);
+    return found;
+}
+
+int32_t game_dir_find_ios(const game_dir_sources *sources, game_dir_choice *choice, char *tried, size_t tried_size)
+{
+    static game_dir_search search;
+    memset(&search, 0, sizeof(search));
+    memset(choice, 0, sizeof(*choice));
+    search.choice = choice;
+    search.tried = tried;
+    search.tried_size = tried_size;
+    if (tried_size > 0) {
+        tried[0] = 0;
+    }
+    return try_remembered(&search, sources->ini) || try_documents(&search);
+}
+#endif
 
 int32_t game_dir_remember(const char *ini, const char *dir)
 {
@@ -626,12 +681,20 @@ void game_dir_sources_of_system(game_dir_sources *sources, int32_t picker)
 void game_dir_report_not_found(const char *tried, int32_t box)
 {
     static char text[8192];
+#if defined(APP_IOS)
+    snprintf(text, sizeof(text),
+        "The game data was not found. Copy the folder of an installed Pharaoh + Cleopatra (the one with Data, "
+        "campaign.txt and Pharaoh_Text.eng) into Files > On My iPad > Tutankhamun, then start the game again.\n"
+        "Tried:\n%s",
+        tried);
+#else
     snprintf(text, sizeof(text),
         "The game data was not found. tutankhamun needs the folder of an installed Pharaoh + Cleopatra (the one with "
         "Data, campaign.txt and Pharaoh_Text.eng); start it with that folder:\n"
         "    tutankhamun <game dir>\n"
         "Tried:\n%s",
         tried);
+#endif
     platform_log("port: %s", text);
     fprintf(stderr, "%s", text);
     if (box) {

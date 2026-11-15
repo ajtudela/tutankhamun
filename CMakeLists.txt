@@ -1,7 +1,11 @@
 cmake_minimum_required(VERSION 3.22)
 # macOS: the oldest system the app runs on, Akhenaten's default (its CI: 10.15 for x86_64, 11.7 for arm64); set
 # before project() as CMake asks
-set(CMAKE_OSX_DEPLOYMENT_TARGET "10.15" CACHE STRING "The oldest macOS the program runs on")
+if(CMAKE_SYSTEM_NAME STREQUAL "iOS")
+    set(CMAKE_OSX_DEPLOYMENT_TARGET "13.0" CACHE STRING "The oldest iOS the program runs on")
+else()
+    set(CMAKE_OSX_DEPLOYMENT_TARGET "10.15" CACHE STRING "The oldest macOS the program runs on")
+endif()
 project(tutankhamun C CXX)
 
 # Tutankhamun: tutankhamun, the game of Pharaoh + Cleopatra in C. The game (src/game), the platform layer
@@ -10,7 +14,8 @@ project(tutankhamun C CXX)
 # the AppImage: packaging/linux), macOS (Apple Clang; the app bundle Tutankhamun.app for one architecture,
 # -DCMAKE_OSX_ARCHITECTURES=arm64 or x86_64, as Akhenaten builds; the disk image: packaging/macos) and Android (the
 # NDK through the Gradle project in android/: the game is libmain.so beside a shared SDL2 and SDL2_mixer) and the
-# browser (Emscripten: emcmake cmake; tutankhamun.html, .js and .wasm with Emscripten's SDL2 ports).
+# browser (Emscripten: emcmake cmake; tutankhamun.html, .js and .wasm with Emscripten's SDL2 ports) and the iPhone and
+# iPad (-G Xcode -DCMAKE_SYSTEM_NAME=iOS: the app bundle Tutankhamun.app, packaging/ios).
 if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
     set(CMAKE_BUILD_TYPE Release)
 endif()
@@ -77,6 +82,13 @@ else()
     endif()
     if(WIN32)
         target_link_libraries(tutankhamun_platform PUBLIC winmm version imm32 setupapi)
+    elseif(IOS)
+        # the frameworks of the static SDL2 on UIKit (SDL2's sdl2.pc for iOS, as in Julius's iOS build)
+        target_link_libraries(tutankhamun_platform PUBLIC
+            "-framework UIKit" "-framework Foundation" "-framework CoreGraphics" "-framework QuartzCore"
+            "-framework Metal" "-framework OpenGLES" "-framework AVFoundation" "-framework AudioToolbox"
+            "-framework CoreAudio" "-framework CoreMotion" "-framework GameController" "-framework CoreHaptics"
+            "-framework CoreBluetooth" iconv m)
     elseif(APPLE)
         # the frameworks of the static SDL2: Akhenaten's list (CMakeLists.txt, "Apple specific"), with the others of
         # SDL2's sdl2.pc (AVFoundation, Foundation, QuartzCore, iconv)
@@ -113,8 +125,8 @@ elseif(ANDROID)
 else()
     set(TUTANKHAMUN_SYSTEM_SOURCES src/app/port_posix.c src/platform/platform_posix.c)
 endif()
-# Discord's presence talks to the Discord client over a local pipe: a browser has none
-if(EMSCRIPTEN)
+# Discord's presence talks to the Discord client over a local pipe: a browser, an iPhone or an iPad has none
+if(EMSCRIPTEN OR IOS)
     set(TUTANKHAMUN_DISCORD_SOURCE src/platform/discord_rpc_none.c)
 else()
     set(TUTANKHAMUN_DISCORD_SOURCE src/platform/discord_rpc.c)
@@ -198,6 +210,37 @@ if(ANDROID)
     # SDLActivity loads the game as libmain.so and calls its main (TutankhamunActivity.getMainFunction)
     add_library(tutankhamun SHARED ${TUTANKHAMUN_SOURCES})
     set_target_properties(tutankhamun PROPERTIES OUTPUT_NAME main)
+elseif(IOS)
+    # The iPhone and iPad app Tutankhamun.app (packaging/ios: the Info.plist template, the app icon, the build): the
+    # program, the icon and the configs at the bundle's top. SDL2main starts UIKit and calls main as SDL_main
+    # (main.c). Without TUTANKHAMUN_IOS_TEAM the app is built unsigned, as Julius's iOS build in its CI; with the
+    # team's ID Xcode signs it for the team's devices (automatic signing).
+    set(TUTANKHAMUN_IOS_TEAM "" CACHE STRING "The Apple developer team ID that signs the iOS app (empty: unsigned)")
+    set(TUTANKHAMUN_IOS_ASSETS "${CMAKE_SOURCE_DIR}/packaging/ios/Assets.xcassets")
+    add_executable(tutankhamun MACOSX_BUNDLE ${TUTANKHAMUN_SOURCES} ${TUTANKHAMUN_IOS_ASSETS})
+    set_source_files_properties(${TUTANKHAMUN_IOS_ASSETS} PROPERTIES MACOSX_PACKAGE_LOCATION Resources)
+    set_target_properties(tutankhamun PROPERTIES
+        OUTPUT_NAME Tutankhamun
+        MACOSX_BUNDLE_INFO_PLIST "${CMAKE_SOURCE_DIR}/packaging/ios/Info.plist.in"
+        MACOSX_BUNDLE_BUNDLE_NAME Tutankhamun
+        MACOSX_BUNDLE_GUI_IDENTIFIER com.github.dalerank.tutankhamun
+        MACOSX_BUNDLE_BUNDLE_VERSION 0.1.${TUTANKHAMUN_BUILD_NUMBER}
+        MACOSX_BUNDLE_SHORT_VERSION_STRING 0.1.${TUTANKHAMUN_BUILD_NUMBER}
+        XCODE_ATTRIBUTE_PRODUCT_BUNDLE_IDENTIFIER com.github.dalerank.tutankhamun
+        XCODE_ATTRIBUTE_TARGETED_DEVICE_FAMILY "1,2"
+        XCODE_ATTRIBUTE_IPHONEOS_DEPLOYMENT_TARGET ${CMAKE_OSX_DEPLOYMENT_TARGET}
+        XCODE_ATTRIBUTE_ASSETCATALOG_COMPILER_APPICON_NAME AppIcon)
+    if(TUTANKHAMUN_IOS_TEAM)
+        set_target_properties(tutankhamun PROPERTIES
+            XCODE_ATTRIBUTE_DEVELOPMENT_TEAM ${TUTANKHAMUN_IOS_TEAM}
+            XCODE_ATTRIBUTE_CODE_SIGN_STYLE Automatic
+            XCODE_ATTRIBUTE_CODE_SIGN_IDENTITY "Apple Development")
+    else()
+        set_target_properties(tutankhamun PROPERTIES
+            XCODE_ATTRIBUTE_CODE_SIGNING_ALLOWED NO
+            XCODE_ATTRIBUTE_CODE_SIGNING_REQUIRED NO
+            XCODE_ATTRIBUTE_CODE_SIGN_IDENTITY "")
+    endif()
 elseif(APPLE)
     # The app bundle Tutankhamun.app: Contents/MacOS/Tutankhamun, the icon and the configs in Contents/Resources
     # (packaging/macos: the Info.plist template, the disk image).
@@ -264,12 +307,15 @@ elseif(NOT ANDROID AND NOT APPLE)
     # the C++ run time of the Bink decoder is linked in: the program needs only the system's C library
     target_link_options(tutankhamun PRIVATE -static-libstdc++ -static-libgcc -rdynamic)
 endif()
-target_compile_definitions(tutankhamun PRIVATE SDL_MAIN_HANDLED)
+# on iOS SDL2main starts the program (main.c includes SDL_main.h); elsewhere main is the program's own
+if(NOT IOS)
+    target_compile_definitions(tutankhamun PRIVATE SDL_MAIN_HANDLED)
+endif()
 target_link_libraries(tutankhamun PRIVATE tutankhamun_game parson tutankhamun_platform akhenaten_bink)
 
 # The headless runner of the saved game regression (src/tools/sim_main.c, docs/architecture-plan.md 1.2): the program's
-# sources with sim_main.c for main.c, beside the program with its configs. Not on Android or in the browser.
-if(NOT ANDROID AND NOT EMSCRIPTEN)
+# sources with sim_main.c for main.c, beside the program with its configs. Not on Android, iOS or in the browser.
+if(NOT ANDROID AND NOT EMSCRIPTEN AND NOT IOS)
     set(TUTANKHAMUN_SIM_SOURCES ${TUTANKHAMUN_SOURCES})
     list(REMOVE_ITEM TUTANKHAMUN_SIM_SOURCES src/app/main.c res/tutankhamun.rc)
     add_executable(tutankhamun_sim ${TUTANKHAMUN_SIM_SOURCES} src/tools/sim_main.c)
@@ -299,8 +345,10 @@ if(EMSCRIPTEN)
 endif()
 
 # The gameplay configs (config/*.json) are copied beside the program on every build (macOS: into the bundle's
-# Contents/Resources).
-if(APPLE)
+# Contents/Resources; iOS: into the bundle's top, beside the program).
+if(IOS)
+    set(TUTANKHAMUN_CONFIG_OUT "$<TARGET_BUNDLE_DIR:tutankhamun>/config")
+elseif(APPLE)
     set(TUTANKHAMUN_CONFIG_OUT "$<TARGET_BUNDLE_CONTENT_DIR:tutankhamun>/Resources/config")
 else()
     set(TUTANKHAMUN_CONFIG_OUT "$<TARGET_FILE_DIR:tutankhamun>/config")

@@ -3,6 +3,7 @@
 // directory search (--find-game-dir).
 
 #include "app/app_files.h"
+#include "app/app_platform.h"
 #include "app/game_dir.h"
 #include "app/image.h"
 #include "app/media_lib.h"
@@ -21,6 +22,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+
+#if defined(APP_IOS)
+// UIKit starts the program: SDL's main (SDL2main) calls this main, renamed SDL_main
+#include "SDL_main.h"
+#endif
 
 static const char PLAY_LOG_NAME[] = "tutankhamun_play.log";
 
@@ -84,6 +90,17 @@ static int32_t find_game_dir(game_dir_sources *sources, game_dir_choice *choice)
     app_ini_path(ini, sizeof(ini));
     sources->ini = 0;
     return game_dir_pick_android(ini, choice);
+}
+#elif defined(APP_IOS)
+static int32_t find_game_dir(game_dir_sources *sources, game_dir_choice *choice)
+{
+    static char tried[4096];
+    game_dir_sources_of_system(sources, 0);
+    if (game_dir_find_ios(sources, choice, tried, sizeof(tried))) {
+        return 1;
+    }
+    game_dir_report_not_found(tried, 1);
+    return 0;
 }
 #else
 static int32_t find_game_dir(game_dir_sources *sources, game_dir_choice *choice)
