@@ -1,0 +1,13 @@
+{
+ "about": "The saved game regression (tests/run_regression.py): each case runs tests/saves/<name>.sav for its game days in tutankhamun_sim and compares the result with tests/reference/<name>.sav. The saves are players' cities from Pharaoh Heaven (source); the game's own files are not in the repository.",
+ "cases": [
+  { "name": "rostja-pyramids", "days": 192, "covers": "pyramids under construction, quarries and mines, two communities", "source": "https://pharaoh.heavengames.com/downloads/showfile.php?fileid=1166" },
+  { "name": "bubastis-obelisk", "days": 192, "covers": "an obelisk under construction", "source": "https://pharaoh.heavengames.com/downloads/showfile.php?fileid=1194" },
+  { "name": "kerma-invasions", "days": 192, "covers": "six companies, walls and towers, Kushite invasions", "source": "https://pharaoh.heavengames.com/downloads/showfile.php?fileid=1154" },
+  { "name": "atlantis-trade", "days": 192, "covers": "canals, heavy sea trade, a city of 40000", "source": "https://pharaoh.heavengames.com/downloads/showfile.php?fileid=1412" },
+  { "name": "baki-temples", "days": 192, "covers": "an Osiris temple complex, the gods, palatial estates, sea imports", "source": "https://pharaoh.heavengames.com/downloads/showfile.php?fileid=1232" },
+  { "name": "cleopatra-alexandria", "days": 192, "covers": "a Cleopatra-era city", "source": "https://pharaoh.heavengames.com/downloads/showfile.php?fileid=579" },
+  { "name": "abu-ferry", "days": 192, "covers": "an island city with a ferry, Very Hard", "source": "https://pharaoh.heavengames.com/downloads/showfile.php?fileid=1183" },
+  { "name": "avaris-tomb", "days": 192, "covers": "a royal tomb and burial provisions", "source": "https://pharaoh.heavengames.com/downloads/showfile.php?fileid=810" }
+ ]
+}
