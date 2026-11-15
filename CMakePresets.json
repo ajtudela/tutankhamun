@@ -141,6 +141,26 @@
       "inherits": ["base-linux", "base-buildtype-release"]
     },
     {
+      "name": "linux-asan",
+      "displayName": "Linux 64-bit AddressSanitizer: Debug at -O1, static SDL2 + mixer, Bink (Ninja)",
+      "inherits": ["base-linux", "base-buildtype-debug"],
+      "cacheVariables": {
+        "TUTANKHAMUN_SANITIZE": "address",
+        "CMAKE_C_FLAGS_DEBUG": "-g -O1",
+        "CMAKE_CXX_FLAGS_DEBUG": "-g -O1"
+      }
+    },
+    {
+      "name": "linux-ubsan",
+      "displayName": "Linux 64-bit UndefinedBehaviorSanitizer: Debug at -O1, static SDL2 + mixer, Bink (Ninja)",
+      "inherits": ["base-linux", "base-buildtype-debug"],
+      "cacheVariables": {
+        "TUTANKHAMUN_SANITIZE": "undefined",
+        "CMAKE_C_FLAGS_DEBUG": "-g -O1",
+        "CMAKE_CXX_FLAGS_DEBUG": "-g -O1"
+      }
+    },
+    {
       "name": "base-macos",
       "hidden": true,
       "generator": "Unix Makefiles",
@@ -233,6 +253,16 @@
       "name": "linux-release",
       "configurePreset": "linux-release",
       "targets": ["tutankhamun"]
+    },
+    {
+      "name": "linux-asan",
+      "configurePreset": "linux-asan",
+      "targets": ["tutankhamun", "tutankhamun_sim"]
+    },
+    {
+      "name": "linux-ubsan",
+      "configurePreset": "linux-ubsan",
+      "targets": ["tutankhamun", "tutankhamun_sim"]
     },
     {
       "name": "macos-dev",

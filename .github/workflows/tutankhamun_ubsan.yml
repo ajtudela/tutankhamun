@@ -1,0 +1,35 @@
+name: Tutankhamun UndefinedBehaviorSanitizer
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+# The preset linux-ubsan (docs/architecture-plan.md, 1.5): the program and tutankhamun_sim with -fsanitize=undefined,
+# then the checks that need no game data (tests/sanitizer_checks.sh): the configs and the saved games of tests/saves
+# read and decompressed. The saved game regression needs the game itself and runs locally (tests/run_regression.py).
+jobs:
+  ubsan:
+    name: UndefinedBehaviorSanitizer
+    runs-on: ubuntu-24.04
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        fetch-depth: 0 # the commit count is the build number (CMakeLists.txt)
+    - name: install the build dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y --no-install-recommends ninja-build \
+          libgl1-mesa-dev libx11-dev libxext-dev libxrandr-dev libxcursor-dev libxi-dev libxss-dev libxfixes-dev \
+          libwayland-dev libxkbcommon-dev wayland-protocols libdecor-0-dev libasound2-dev libpulse-dev libdbus-1-dev libudev-dev
+    - name: configure
+      run: cmake --preset linux-ubsan
+    - name: build
+      run: cmake --build --preset linux-ubsan
+    - name: the checks under UndefinedBehaviorSanitizer
+      run: sh tests/sanitizer_checks.sh out/build/linux-ubsan

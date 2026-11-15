@@ -37,6 +37,16 @@ else()
     add_compile_options(-Wall -Wextra -Wno-unused-parameter -Wno-sign-compare -Wno-missing-field-initializers -Wno-missing-braces -fno-strict-aliasing)
     set(TUTANKHAMUN_THIRD_PARTY_WARNINGS -w)
 endif()
+# The sanitizers (docs/architecture-plan.md, 1.5): GCC or Clang, -DTUTANKHAMUN_SANITIZE=address (the preset
+# linux-asan) or undefined (linux-ubsan). Our targets only: the nested SDL builds are separate processes.
+set(TUTANKHAMUN_SANITIZE "" CACHE STRING "-fsanitize= list for GCC / Clang, e.g. address,undefined; empty: none")
+if(TUTANKHAMUN_SANITIZE)
+    if(MSVC)
+        message(FATAL_ERROR "TUTANKHAMUN_SANITIZE is for GCC and Clang")
+    endif()
+    add_compile_options(-fsanitize=${TUTANKHAMUN_SANITIZE} -fno-omit-frame-pointer)
+    add_link_options(-fsanitize=${TUTANKHAMUN_SANITIZE})
+endif()
 
 file(GLOB_RECURSE GAME_SOURCES CONFIGURE_DEPENDS src/game/*.c)
 
