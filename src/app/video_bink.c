@@ -10,6 +10,7 @@
 // - frame_num is 1-based, the frame BinkDoFrame decodes next, as in the BINK struct the game reads;
 // - when the low-resolution files are not installed, the high-resolution file of the same video is played.
 
+#include "app/app_screen.h"
 #include "app/media_lib.h"
 #include "app/play.h"
 #include "building/building_data.h"
@@ -17,7 +18,6 @@
 #include "platform/platform_file.h"
 #include "video/video_data.h"
 #include "window/window_data.h"
-#include "app/app_screen.h"
 #include "platform/platform_display.h"
 #include "platform/screen.h"
 #include "third_party/akhenaten_bink/bink_c.h"

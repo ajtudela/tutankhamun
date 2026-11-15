@@ -3,7 +3,6 @@
 
 #include "app/app_screen.h"
 
-#include "building/building_data.h"
 #include "graphics/graphics_data.h"
 #include "graphics/graphics_display.h"
 #include "platform/screen.h"

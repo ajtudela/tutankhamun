@@ -143,6 +143,8 @@ extern int32_t g_screen_height;
 
 extern int32_t g_screen_width;
 
+extern uint16_t *screen_rgb565_ptr;
+
 extern uint8_t g_force_refresh;
 
 extern uint8_t window_state_end[9];

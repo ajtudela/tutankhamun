@@ -48,11 +48,9 @@ The files with the most includes: `window/window_draw.c` 82, `window/building_in
 
 ### 2. The platform layer depends on the game
 
-- `src/platform/platform_screen.c` includes `building/building_data.h`, `graphics/graphics_data.h`,
-  `graphics/graphics_display.h` and `window/window_data.h` for `g_screen_width`, `g_screen_height` and
-  `screen_rgb565_ptr`;
-- `src/platform/updater.c` includes `app/app_files.h`;
-- so `tutankhamun_platform` needs `PRIVATE src/game` in CMakeLists.txt.
+- `src/platform/platform_screen.c` included the game's headers for its screen buffer, `updater.c` and
+  `language_store.c` included `app/app_files.h` (fixed by 2.1 and 2.2);
+- `tutankhamun_platform` still has `PRIVATE src/game` in CMakeLists.txt.
 
 ### 3. Two folders answer to `platform/`
 
@@ -108,8 +106,10 @@ after the changes of phase 1: the file itself is damaged (1.6).
   2.1 after the same days would check the logic itself, a work of its own. No game data in the repository: the run
   needs the user's copy (`--game` or `TUTANKHAMUN_GAME_DIR`), so it is local, or on a runner of our own. All 8 take
   about 25 s.
-- [ ] 1.5. The preset `linux-asan` (`-fsanitize=address,undefined`), the regression run under it; a real overrun is a
-  fix of its own, a behaviour of the original stays and the file's header says so.
+- [x] 1.5. The presets `linux-asan` and `linux-ubsan`, each with its flow running `tests/sanitizer_checks.sh` (the
+  configs, the saves of `tests/saves/` read); the regression under both is clean locally. Fixed: a shift into the
+  sign bit, a misaligned read of old empire records, `figure[-1]` of an empty ferry slot; the route searches' reads
+  past a grid stay (`tests/ubsan.supp`).
 - [x] 1.6. The `ERR:COMP1 Corrupt.` of `test.sav` found with `--diff-saves` and the chunk table: the file is damaged,
   the reader is right. `test.sav` (2023, version 147, a schema of 175 chunks) has 9775 bytes after chunk 146 that its
   schema does not list: 1463 bytes (915 of `FF`, 548 of zeros), chunks 147-174 with the city's data (the flood settings,

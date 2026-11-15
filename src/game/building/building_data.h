@@ -623,8 +623,6 @@ extern int32_t formation_id_last_in_use;
 
 extern int32_t storage_staff_missing;
 
-extern uint16_t *screen_rgb565_ptr;
-
 extern int32_t scenario_mausoleum_size_cached;
 
 extern int32_t message_collapse_last_time;
