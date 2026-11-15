@@ -52,9 +52,6 @@ typedef struct {
     int32_t weights[ANIMAL_CHOICE_ACTIONS];
 } animal_choice;
 
-extern int32_t animal_rules[ANIMAL_RULE_COUNT];
-extern animal_choice animal_choices[ANIMAL_CHOICE_COUNT];
-
 int32_t animal_find_nearest_figure_of_types(
     int32_t x, int32_t y, int32_t num_types, const int32_t *types, uint32_t terrain_mask, int32_t *out_x, int32_t *out_y, int32_t rings, int32_t exclude_id);
 void predator_hunt_or_choose_action(int32_t figure_id);

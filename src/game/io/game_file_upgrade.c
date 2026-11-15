@@ -583,7 +583,7 @@ static void set_enemy_name_group(figure *f)
 {
     uint32_t enemy = formation_get(f->formation_id)->enemy_type;
     if (enemy < ENEMY_EGYPTIAN) {
-        set_name_group(f, enemy_name_groups[enemy].group, enemy_name_groups[enemy].count);
+        set_name_group(f, enemy_name_group_entry(enemy)->group, enemy_name_group_entry(enemy)->count);
     } else {
         f->name_group = -1;
     }
@@ -592,9 +592,9 @@ static void set_enemy_name_group(figure *f)
 static const figure_name_group *type_name_group(int32_t type)
 {
     if (type == FIGURE_TOMB_ROBBER) {
-        return &figure_name_groups[FIGURE_CRIMINAL];
+        return figure_name_group_entry(FIGURE_CRIMINAL);
     }
-    return (type < FIGURE_TYPE_COUNT) ? &figure_name_groups[type] : 0;
+    return (type < FIGURE_TYPE_COUNT) ? figure_name_group_entry(type) : 0;
 }
 
 static void set_type_name_group(figure *f)

@@ -98,12 +98,6 @@ typedef struct transport_escape {
     int32_t dy[TRANSPORT_ESCAPE_POINTS];
 } transport_escape;
 
-extern int32_t military_rules[MILITARY_RULE_COUNT];
-extern military_difficulty military_difficulties[DIFFICULTY_COUNT];
-extern military_offset chariot_cart_offsets[DIRECTION_COUNT];
-extern transport_escape transport_escapes[DIRECTION_COUNT];
-extern military_offset soldier_alternative_spots[SOLDIER_ALTERNATIVE_SPOTS];
-
 void figure_play_die_sound(int32_t figure_id);
 void figure_play_hit_sound(int32_t figure_id);
 void figure_set_state_dead(int32_t figure_id);
@@ -141,5 +135,7 @@ int32_t figure_next_route_direction(int32_t figure_id);
 void figure_warship_action(void);
 void figure_transport_ship_action(void);
 void figure_soldier_action(void);
+
+int32_t military_rule(int32_t rule);
 
 #endif

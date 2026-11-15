@@ -9,6 +9,7 @@
 #include "building/building_data.h"
 #include "building/destroy_enemy.h"
 #include "core/calc.h"
+#include "core/config.h"
 #include "core/random.h"
 #include "editor/editor_data.h"
 #include "figure/enemy.h"
@@ -171,7 +172,7 @@ void ship_pick_escape_point(int32_t *x, int32_t *y, int32_t dx1, int32_t dy1, in
     map_water_find_free_tile(x, y);
 }
 
-ship_escape_move ship_escape_moves[DIRECTION_COUNT] = {
+static ship_escape_move ship_escape_moves[DIRECTION_COUNT] = {
     [DIRECTION_TOP] = { .dx1 = 0, .dy1 = -10, .dx2 = 10, .dy2 = -10, .dx3 = -10, .dy3 = -10 },
     [DIRECTION_TOP_RIGHT] = { .dx1 = 0, .dy1 = -10, .dx2 = 10, .dy2 = -10, .dx3 = 10, .dy3 = 0 },
     [DIRECTION_RIGHT] = { .dx1 = 10, .dy1 = -10, .dx2 = 10, .dy2 = 0, .dx3 = 10, .dy3 = 10 },
@@ -1157,4 +1158,30 @@ void figure_count_traders(void)
             player->enemy_warships++;
         }
     }
+}
+
+static const config_field ship_escape_move_fields[] = {
+    { "dx1", &ship_escape_moves[0].dx1, (int32_t) (sizeof(ship_escape_move) / sizeof(int32_t)), 1, INT8_MIN, INT8_MAX, 0 },
+    { "dy1", &ship_escape_moves[0].dy1, (int32_t) (sizeof(ship_escape_move) / sizeof(int32_t)), 1, INT8_MIN, INT8_MAX, 0 },
+    { "dx2", &ship_escape_moves[0].dx2, (int32_t) (sizeof(ship_escape_move) / sizeof(int32_t)), 1, INT8_MIN, INT8_MAX, 0 },
+    { "dy2", &ship_escape_moves[0].dy2, (int32_t) (sizeof(ship_escape_move) / sizeof(int32_t)), 1, INT8_MIN, INT8_MAX, 0 },
+    { "dx3", &ship_escape_moves[0].dx3, (int32_t) (sizeof(ship_escape_move) / sizeof(int32_t)), 1, INT8_MIN, INT8_MAX, 0 },
+    { "dy3", &ship_escape_moves[0].dy3, (int32_t) (sizeof(ship_escape_move) / sizeof(int32_t)), 1, INT8_MIN, INT8_MAX, 0 },
+};
+
+static const config_storage ship_escape_move_storage[] = {
+    { ship_escape_moves, sizeof(ship_escape_moves) },
+};
+
+const config_table ship_escape_move_table = {
+    "ship_escape_moves.json",
+    "direction",
+    config_direction_names,
+    DIRECTION_COUNT,
+    CONFIG_TABLE_COLUMNS(ship_escape_move_fields, ship_escape_move_storage),
+};
+
+const ship_escape_move *ship_escape_move_get(int32_t direction)
+{
+    return &ship_escape_moves[direction];
 }

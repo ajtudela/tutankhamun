@@ -24,9 +24,6 @@ typedef struct {
     int32_t count;
 } figure_name_group;
 
-extern figure_name_group figure_name_groups[];
-extern figure_name_group enemy_name_groups[];
-
 int32_t map_figure_count_at(int32_t grid_offset);
 int32_t map_figure_find_target(int32_t figure_id);
 int32_t figure_create(int32_t player, int32_t type, int32_t x, int32_t y, int32_t direction);
@@ -40,5 +37,9 @@ int32_t map_figure_of_type_at(int32_t figure_id, int32_t type);
 bool figure_is_herd_animal(int32_t type);
 bool figure_is_predator_animal(int32_t type);
 bool figure_is_boat(int32_t type);
+
+// the tables as the config holds them, unchecked
+figure_name_group *figure_name_group_entry(int32_t type);
+figure_name_group *enemy_name_group_entry(int32_t enemy);
 
 #endif

@@ -31,8 +31,6 @@ typedef struct {
     int32_t reset_counter;
 } wild_predator;
 
-extern wild_predator wild_predators[WILD_PREDATOR_KINDS];
-
 void figure_create_herds(void);
 void figure_hyena_action(void);
 void figure_lion_action(void);

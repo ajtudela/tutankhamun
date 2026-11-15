@@ -568,7 +568,7 @@ void warship_evading(int32_t figure_id, int32_t *moving)
     if (direction > DIRECTION_LEFT) {
         direction = DIRECTION_TOP_LEFT;
     }
-    const ship_escape_move *m = &ship_escape_moves[direction];
+    const ship_escape_move *m = ship_escape_move_get(direction);
     int32_t x;
     int32_t y;
     ship_pick_escape_point(&x, &y, m->dx1, m->dy1, m->dx2, m->dy2, m->dx3, m->dy3, figure_id);

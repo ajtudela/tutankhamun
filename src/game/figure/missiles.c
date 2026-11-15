@@ -45,20 +45,20 @@ static int32_t missile_defense(const figure *target, int32_t formation_id, int32
         int32_t type = legion->figure_type;
         if (type >= FIGURE_ARCHER && type <= FIGURE_INFANTRY) {
             if (!attack_is_same_direction(target->attack_direction, legion->direction)) {
-                defense -= military_rules[MILITARY_RULE_MISSILE_FACING_AWAY_PENALTY];
+                defense -= military_rule(MILITARY_RULE_MISSILE_FACING_AWAY_PENALTY);
             } else {
                 int32_t layout = legion->layout;
                 if (layout >= FORMATION_SINGLE_LINE_1 && layout <= FORMATION_SINGLE_LINE_2) {
-                    defense += military_rules[MILITARY_RULE_MISSILE_SINGLE_LINE_BONUS];
+                    defense += military_rule(MILITARY_RULE_MISSILE_SINGLE_LINE_BONUS);
                 } else if (layout == FORMATION_MOP_UP) {
-                    defense -= military_rules[MILITARY_RULE_MISSILE_MOP_UP_PENALTY];
+                    defense -= military_rule(MILITARY_RULE_MISSILE_MOP_UP_PENALTY);
                 }
             }
         } else if (type == FIGURE_CHARIOTEER) {
             if (!attack_is_same_direction(target->attack_direction, legion->direction)) {
-                defense -= military_rules[MILITARY_RULE_MISSILE_FACING_AWAY_PENALTY];
+                defense -= military_rule(MILITARY_RULE_MISSILE_FACING_AWAY_PENALTY);
             } else if (legion->layout == FORMATION_MOP_UP) {
-                defense -= military_rules[MILITARY_RULE_MISSILE_MOP_UP_PENALTY];
+                defense -= military_rule(MILITARY_RULE_MISSILE_MOP_UP_PENALTY);
             }
         }
     }
@@ -141,7 +141,7 @@ void figure_arrow_action(void)
     arrow->state = FIGURE_STATE_DEAD;
     if (formation_id != 0) {
         formation *hit = formation_get(formation_id);
-        hit->missile_attack_timeout = (int16_t) military_rules[MILITARY_RULE_MISSILE_ATTACK_TIMEOUT];
+        hit->missile_attack_timeout = (int16_t) military_rule(MILITARY_RULE_MISSILE_ATTACK_TIMEOUT);
         hit->missile_attack_formation_id = figure_get(arrow->building_id)->formation_id;
     }
     missile_set_image(MISSILE_IMAGE_ARROW);
@@ -182,7 +182,7 @@ static void spear_hit(figure *spear, int32_t target_id, int32_t shooter_id, int3
     } else if (target->faction_id == city_current_player && type == FIGURE_WARSHIP) {
         max_damage = target->ship_max_hit_points;
         if (target->action_state == FIGURE_ACTION_WARSHIP_DOCKED) {
-            bonus = military_rules[MILITARY_RULE_MISSILE_DOCKED_WARSHIP_BONUS];
+            bonus = military_rule(MILITARY_RULE_MISSILE_DOCKED_WARSHIP_BONUS);
         }
     } else {
         if (target->faction_id == city_current_player && type >= FIGURE_ARCHER && type <= FIGURE_CHARIOTEER) {
@@ -222,7 +222,7 @@ static void spear_hit(figure *spear, int32_t target_id, int32_t shooter_id, int3
     } else {
         missile_damage_figure(target_id, target, formation_id, max_damage, damage);
         formation *hit = formation_get(formation_id);
-        hit->missile_attack_timeout = (int16_t) military_rules[MILITARY_RULE_MISSILE_ATTACK_TIMEOUT];
+        hit->missile_attack_timeout = (int16_t) military_rule(MILITARY_RULE_MISSILE_ATTACK_TIMEOUT);
         hit->missile_attack_formation_id = (int16_t) shooter_formation;
     }
     spear->state = FIGURE_STATE_DEAD;

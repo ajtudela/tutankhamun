@@ -44,8 +44,6 @@ typedef struct ship_escape_move {
     int32_t dy3;
 } ship_escape_move;
 
-extern ship_escape_move ship_escape_moves[DIRECTION_COUNT];
-
 int32_t map_water_farthest_on_line(int32_t x, int32_t y, int32_t dst_x, int32_t dst_y, int32_t *out_x, int32_t *out_y);
 void enemy_ship_reroute_tick(void);
 void enemy_ship_sink(int32_t figure_id);
@@ -77,5 +75,7 @@ void figure_enemy_transport_action(void);
 void figure_enemy_warship_action(void);
 void figure_egyptian_warship_action(void);
 void figure_egyptian_transport_action(void);
+
+const ship_escape_move *ship_escape_move_get(int32_t direction);
 
 #endif

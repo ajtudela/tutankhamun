@@ -12,7 +12,9 @@
 #include "building/building_data.h"
 #include "building/house_population.h"
 #include "city/city_player.h"
+#include "core/config.h"
 #include "core/random.h"
+#include "figure/animals.h"
 #include "figure/animals_internal.h"
 #include "figure/enemy_ships.h"
 #include "figure/figure.h"
@@ -52,7 +54,7 @@ enum wild_behaviour {
     HERD_START_WAIT_TICKS = 24,
 };
 
-wild_predator wild_predators[WILD_PREDATOR_KINDS] = {
+static wild_predator wild_predators[WILD_PREDATOR_KINDS] = {
     [WILD_HYENA] = {
         .frames = { -1, -1, -1, -1, 6, 6, -1, -1, 1, 12, 12, -1, 6, 12, -1, -1, -1, -1, 6, 6, 1, 12, -1, 1, -1 },
         .default_frames = 1,
@@ -562,3 +564,35 @@ void figure_creature_action(void)
 {
     figure_current()->image_id = image_group(IMAGE_GROUP_FIGURE_CROCODILE);
 }
+
+// The gameplay config table of the predators (core/config.h): wild_predators.json.
+
+static const config_name wild_predator_names[] = {
+    { "hyena", WILD_HYENA },
+    { "lion", WILD_LION },
+    { "scorpion", WILD_SCORPION },
+    { 0, 0 },
+};
+
+static const config_field wild_predator_fields[] = {
+    { "frames", &wild_predators[0].frames[0], (int32_t) (sizeof(wild_predator) / sizeof(int32_t)), 25, -1, 100, 0 },
+    { "default_frames", &wild_predators[0].default_frames, (int32_t) (sizeof(wild_predator) / sizeof(int32_t)), 1, 0, 100, 0 },
+    { "attack_sound", &wild_predators[0].attack_sound, (int32_t) (sizeof(wild_predator) / sizeof(int32_t)), 1, 0, 2, 0 },
+    { "rest_base", &wild_predators[0].rest_base, (int32_t) (sizeof(wild_predator) / sizeof(int32_t)), 1, 0, 10000, 0 },
+    { "rest_range", &wild_predators[0].rest_range, (int32_t) (sizeof(wild_predator) / sizeof(int32_t)), 1, 1, 10000, 0 },
+    { "no_tile_wait", &wild_predators[0].no_tile_wait, (int32_t) (sizeof(wild_predator) / sizeof(int32_t)), 1, -1, 10000, 0 },
+    { "arrival_frames", &wild_predators[0].arrival_frames, (int32_t) (sizeof(wild_predator) / sizeof(int32_t)), 1, 0, 1, 0 },
+    { "reset_counter", &wild_predators[0].reset_counter, (int32_t) (sizeof(wild_predator) / sizeof(int32_t)), 1, 0, 1, 0 },
+};
+
+static const config_storage wild_predator_storage[] = {
+    { wild_predators, sizeof(wild_predators) },
+};
+
+const config_table wild_predator_table = {
+    "wild_predators.json",
+    "animal",
+    wild_predator_names,
+    WILD_PREDATOR_KINDS,
+    CONFIG_TABLE_COLUMNS(wild_predator_fields, wild_predator_storage),
+};

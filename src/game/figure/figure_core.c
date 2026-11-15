@@ -17,6 +17,7 @@
 #include "building/ferry_landing.h"
 #include "city/city_player.h"
 #include "city/resource_type.h"
+#include "core/config.h"
 #include "core/crt_compat.h"
 #include "core/queue.h"
 #include "empire/empire.h"
@@ -350,7 +351,7 @@ static int32_t *name_counter(int32_t group)
     return &figure_name_counter_table.by_slot[slot];
 }
 
-figure_name_group figure_name_groups[FIGURE_TYPE_COUNT] = {
+static figure_name_group figure_name_groups[FIGURE_TYPE_COUNT] = {
     [FIGURE_IMMIGRANT] = { 0xFE, 0x80 },
     [FIGURE_EMIGRANT] = { 0xFE, 0x80 },
     [FIGURE_HOMELESS] = { 0xFF, 0x20 },
@@ -407,7 +408,7 @@ figure_name_group figure_name_groups[FIGURE_TYPE_COUNT] = {
     [FIGURE_TOMB_ARTISAN] = { 0xFE, 0x80 },
 };
 
-figure_name_group enemy_name_groups[ENEMY_EGYPTIAN] = {
+static figure_name_group enemy_name_groups[ENEMY_EGYPTIAN] = {
     [ENEMY_HYKSOS] = { 0x11D, 0x10 },
     [ENEMY_SEA_PEOPLE] = { 0x11F, 0x10 },
     [ENEMY_HITTITE] = { 0x11E, 0x10 },
@@ -639,4 +640,64 @@ bool figure_is_boat(int32_t type)
             return 1;
     }
     return 0;
+}
+
+static const config_field figure_name_group_fields[] = {
+    { "group", &figure_name_groups[0].group, 2, 1, 0, FIGURE_NAME_GROUP_ENEMY_EXTRA_LAST, 0 },
+    { "count", &figure_name_groups[0].count, 2, 1, 0, 10000, 0 },
+};
+
+static const config_storage figure_name_group_storage[] = {
+    { figure_name_groups, sizeof(figure_name_group) * FIGURE_TYPE_COUNT },
+};
+
+const config_table figure_name_group_table = {
+    "figure_name_groups.json",
+    "type",
+    config_figure_type_names,
+    FIGURE_TYPE_COUNT,
+    CONFIG_TABLE_COLUMNS(figure_name_group_fields, figure_name_group_storage),
+};
+
+static const config_name enemy_name_group_names[] = {
+    { "hyksos", ENEMY_HYKSOS },
+    { "sea_people", ENEMY_SEA_PEOPLE },
+    { "hittite", ENEMY_HITTITE },
+    { "mitani", ENEMY_MITANI },
+    { "kushite", ENEMY_KUSHITE },
+    { "libyan", ENEMY_LIBYAN },
+    { "nubian", ENEMY_NUBIAN },
+    { "canaanite", ENEMY_CANAANITE },
+    { "assyrian", ENEMY_ASSYRIAN },
+    { "roman", ENEMY_ROMAN },
+    { "phoenician", ENEMY_PHOENICIAN },
+    { "persian", ENEMY_PERSIAN },
+    { 0, 0 },
+};
+
+static const config_field enemy_name_group_fields[] = {
+    { "group", &enemy_name_groups[0].group, 2, 1, 0, FIGURE_NAME_GROUP_ENEMY_EXTRA_LAST, 0 },
+    { "count", &enemy_name_groups[0].count, 2, 1, 0, 10000, 0 },
+};
+
+static const config_storage enemy_name_group_storage[] = {
+    { enemy_name_groups, sizeof(figure_name_group) * ENEMY_EGYPTIAN },
+};
+
+const config_table enemy_name_group_table = {
+    "enemy_name_groups.json",
+    "enemy",
+    enemy_name_group_names,
+    ENEMY_EGYPTIAN,
+    CONFIG_TABLE_COLUMNS(enemy_name_group_fields, enemy_name_group_storage),
+};
+
+figure_name_group *figure_name_group_entry(int32_t type)
+{
+    return &figure_name_groups[type];
+}
+
+figure_name_group *enemy_name_group_entry(int32_t enemy)
+{
+    return &enemy_name_groups[enemy];
 }
