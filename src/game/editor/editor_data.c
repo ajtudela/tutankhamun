@@ -8,7 +8,9 @@
 #include "editor/editor_menu.h"
 #include "figure/action.h"
 #include "window/advisors.h"
+#include "text/lang_pack.h"
 #include "window/file_dialog_buttons.h"
+#include "window/language_options.h"
 #include "window/mission_flow.h"
 #include "window/options_buttons.h"
 #include "window/top_menu_entries.h"
@@ -24,6 +26,7 @@ menu_item g_menu_items[MENU_ITEMS] = { { 0, 1, menu_file_new_game, 0, 0 }, { 20,
     { 40, 3, window_speed_options_show, 0, 0 }, { 60, 11, window_game_options_show, 0, 0 },
     { 80, 7, options_toggle_city_names, 0, 0 }, { 100, 6, window_difficulty_options_show, 0, 0 },
     { 120, 9, options_toggle_autosave, 0, 0 }, { 140, 15, options_toggle_pyramid_speedup, 0, 0 },
+    { 160, LANG_PACK_MENU_TEXT, window_language_options_show, 0, 0 },
     { 0, 1, help_menu_show_help, 0, 0 }, { 20, 2, help_menu_toggle_tooltips, 0, 0 },
     { 40, 5, help_menu_toggle_warnings, 0, 0 }, { 60, 7, help_menu_show_about, 0, 0 },
     { 0, 1, help_menu_show_help, 0, 0 }, { 20, 2, help_menu_toggle_tooltips, 0, 0 },

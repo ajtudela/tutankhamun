@@ -48,5 +48,6 @@ int32_t lang_load(const char *text_file, const char *message_file)
     platform_file_read(fd, &lang_message_index, MESSAGE_INDEX_SIZE);
     platform_file_read(fd, lang_message_data, (uint32_t) size);
     platform_file_close(fd);
+    lang_message_data_size = size;
     return 1;
 }

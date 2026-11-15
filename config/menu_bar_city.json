@@ -2,7 +2,7 @@
 // A record or a field left out keeps the built-in value.
 [
     { "entry": 0, "text_group": 1, "first_item": 0, "item_count": 6 },
-    { "entry": 1, "text_group": 2, "first_item": 6, "item_count": 8 },
-    { "entry": 2, "text_group": 3, "first_item": 14, "item_count": 4 },
-    { "entry": 3, "text_group": 4, "first_item": 21, "item_count": 13 }
+    { "entry": 1, "text_group": 2, "first_item": 6, "item_count": 9 },
+    { "entry": 2, "text_group": 3, "first_item": 15, "item_count": 4 },
+    { "entry": 3, "text_group": 4, "first_item": 22, "item_count": 13 }
 ]

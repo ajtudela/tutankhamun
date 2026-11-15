@@ -140,6 +140,7 @@ set(TUTANKHAMUN_SOURCES
     src/platform/platform_file.c
     src/platform/platform_screen.c
     src/platform/http.c
+    src/platform/language_store.c
     src/platform/report.c
     src/platform/updater.c
     src/platform/version.c

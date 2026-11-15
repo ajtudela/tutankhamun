@@ -20,4 +20,6 @@ uint8_t *lang_text_base;
 
 uint8_t *lang_message_data;
 
+int32_t lang_message_data_size;
+
 monument_text_resources bi_monument_resources;

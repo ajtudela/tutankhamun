@@ -17,7 +17,7 @@ typedef struct {
 } menu_item;
 
 enum menu_bar_size {
-    MENU_ITEMS = 44,
+    MENU_ITEMS = 45,
     MENU_BAR_ENTRIES = 4,
 };
 

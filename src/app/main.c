@@ -15,6 +15,7 @@
 #include "platform/platform_file.h"
 #include "platform/updater.h"
 #include "platform/version.h"
+#include "text/lang_pack.h"
 
 #include <stdint.h>
 #include <stdio.h>
@@ -150,7 +151,7 @@ static void print_usage(void)
 {
     fprintf(stderr,
         "usage: tutankhamun [game dir] [save.sav] [--log file] [--size WxH] [--window | --fullscreen] [--cursor-scale N] [--discord-log]\n"
-        "                   [--no-update] [--no-video]\n"
+        "                   [--no-update] [--no-video] [--language en|de|it|es|pl]\n"
         "       tutankhamun --export-configs <dir> | --check-configs <dir>\n"
         "       tutankhamun --find-game-dir [--system] [--ini file] [--here dir] [--steam root] [--gog dir]... [...]\n"
         "(the game directory holds the game's Data folder; a path ending in .exe stands for its folder)\n");
@@ -178,6 +179,11 @@ static int32_t play_main(int32_t argc, char **argv, int32_t first)
         } else if (strcmp(argv[i], "--cursor-scale") == 0 && i + 1 < argc) {
             if (!parse_cursor_scale(argv[++i], &cursor_scale_percent)) {
                 fprintf(stderr, "--cursor-scale must be followed by 1, 1.5 or 2, not %s\n", argv[i]);
+                return 1;
+            }
+        } else if (strcmp(argv[i], "--language") == 0 && i + 1 < argc) {
+            if (!lang_pack_request(argv[++i])) {
+                fprintf(stderr, "--language must be followed by %s, not %s\n", lang_pack_codes(), argv[i]);
                 return 1;
             }
         } else if (strcmp(argv[i], "--log") == 0 && i + 1 < argc) {

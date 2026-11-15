@@ -119,5 +119,7 @@ enum lang_window_hint {
 };
 
 const char *lang_get_string(int32_t group, int32_t index);
+// the strings of a group in the game's text file (a translation keeps its indexes)
+int32_t lang_group_string_count(int32_t group);
 
 #endif

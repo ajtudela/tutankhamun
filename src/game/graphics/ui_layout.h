@@ -16,6 +16,8 @@ void ui_layout_refresh(void);
 int32_t ui_layout_group_max_width(int32_t group);
 void ui_layout_init_column_widths(void);
 int32_t ui_layout_init_label_width(void);
+// the menu columns and the build menu's labels measured again after the language changed
+void ui_layout_texts_changed(void);
 void dialog_loc_read_list(void *file, int32_t count, ui_layout_entry **list);
 int32_t dialog_loc_load(void);
 void ui_layout_init(void);

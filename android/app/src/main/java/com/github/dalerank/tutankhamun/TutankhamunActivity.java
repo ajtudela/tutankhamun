@@ -50,29 +50,37 @@ public class TutankhamunActivity extends SDLActivity {
     }
 
     private void copyConfigs() {
-        AssetManager assets = getAssets();
-        File target = new File(getFilesDir(), CONFIG_ASSETS);
+        try {
+            copyAssetFolder(getAssets(), CONFIG_ASSETS, new File(getFilesDir(), CONFIG_ASSETS), new byte[65536]);
+        } catch (IOException e) {
+            Log.e(TAG, "cannot copy the configs: " + e);
+        }
+    }
+
+    // the folder's files and, folder by folder, the ones below it (the language packs in config/lang)
+    private void copyAssetFolder(AssetManager assets, String path, File target, byte[] buffer) throws IOException {
         if (!target.isDirectory() && !target.mkdirs()) {
             Log.e(TAG, "cannot make " + target);
             return;
         }
-        byte[] buffer = new byte[65536];
-        try {
-            String[] names = assets.list(CONFIG_ASSETS);
-            if (names == null) {
-                return;
+        String[] names = assets.list(path);
+        if (names == null) {
+            return;
+        }
+        for (String name : names) {
+            String child = path + "/" + name;
+            String[] below = assets.list(child);
+            if (below != null && below.length > 0) {
+                copyAssetFolder(assets, child, new File(target, name), buffer);
+                continue;
             }
-            for (String name : names) {
-                try (InputStream in = assets.open(CONFIG_ASSETS + "/" + name);
-                     OutputStream out = new FileOutputStream(new File(target, name))) {
-                    int read;
-                    while ((read = in.read(buffer)) > 0) {
-                        out.write(buffer, 0, read);
-                    }
+            try (InputStream in = assets.open(child);
+                 OutputStream out = new FileOutputStream(new File(target, name))) {
+                int read;
+                while ((read = in.read(buffer)) > 0) {
+                    out.write(buffer, 0, read);
                 }
             }
-        } catch (IOException e) {
-            Log.e(TAG, "cannot copy the configs: " + e);
         }
     }
 

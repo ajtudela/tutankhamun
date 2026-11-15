@@ -76,6 +76,7 @@
 #include "window/message_list.h"
 #include "window/mission_flow.h"
 #include "window/name_list.h"
+#include "window/language_options.h"
 #include "window/options_windows.h"
 #include "window/overlay_menu.h"
 #include "window/player_selection.h"
@@ -574,6 +575,11 @@ void window_draw_foreground_dispatch(void)
     }
     if (window_current_id == WINDOW_DISPLAY_OPTIONS) {
         window_display_options_draw();
+        foreground_finish();
+        return;
+    }
+    if (window_current_id == WINDOW_LANGUAGE_OPTIONS) {
+        window_language_options_draw();
         foreground_finish();
         return;
     }

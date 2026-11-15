@@ -1304,16 +1304,16 @@ difficulty_arrow_table difficulty_arrows = {
 
 menu_bar_entry menu_bar_city[MENU_BAR_ENTRIES] = {
     { 0, 0, LANG_GROUP_MENU_FILE, 0, 6 },
-    { 0, 0, LANG_GROUP_MENU_OPTIONS, 6, 8 },
-    { 0, 0, LANG_GROUP_MENU_HELP, 14, 4 },
-    { 0, 0, LANG_GROUP_MENU_OVERSEERS, 21, 13 },
+    { 0, 0, LANG_GROUP_MENU_OPTIONS, 6, 9 },
+    { 0, 0, LANG_GROUP_MENU_HELP, 15, 4 },
+    { 0, 0, LANG_GROUP_MENU_OVERSEERS, 22, 13 },
 };
 
 menu_bar_entry menu_bar_editor[MENU_BAR_ENTRIES] = {
-    { 0, 0, LANG_GROUP_EDITOR_MENU_FILE, 34, 4 },
+    { 0, 0, LANG_GROUP_EDITOR_MENU_FILE, 35, 4 },
     { 0, 0, LANG_GROUP_MENU_OPTIONS, 6, 4 },
-    { 0, 0, LANG_GROUP_MENU_HELP, 18, 3 },
-    { 0, 0, LANG_GROUP_EDITOR_MENU_RESETS, 38, 6 },
+    { 0, 0, LANG_GROUP_MENU_HELP, 19, 3 },
+    { 0, 0, LANG_GROUP_EDITOR_MENU_RESETS, 39, 6 },
 };
 
 int32_t build_menu_types[1607] = { 12, 163, 164, 198, 223, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 10, 0, 0, 0, 0, 0, 0,

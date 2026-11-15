@@ -46,6 +46,7 @@
 #include "window/building_info_military.h"
 #include "window/building_info_ships.h"
 #include "window/display_resolution_list.h"
+#include "window/language_options.h"
 #include "window/empire_scroll.h"
 #include "window/empire_window.h"
 #include "window/file_dialog_buttons.h"
@@ -934,6 +935,9 @@ void window_handle_input_dispatch(void)
             return;
         case WINDOW_GAME_OPTIONS:
             input_dialog_arrows(build_menu_buttons.game_options, 14, 0, 0, 0, 0);
+            return;
+        case WINDOW_LANGUAGE_OPTIONS:
+            input_dialog_arrows(language_options_buttons(), language_options_button_count(), 0, 0, 0, 0);
             return;
         case WINDOW_DIFFICULTY_OPTIONS:
             input_difficulty();

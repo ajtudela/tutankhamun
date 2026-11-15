@@ -53,6 +53,7 @@ int32_t text_expand_tokens(const event_phrase_table *self, const char *src, char
     for (;;) {
         while (src[i] != '[') {
             if (o >= max) {
+                dst[max - 1] = 0;
                 return 0;
             }
             dst[o++] = src[i];
@@ -83,6 +84,7 @@ int32_t text_expand_tokens(const event_phrase_table *self, const char *src, char
         current_token = saved;
         while (text != 0 && *text != 0) {
             if (o >= max) {
+                dst[max - 1] = 0;
                 return 0;
             }
             dst[o++] = *text++;

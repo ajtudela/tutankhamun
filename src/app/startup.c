@@ -21,6 +21,7 @@
 #include "scenario/reason_phrases.h"
 #include "sound/sound_init.h"
 #include "text/lang_load.h"
+#include "text/lang_pack.h"
 #include "widget/widget_data.h"
 #include "window/display_resolution_list.h"
 
@@ -119,6 +120,7 @@ int32_t app_startup(void)
     if (!step("settings", settings_load()) || !step("texts", lang_load(text_file_name, message_file_name))) {
         return 0;
     }
+    lang_pack_startup();
     settings_data.cd_drive_letter = DEFAULT_CD_DRIVE_LETTER;
     settings_load_default_names();
     apply_requested_display_mode();

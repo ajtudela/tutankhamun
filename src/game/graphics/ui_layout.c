@@ -16,6 +16,7 @@
 #include "io/io_data.h"
 #include "platform/platform_file.h"
 #include "text/lang.h"
+#include "text/lang_pack.h"
 #include "window/building_menu.h"
 #include "window/window_data.h"
 #include "window/window_id.h"
@@ -128,17 +129,19 @@ static int32_t dialog_loc_flags(void *file)
 int32_t ui_layout_group_max_width(int32_t group)
 {
     int32_t max = 1;
-    int32_t index = 1;
-    const char *end = lang_get_string(group + 1, 0);
-    const char *text = lang_get_string(group, index);
-    do {
-        int32_t width = text_get_width((const uint8_t *) text, image_group(IMAGE_GROUP_FONT_BLACK));
+    int32_t count = lang_group_string_count(group);
+    for (int32_t index = 1; index < count; index++) {
+        int32_t width = text_get_width((const uint8_t *) lang_get_string(group, index), image_group(IMAGE_GROUP_FONT_BLACK));
         if (width > max) {
             max = width;
         }
-        index++;
-        text = lang_get_string(group, index);
-    } while (end != text);
+    }
+    if (group == LANG_GROUP_MENU_OPTIONS) {
+        int32_t width = text_get_width((const uint8_t *) lang_get_string(group, LANG_PACK_MENU_TEXT), image_group(IMAGE_GROUP_FONT_BLACK));
+        if (width > max) {
+            max = width;
+        }
+    }
     return max;
 }
 
@@ -224,6 +227,14 @@ int32_t dialog_loc_load(void)
         }
     }
     return fclose(file);
+}
+
+void ui_layout_texts_changed(void)
+{
+    if (ui_layout_initialized != 0) {
+        ui_layout_init_column_widths();
+        ui_layout_init_label_width();
+    }
 }
 
 void ui_layout_init(void)

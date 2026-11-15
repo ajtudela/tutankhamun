@@ -24,6 +24,9 @@ extern uint8_t *lang_text_base;
 
 extern uint8_t *lang_message_data;
 
+// the bytes of lang_message_data as lang_load read them
+extern int32_t lang_message_data_size;
+
 extern monument_text_resources bi_monument_resources;
 
 #endif
