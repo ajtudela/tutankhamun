@@ -261,6 +261,11 @@ static int32_t play_main(int32_t argc, char **argv, int32_t first)
         }
         game_dir = found.dir;
     }
+#if defined(__ANDROID__)
+    if (!log) {
+        platform_log_move(PLAY_LOG_NAME);
+    }
+#endif
     play_display_request request = { size_width, size_height, start_fullscreen };
     app_request_display_mode(play_display_prepare(&request));
     if (!prepare(game_dir)) {

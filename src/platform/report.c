@@ -3,6 +3,7 @@
 #include "platform/report.h"
 #include "platform/http.h"
 #include "platform/log.h"
+#include "platform/platform_file.h"
 #include "platform/version.h"
 
 #include <stdio.h>
@@ -149,7 +150,7 @@ static char *log_tail(size_t *length)
 {
     *length = 0;
     const char *path = platform_log_path();
-    FILE *file = path ? fopen(path, "rb") : 0;
+    FILE *file = path ? platform_fopen(path, "rb") : 0;
     if (!file) {
         return 0;
     }
