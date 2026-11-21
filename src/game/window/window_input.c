@@ -398,12 +398,12 @@ static void input_overlay_menu(void)
     if (generic_buttons(city_view_width_expanded - 170, build_menu_y_offset + 32, build_menu_buttons.overlay_menu, 10, &focus_button_id) != 0) {
         return;
     }
-    overlay_menu_handle_submenu();
-    if (overlay_submenu_open == 0) {
+    if (overlay_submenu_open != 0
+        && generic_buttons(city_view_width_expanded - 348, build_menu_y_offset + 32 + overlay_submenu_index * 24, build_menu_buttons.overlay_submenu,
+               overlay_submenu_count, &focus_button_id_secondary) != 0) {
         return;
     }
-    generic_buttons(city_view_width_expanded - 348, build_menu_y_offset + 32 + overlay_submenu_index * 24, build_menu_buttons.overlay_submenu, overlay_submenu_count,
-        &focus_button_id_secondary);
+    overlay_menu_handle_submenu();
 }
 static void input_message_video(void)
 {

@@ -252,6 +252,7 @@ int32_t overlay_menu_handle_submenu(void)
         if ((time_current_millis - overlay_menu_hover_time) > OVERLAY_SUBMENU_CLOSE_MILLIS) {
             overlay_submenu_open = 0;
             overlay_submenu_count = 0;
+            focus_button_id_secondary = 0;
         }
         return 0;
     }
@@ -272,6 +273,15 @@ static int32_t overlay_shown_directly(int32_t overlay)
 
 void overlay_menu_select(void)
 {
+    int32_t submenu = overlay_submenu_ids[button_parameter + 1];
+    if (submenu != 0) {
+        overlay_menu_hover_time = time_current_millis;
+        overlay_submenu_index = button_parameter;
+        overlay_submenu_open = submenu;
+        overlay_submenu_count = overlay_menu_submenu_count(submenu);
+        window_redraw_request = 1;
+        return;
+    }
     int32_t overlay = build_menu_types[OVERLAY_MENU_OVERLAYS_FIRST + button_parameter];
     if (overlay == OVERLAY_NONE) {
         int32_t previous = city_overlay;
