@@ -34,6 +34,7 @@ typedef struct {
 static const lang_pack_info pack_infos[] = {
     { "en", "English", "Language" },
     { "de", "Deutsch", "Sprache" },
+    { "fr", "Fran\xE7" "ais", "Langue" },
     { "it", "Italiano", "Lingua" },
     { "es", "Espa\xF1ol", "Idioma" },
     { "pl", "Polski", "Jezyk" },

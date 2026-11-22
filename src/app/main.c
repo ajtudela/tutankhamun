@@ -174,7 +174,7 @@ static void print_usage(void)
 {
     fprintf(stderr,
         "usage: tutankhamun [game dir] [save.sav] [--log file] [--size WxH] [--window | --fullscreen] [--cursor-scale N] [--discord-log]\n"
-        "                   [--no-update] [--no-video] [--language en|de|it|es|pl]\n"
+        "                   [--no-update] [--no-video] [--language en|de|fr|it|es|pl]\n"
         "       tutankhamun --export-configs <dir> | --check-configs <dir>\n"
         "       tutankhamun --find-game-dir [--system] [--ini file] [--here dir] [--steam root] [--gog dir]... [...]\n"
         "(the game directory holds the game's Data folder; a path ending in .exe stands for its folder)\n");
