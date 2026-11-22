@@ -25,6 +25,7 @@
 #include "window/building_menu.h"
 #include "window/message_list.h"
 #include "window/report_bug.h"
+#include "widget/touch_pause.h"
 #include "window/window_id.h"
 #include "window/window_image_group.h"
 #include <stdint.h>
@@ -55,6 +56,7 @@ int32_t widget_sidebar_draw_buttons(void)
         image_buttons_draw(city_view_width_expanded, SIDEBAR_TOP, buttons_expanded_extra, SIDEBAR_EXPANDED_EXTRA_BUTTONS);
         image_buttons_draw(city_view_width_expanded, SIDEBAR_TOP, buttons_expanded_build, SIDEBAR_EXPANDED_BUILD_BUTTONS);
         report_bug_sidebar_button_draw();
+        touch_pause_button_draw();
         return image_buttons_draw(city_view_width_expanded, SIDEBAR_TOP, buttons_expanded_top, SIDEBAR_EXPANDED_TOP_BUTTONS);
     }
     if (g_sidebar_collapsed == 1) {

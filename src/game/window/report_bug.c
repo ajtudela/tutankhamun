@@ -107,7 +107,7 @@ static int32_t sidebar_button_shown(void)
 static int32_t inside(int32_t x, int32_t y, int32_t width, int32_t height);
 
 // the frame around the icon: x, y, width, height on the screen
-static void sidebar_button_box(int32_t *box)
+void report_bug_sidebar_button_box(int32_t *box)
 {
     const image_header *header = image_header_get(image_group(SIDEBAR_BUTTON_GROUP));
     int32_t width = header->width + 2 * SIDEBAR_BUTTON_PADDING;
@@ -123,7 +123,7 @@ void report_bug_sidebar_button_draw(void)
         return;
     }
     int32_t box[4];
-    sidebar_button_box(box);
+    report_bug_sidebar_button_box(box);
     if (box[1] + box[3] > g_screen_height) {
         return;
     }
@@ -138,7 +138,7 @@ int32_t report_bug_sidebar_button_handle(void)
         return 0;
     }
     int32_t box[4];
-    sidebar_button_box(box);
+    report_bug_sidebar_button_box(box);
     if (box[1] + box[3] > g_screen_height || !inside(box[0], box[1], box[2], box[3])) {
         return 0;
     }

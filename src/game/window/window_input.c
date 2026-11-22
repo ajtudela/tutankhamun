@@ -58,6 +58,7 @@
 #include "window/main_menu_links.h"
 #include "window/main_menu_version.h"
 #include "window/report_bug.h"
+#include "widget/touch_pause.h"
 #include "window/map_selection.h"
 #include "window/message_dialog.h"
 #include "window/message_list.h"
@@ -300,6 +301,10 @@ static void input_city(void)
             return;
         }
         if (image_buttons(city_view_width_expanded, 30, buttons_expanded_extra, 2, 10) != 0) {
+            window_ui_redraw = 1;
+            return;
+        }
+        if (touch_pause_button_handle() != 0) {
             window_ui_redraw = 1;
             return;
         }

@@ -10,6 +10,7 @@
 
 void report_bug_sidebar_button_draw(void);
 int32_t report_bug_sidebar_button_handle(void);
+void report_bug_sidebar_button_box(int32_t *box);
 
 void report_bug_show(void);
 void report_bug_close(void);
