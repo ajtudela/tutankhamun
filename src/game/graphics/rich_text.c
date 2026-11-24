@@ -55,11 +55,7 @@ enum rich_text_line_limit {
     RICH_TEXT_WORD_MAX_CHARS = 2000,
 };
 
-enum rich_text_letter {
-    RICH_TEXT_LETTER_TALL_FIRST = 0x60,
-    RICH_TEXT_LETTER_C_CEDILLA = 199,
-    RICH_TEXT_CHAR_C_CEDILLA = 0xE7,
-};
+
 
 typedef struct rich_text_layout {
     const uint8_t *p;
@@ -192,17 +188,7 @@ int32_t rich_text_draw_character(int32_t font, uint8_t letter_index, int32_t x, 
         return 0;
     }
     int32_t image_id = (g_last_image_id - 1) + font;
-    int32_t line_height = (large_line == 0) ? RICH_TEXT_LINE_HEIGHT : RICH_TEXT_TALL_LINE_HEIGHT;
-    int32_t raise = image_header_get(image_id)->height - line_height;
-    if (raise < 0) {
-        raise = 0;
-    }
-    if (letter_index < RICH_TEXT_LETTER_TALL_FIRST) {
-        raise = 0;
-    }
-    if (letter_index == RICH_TEXT_LETTER_C_CEDILLA || letter_index == RICH_TEXT_CHAR_C_CEDILLA) {
-        raise = 0;
-    }
+    int32_t raise = text_character_raise(font, letter_index, (uint8_t) g_last_image_id);
     if (measure_only == 0) {
         image_draw(image_id, x, y - raise);
     }

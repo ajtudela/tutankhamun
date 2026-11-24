@@ -30,6 +30,7 @@ uint8_t text_letter_image_id(int32_t letter_index);
 int32_t text_draw_character(int32_t font, uint8_t letter_index, int32_t x, int32_t y);
 int32_t text_get_width(const uint8_t *str, int32_t font);
 int32_t text_get_letter_width(uint8_t c, int32_t font);
+int32_t text_character_raise(int32_t font, uint8_t letter_index, uint8_t glyph_id);
 int32_t text_get_word_width(const uint8_t *str, int32_t font);
 void text_draw(const uint8_t *str, int32_t x, int32_t y, int32_t font, int32_t color);
 void text_draw_centered(const uint8_t *str, int32_t x, int32_t y, int32_t box_width, int32_t font, int32_t color);

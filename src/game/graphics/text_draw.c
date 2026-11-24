@@ -196,7 +196,7 @@ static int32_t glyph_ink_bottom(int32_t image_id)
     return stored - TEXT_GLYPH_INK_BOTTOM_OFFSET;
 }
 
-static int32_t text_character_raise(int32_t font, uint8_t letter_index, uint8_t glyph_id)
+int32_t text_character_raise(int32_t font, uint8_t letter_index, uint8_t glyph_id)
 {
     if (letter_index < TEXT_LETTER_TALL_FIRST) {
         return 0;
