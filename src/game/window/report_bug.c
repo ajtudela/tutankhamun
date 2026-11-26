@@ -85,6 +85,7 @@ static const char text_need_body[] = "Please write a description of at least 10 
 static const char text_sending[] = "Sending...";
 static const char text_sent[] = "Sent, thank you! The screenshot and the log went with it.";
 static const char text_failed[] = "Could not send it";
+static const char text_public[] = "It becomes a public GitHub issue, with a screenshot and the log.";
 
 static struct {
     char title[TITLE_MAX + 2];
@@ -340,6 +341,8 @@ void report_bug_draw(void)
             snprintf(status, sizeof(status), "%s", form.status);
         }
         text_draw_centered((const uint8_t *) status, x, y + STATUS_Y, FORM_WIDTH, font_black(), 0);
+    } else {
+        text_draw_centered((const uint8_t *) text_public, x, y + STATUS_Y, FORM_WIDTH, font_black(), 0);
     }
     draw_button(x + MARGIN, y + ACTION_Y, ACTION_WIDTH, text_send, 0);
     draw_button(x + FORM_WIDTH - MARGIN - ACTION_WIDTH, y + ACTION_Y, ACTION_WIDTH, text_cancel, 0);
