@@ -1,0 +1,62 @@
+name: Tutankhamun Google Play
+
+on:
+  push:
+    tags: [ "v*" ]
+  workflow_dispatch:
+    inputs:
+      track:
+        description: Google Play track
+        type: choice
+        options: [ production, alpha, internal ]
+        default: production
+
+jobs:
+  bundle:
+    name: publish the bundle
+    runs-on: ubuntu-24.04
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        fetch-depth: 0 # the commit count is the build number and the versionCode
+    - uses: actions/setup-java@v4
+      with:
+        distribution: temurin
+        java-version: 17
+    - uses: android-actions/setup-android@v3
+      with:
+        packages: platform-tools platforms;android-36 build-tools;36.0.0 ndk;27.2.12479018 cmake;3.22.1
+    - uses: actions/cache@v4
+      with:
+        path: |
+          ~/.gradle/caches
+          ~/.gradle/wrapper
+        key: gradle-${{ hashFiles('android/**/*.gradle', 'android/gradle/wrapper/gradle-wrapper.properties') }}
+    # As in Julius (Gradle Play Publisher) and Akhenaten (a v* tag): the bundle signed with the upload key of the
+    # secrets (ANDROID_UPLOAD_KEYSTORE: the .jks in base64; ANDROID_UPLOAD_STORE_PASSWORD, ANDROID_UPLOAD_KEY_ALIAS,
+    # ANDROID_UPLOAD_KEY_PASSWORD), uploaded with the service account's key (PLAY_SERVICE_ACCOUNT_JSON); the release
+    # notes are the commit's title.
+    - name: build and publish
+      working-directory: android
+      env:
+        UPLOAD_KEYSTORE: ${{ secrets.ANDROID_UPLOAD_KEYSTORE }}
+        TUTANKHAMUN_UPLOAD_STORE_PASSWORD: ${{ secrets.ANDROID_UPLOAD_STORE_PASSWORD }}
+        TUTANKHAMUN_UPLOAD_KEY_ALIAS: ${{ secrets.ANDROID_UPLOAD_KEY_ALIAS }}
+        TUTANKHAMUN_UPLOAD_KEY_PASSWORD: ${{ secrets.ANDROID_UPLOAD_KEY_PASSWORD }}
+        ANDROID_PUBLISHER_CREDENTIALS: ${{ secrets.PLAY_SERVICE_ACCOUNT_JSON }}
+        TRACK: ${{ inputs.track || 'production' }}
+      run: |
+        if [ -z "$UPLOAD_KEYSTORE" ] || [ -z "$ANDROID_PUBLISHER_CREDENTIALS" ]; then
+          echo "::error::no upload key or PLAY_SERVICE_ACCOUNT_JSON in the secrets"
+          exit 1
+        fi
+        echo "$UPLOAD_KEYSTORE" | base64 --decode > "$RUNNER_TEMP/upload.jks"
+        export TUTANKHAMUN_UPLOAD_STORE_FILE="$RUNNER_TEMP/upload.jks"
+        export TUTANKHAMUN_VERSION_CODE=$(git rev-list --count HEAD)
+        git log -1 --pretty=%s | cut -c1-500 > app/src/main/play/release-notes/en-US/default.txt
+        ./gradlew --no-daemon publishReleaseBundle --track "$TRACK" --release-status completed
+        rm -f "$RUNNER_TEMP/upload.jks"
+    - uses: actions/upload-artifact@v4
+      with:
+        name: android_aab
+        path: android/app/build/outputs/bundle/release/app-release.aab
