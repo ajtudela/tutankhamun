@@ -3,10 +3,12 @@
 
 #include "window/empire_scroll.h"
 #include "graphics/graphics_data.h"
+#include "input/input_data.h"
 #include "map/grid.h"
 #include "widget/screen_layout.h"
 #include "window/window_data.h"
 #include <stdint.h>
+#include <stdlib.h>
 
 void empire_check_scroll_boundaries(void)
 {
@@ -69,4 +71,52 @@ void empire_scroll_map(int32_t direction)
             break;
     }
     empire_check_scroll_boundaries();
+}
+
+int32_t empire_scroll_area_contains(int32_t x, int32_t y)
+{
+    return x >= empire_border_x && x < display_width - empire_border_x && y >= empire_border_y && y < screen_height - empire_border_bottom;
+}
+
+// a finger's or a mouse's drag: the map follows it
+void empire_scroll_by(int32_t dx, int32_t dy)
+{
+    if (dx == 0 && dy == 0) {
+        return;
+    }
+    empire_scroll_x -= dx;
+    empire_scroll_y -= dy;
+    empire_check_scroll_boundaries();
+}
+
+static struct {
+    int32_t active;
+    int32_t moved;
+    int32_t x;
+    int32_t y;
+} drag;
+
+int32_t empire_scroll_drag(void)
+{
+    if (mouse_right_went_down && empire_scroll_area_contains(mouse_x, mouse_y)) {
+        drag.active = 1;
+        drag.moved = 0;
+        drag.x = mouse_x;
+        drag.y = mouse_y;
+    }
+    if (!drag.active) {
+        return 0;
+    }
+    if (!drag.moved && (abs(mouse_x - drag.x) > EMPIRE_DRAG_START || abs(mouse_y - drag.y) > EMPIRE_DRAG_START)) {
+        drag.moved = 1;
+    }
+    if (drag.moved) {
+        empire_scroll_by(mouse_x - drag.x, mouse_y - drag.y);
+        drag.x = mouse_x;
+        drag.y = mouse_y;
+    }
+    if (!mouse_right_down) {
+        drag.active = 0;
+    }
+    return drag.moved;
 }

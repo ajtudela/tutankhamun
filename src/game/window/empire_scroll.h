@@ -11,9 +11,15 @@ enum empire_scroll_direction {
 
 enum empire_scroll_step {
     EMPIRE_SCROLL_STEP = 20,
+    EMPIRE_DRAG_START = 4,
 };
 
 void empire_check_scroll_boundaries(void);
 void empire_scroll_map(int32_t direction);
+int32_t empire_scroll_area_contains(int32_t x, int32_t y);
+void empire_scroll_by(int32_t dx, int32_t dy);
+// the map follows the mouse while the right button is held on it, as in Julius; 1 from the first move until the
+// release, so a drag's release does not close the window the way a right click does
+int32_t empire_scroll_drag(void);
 
 #endif

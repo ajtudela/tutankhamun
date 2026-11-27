@@ -516,6 +516,9 @@ static void input_text_dialog(int32_t slot, on_accept_fn on_accept, int32_t back
 static void input_empire(void)
 {
     empire_scroll_map(scroll_get_direction());
+    if (empire_scroll_drag()) {
+        return;
+    }
     if (image_buttons(20, g_screen_height - 44, empire_help_button.buttons, 1, 10) != 0) {
         return;
     }
