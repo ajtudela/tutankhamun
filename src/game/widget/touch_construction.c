@@ -14,6 +14,7 @@
 #include "graphics/graphics_data.h"
 #include "widget/city_view.h"
 #include "widget/city_viewport.h"
+#include "window/empire_scroll.h"
 #include "window/window_id.h"
 #include "widget/widget_data.h"
 #include "window/window_data.h"
@@ -26,6 +27,12 @@ enum touch_cancel_button {
     TOUCH_CANCEL_MARGIN = 8,
     TOUCH_CANCEL_TOP = 44,
     TOUCH_CANCEL_REACH = 8,
+};
+
+// the city map follows the finger by whole steps
+enum touch_map_pan_step {
+    TOUCH_MAP_PAN_COLUMN_PIXELS = 60,
+    TOUCH_MAP_PAN_ROW_PAIR_PIXELS = 30,
 };
 
 int32_t touch_construction_enabled;
@@ -77,15 +84,31 @@ static int32_t on_ghost(int32_t type)
 
 int32_t touch_map_pan_allowed(int32_t x, int32_t y)
 {
-    if (!touch_construction_enabled || window_current_id != WINDOW_CITY || construction_building_type != BUILDING_NONE) {
+    if (!touch_construction_enabled) {
+        return 0;
+    }
+    if (window_current_id == WINDOW_EMPIRE) {
+        return empire_scroll_area_contains(x, y);
+    }
+    if (window_current_id != WINDOW_CITY || construction_building_type != BUILDING_NONE) {
         return 0;
     }
     int32_t view_width = g_sidebar_collapsed ? city_view_width_collapsed : city_view_width_expanded;
     return x >= 0 && x < view_width && y >= VIEWPORT_TOP && y < g_screen_height;
 }
 
-void touch_map_pan(int32_t columns, int32_t row_pairs)
+void touch_map_pan(int32_t *dx, int32_t *dy)
 {
+    if (window_current_id == WINDOW_EMPIRE) {
+        empire_scroll_by(*dx, *dy);
+        *dx = 0;
+        *dy = 0;
+        return;
+    }
+    int32_t columns = *dx / TOUCH_MAP_PAN_COLUMN_PIXELS;
+    int32_t row_pairs = *dy / TOUCH_MAP_PAN_ROW_PAIR_PIXELS;
+    *dx -= columns * TOUCH_MAP_PAN_COLUMN_PIXELS;
+    *dy -= row_pairs * TOUCH_MAP_PAN_ROW_PAIR_PIXELS;
     city_view_pan(columns, row_pairs);
 }
 

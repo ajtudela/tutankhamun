@@ -720,14 +720,13 @@ static struct {
     int32_t pan_y;
 } touch;
 
-// the map follows the finger by whole steps; what is left of the move waits for the next one
 static void touch_pan(int32_t x, int32_t y)
 {
-    int32_t columns = (x - touch.pan_x) / TOUCH_MAP_PAN_COLUMN_PIXELS;
-    int32_t row_pairs = (y - touch.pan_y) / TOUCH_MAP_PAN_ROW_PAIR_PIXELS;
-    touch.pan_x += columns * TOUCH_MAP_PAN_COLUMN_PIXELS;
-    touch.pan_y += row_pairs * TOUCH_MAP_PAN_ROW_PAIR_PIXELS;
-    touch_map_pan(columns, row_pairs);
+    int32_t dx = x - touch.pan_x;
+    int32_t dy = y - touch.pan_y;
+    touch_map_pan(&dx, &dy);
+    touch.pan_x = x - dx;
+    touch.pan_y = y - dy;
 }
 
 static void touch_left_down(int32_t x, int32_t y)
