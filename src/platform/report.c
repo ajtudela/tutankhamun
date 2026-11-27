@@ -149,6 +149,7 @@ static void put_base64(text_buffer *b, const uint8_t *data, size_t size)
 static char *log_tail(size_t *length)
 {
     *length = 0;
+    platform_log_flush();
     const char *path = platform_log_path();
     FILE *file = path ? platform_fopen(path, "rb") : 0;
     if (!file) {

@@ -111,6 +111,7 @@ static LONG handle_exception(EXCEPTION_POINTERS *info, int32_t resolve)
             found++;
         }
     }
+    platform_log_flush();
     ExitProcess(3);
 }
 
@@ -134,6 +135,7 @@ static __declspec(noreturn) void __stdcall cookie_failure(uint32_t from, const u
             found++;
         }
     }
+    platform_log_flush();
     __fastfail(FAST_FAIL_STACK_COOKIE_CHECK_FAILURE);
 }
 

@@ -23,6 +23,8 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "SDL.h"
+
 #if defined(APP_IOS)
 // UIKit starts the program: SDL's main (SDL2main) calls this main, renamed SDL_main
 #include "SDL_main.h"
@@ -153,6 +155,22 @@ static void default_log_path(char *path, size_t size)
 #endif
 }
 
+static void run_frame_and_log(void)
+{
+    game_run_frame();
+    platform_log_flush_due();
+}
+
+static int SDLCALL log_flush_on_leave(void *data, SDL_Event *event)
+{
+    (void) data;
+    if (event->type == SDL_APP_WILLENTERBACKGROUND || event->type == SDL_APP_TERMINATING || event->type == SDL_APP_LOWMEMORY ||
+        event->type == SDL_QUIT) {
+        platform_log_flush();
+    }
+    return 1;
+}
+
 static int32_t parse_size(const char *text, int32_t *width, int32_t *height)
 {
     char rest;
@@ -249,8 +267,9 @@ static int32_t play_main(int32_t argc, char **argv, int32_t first)
         updater_disable();
     }
     updater_start();
-    static const play_host host = { platform_log, game_run_tick, game_run_frame };
+    static const play_host host = { platform_log, game_run_tick, run_frame_and_log };
     play_bind(&host);
+    SDL_AddEventWatch(log_flush_on_leave, 0);
     play_cursors_set_scale(cursor_scale_percent);
     app_report_no_configs_in_box();
     static game_dir_sources sources;

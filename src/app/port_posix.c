@@ -77,6 +77,7 @@ static void handle_crash(int number, siginfo_t *info, void *context)
         }
     }
 #endif
+    platform_log_flush();
     _exit(PORT_CRASH_EXIT_CODE);
 }
 
